@@ -1,0 +1,10 @@
+The spinning wait icons by Andrew B. Davidson were taken from
+
+http://www.andrewdavidson.com/articles/spinning-wait-icons/
+
+The icons are copyrighted. As far as license goes, this is my understanding
+from the above web site:
+
+"These icons are licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 2.5 License."
+
+Link to license: http://creativecommons.org/licenses/by-nc-sa/2.5/
