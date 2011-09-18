@@ -1,0 +1,22 @@
+Numeric Javascript by Sébastien Loisel
+======================================
+
+Numeric Javascript is a javascript library for doing numerical analysis in
+the browser. Because Numeric Javascript uses only the javascript programming
+language, it works in many browsers and does not require powerful servers.
+
+Numeric Javascript is for building "web 2.0" apps that can perform complex
+calculations in the browser and thus avoid the latency of asking a server
+to compute something. Indeed, you do not need a powerful server (or any
+server at all) since your web app will perform all its calculations in the
+client.
+
+For further information, see http://www.ma.hw.ac.uk/~loisel/numeric/
+
+License
+-------
+
+Numeric Javascript is copyright by Sébastien Loisel
+and is distributed under the MIT license. Details are found
+in the license.txt file.
+ 
