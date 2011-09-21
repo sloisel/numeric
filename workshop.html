@@ -155,29 +155,35 @@ a.menu:hover { text-decoration: none; color: #ff0000; }
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <body>
+<form name="myform" action="workshop.php" method="post">
 <table><tr valign="center">
 	<td><img src="resources/paperplane-small.png"></td>
 	<td>
-	<font size=+3><b>Numeric Javascript Workshop.</b></font> <font color="#b0b0b0">(Beta)</font><br>
-	<table><tr>
-	 	<td>
-	 		<input type="text" size=50 value="Untitled" id = "title" onchange="workshop.settitle();" class="unsaved">
-			<select id = "loader" onchange="workshop.loadit();" class="loader"><option>Load...</select>
-		</td>
-	</tr><tr>
-		<td class="menu">
-			<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>
-			<a href="#" onclick="workshop.reset(); workshop.mkinput(0);" class="menu">[NEW]</a>
-			<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
-			<a href="doc/symbols/numeric.html" class="menu">[HELP]</a>
-			<a href="index.html" class="menu">[ABOUT]</a>
-			<form name="myform" action="workshop.php" method="post">
-			<a href="javascript: workshop.submit();" class="menu">[PERMALINK]</a>
-			<input type="hidden" name="savedata" value="">
-			</form>
-		</td>
-	</tr></table>
-</td></tr></table>
+		<font size=+2><b>Numeric Javascript Workshop.</b></font> <font color="#b0b0b0">(Beta)</font><br>
+		<table>
+			<tr>
+	 			<td>
+	 				<input type="text" size=50 value="Untitled" id = "title" onchange="workshop.settitle();" class="unsaved">
+					<select id = "loader" onchange="workshop.loadit();" class="loader"><option>Load...</select>
+				</td>
+			</tr>
+			<tr>
+				<td class="menu">
+					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>
+					<a href="#" onclick="workshop.reset(); workshop.mkinput(0);" class="menu">[NEW]</a>
+					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
+					<a href="doc/symbols/numeric.html" class="menu">[HELP]</a>
+					<a href="index.html" class="menu">[ABOUT]</a>
+					<a href="javascript: workshop.submit();" class="menu">[PERMALINK]</a>
+					<input type="hidden" name="savedata" value="">
+				</td>
+			</tr>
+		</table>
+	</td>
+<!--	<td valign="top">Includes:<br>
+		<a href="#" class="button">&#x2716;</a> numeric.js
+</td>-->
+</tr></table>
 
 <table id = "interactions" class="interactions">
 <tr>
@@ -519,3 +525,4 @@ return {restore:restore,
 workshop.reset();
 workshop.mkinput(0);
 </script>
+</form>

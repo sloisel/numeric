@@ -167,7 +167,7 @@ expo(prettyPrint);
 function plot() {
 var ret;
 var color = ["black","blue","red","green","orange","purple","brown","yellow"];
-if(this.__proto__ !== P.prototype) { ret = new P; }
+if(this.__proto__ !== P.prototype) { ret = new P; } 
 else { ret = this; }
 var n = arguments.length, i, z, type, w;
 for(i=0;i<n;i++) {

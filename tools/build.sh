@@ -6,5 +6,3 @@ java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js
 ./mkdoc.sh > ../log/jsdoc.log 2>&1
 wait
 cd ../..
-zip -r numeric-1.0.zip numeric > numeric-zip.log 2>&1
-mv numeric-1.0.zip numeric
