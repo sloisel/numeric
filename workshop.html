@@ -172,12 +172,11 @@ foreach($incs as $i) {
 			</tr>
 			<tr>
 				<td class="menu">
-					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>
-					<a href="#" onclick="workshop.reset(); workshop.mkinput(0);" class="menu">[NEW]</a>
-					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
-					<a href="/numeric/doc/symbols/numeric.html" class="menu">[HELP]</a>
-					<a href="/numeric/about.html" class="menu">[ABOUT]</a>
+<!--					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>-->
 					<form name="myform" action="index.php" method="post">
+					<a href="/" class="menu">[NEW]</a>
+					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
+<!--					<a href="/numeric/about.html" class="menu">[ABOUT]</a>-->
 					<a href="javascript: workshop.submit();" class="menu">[PERMALINK]</a>
 					<input type="hidden" name="savedata" value="">
 					</form>
@@ -186,9 +185,15 @@ foreach($incs as $i) {
 			<tr>
 				<td>
 					<b>
-					<a href="/numeric/index.php?link=79cfb087074a163a9a763ebe55a4f55545d33a50f54827474cc7e600a5c1ab35">Click here</a>
+					<a href="/numeric/demo.html">Click here</a>
 					for a demo, or you can read more <a href="/numeric/about.html">about Numeric Javascript</a>.					
-					</b>
+					</b><br>
+					<a href="/numeric/lib/numeric.js">Download numeric.js</a> |
+				 	<a href="/numeric/lib/numeric-min.js">numeric-min.js</a> | 
+				 	<a href="https://github.com/sloisel/numeric">github repo</a> |
+				 	<a href="/numeric/doc/symbols/numeric.html">Documentation</a><br>
+					Author: <a href="http://www.ma.hw.ac.uk/~loisel/">S&eacute;bastien Loisel</a>.
+					Copyright 2011. <a href="/numeric/license.txt">MIT License</a>
 				</td>
 			</tr>
 		</table>

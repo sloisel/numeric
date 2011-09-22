@@ -23,6 +23,10 @@
 # Emacs backups
 *~
 
+# generated files
+index.html
+demo.html
+
 # Logs and databases #
 ######################
 *.log
