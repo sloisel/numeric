@@ -151,13 +151,16 @@ a.menu:active { text-decoration: none; color: #0000ff; text-decoration: underlin
 a.menu:hover { text-decoration: none; color: #ff0000; }
 </style>
 <title>Numeric Javascript Workshop</title>
-<script src="lib/numeric.js"></script>
-<script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
-<script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
+<?php
+foreach($incs as $i) {
+   echo '<script src="' . $i . '"></script>';
+}
+?>
+<script src="/numeric/tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
+<script src="/numeric/tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <body>
-<form name="myform" action="workshop.php" method="post">
 <table><tr valign="center">
-	<td><img src="resources/paperplane-small.png"></td>
+	<td><img src="/numeric/resources/paperplane-small.png"></td>
 	<td>
 		<font size=+2><b>Numeric Javascript Workshop.</b></font> <font color="#b0b0b0">(Beta)</font><br>
 		<table>
@@ -172,10 +175,20 @@ a.menu:hover { text-decoration: none; color: #ff0000; }
 					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>
 					<a href="#" onclick="workshop.reset(); workshop.mkinput(0);" class="menu">[NEW]</a>
 					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
-					<a href="doc/symbols/numeric.html" class="menu">[HELP]</a>
-					<a href="index.html" class="menu">[ABOUT]</a>
+					<a href="/numeric/doc/symbols/numeric.html" class="menu">[HELP]</a>
+					<a href="/numeric/about.html" class="menu">[ABOUT]</a>
+					<form name="myform" action="index.php" method="post">
 					<a href="javascript: workshop.submit();" class="menu">[PERMALINK]</a>
 					<input type="hidden" name="savedata" value="">
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<b>
+					<a href="/numeric/index.php?link=79cfb087074a163a9a763ebe55a4f55545d33a50f54827474cc7e600a5c1ab35">Click here</a>
+					for a demo, or you can read more <a href="/numeric/about.html">about Numeric Javascript</a>.					
+					</b>
 				</td>
 			</tr>
 		</table>
@@ -184,6 +197,7 @@ a.menu:hover { text-decoration: none; color: #ff0000; }
 		<a href="#" class="button">&#x2716;</a> numeric.js
 </td>-->
 </tr></table>
+
 
 <table id = "interactions" class="interactions">
 <tr>
@@ -277,7 +291,7 @@ function go(k) {
 	myfocus(inputs[order[n+1]]);
 	clear = true;
 	current = k;
-	outputs[k].innerHTML = "<img src=\"resources/wait16.gif\">";
+	outputs[k].innerHTML = "<img src=\"/numeric/resources/wait16.gif\">";
     var runit = function() {
 		try {
 			ans = window.eval(input.value);
@@ -501,7 +515,7 @@ function submit() {
 	var s = document.myform.savedata;
 	s.value = foo;
 	digest = Crypto.util.bytesToHex(digest);
-	f.action = "workshop.php?link="+digest;
+	f.action = "index.php?link="+digest;
 	f.submit();
 	console.log(digest);
 }
@@ -525,4 +539,4 @@ return {restore:restore,
 workshop.reset();
 workshop.mkinput(0);
 </script>
-</form>
+

@@ -23,9 +23,6 @@
 # Emacs backups
 *~
 
-# Top-secret because of passwords
-workshop.php
-
 # Logs and databases #
 ######################
 *.log
