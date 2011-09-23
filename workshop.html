@@ -364,6 +364,7 @@ function settitle(e) {
 	mksel();
 }
 
+var count = 0;
 function mkinput(i) {
 	var row1 = interactions.insertRow(2*i+1);
 	row1.className = "interactions";
@@ -388,6 +389,8 @@ function mkinput(i) {
     ti.className = "input";
     ti.rows = 1;
     ti.spellcheck = false;
+    ti.id = "in"+count;
+    count++;
     cell3.appendChild(ti);
 
 	cell6.className = "output";
@@ -538,7 +541,7 @@ return {restore:restore,
 	    del:del,
 	    print:print,
 	    submit:submit,
-	    download:download,
+	    download:download
 	    }
 }());
 workshop.reset();
