@@ -173,7 +173,7 @@ foreach($incs as $i) {
 			<tr>
 				<td class="menu">
 <!--					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>-->
-					<form name="myform" action="index.php" method="post">
+					<form name="myform" action="/numeric/index.php" method="post">
 					<a href="/" class="menu">[NEW]</a>
 					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
 <!--					<a href="/numeric/about.html" class="menu">[ABOUT]</a>-->
@@ -520,7 +520,7 @@ function submit() {
 	var s = document.myform.savedata;
 	s.value = foo;
 	digest = Crypto.util.bytesToHex(digest);
-	f.action = "index.php?link="+digest;
+	f.action = "/numeric/index.php?link="+digest;
 	f.submit();
 	console.log(digest);
 }
