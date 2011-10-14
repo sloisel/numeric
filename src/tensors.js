@@ -15,7 +15,7 @@ function size(x) {
             if(x.length === 0) { return ret; }
             x = x[0];
         }
-        else throw new Error("Malformed tensor");
+        else { throw new Error("Malformed tensor (parameter must be a number or an array)"); }
     }
     return ret;
 }
@@ -24,9 +24,9 @@ function checkTensor(x,s) {
         var i;
         if(k === s.length) {
             if(typeof x === "number") { return }
-            else throw new Error("Malformed tensor");
+            else throw new Error("Malformed tensor (heterogeneous)");
         }
-        if(!(x instanceof Array) || x.length !== s[k]) { throw new Error("Malformed tensor"); }
+        if(!(x instanceof Array) || x.length !== s[k]) { throw new Error("Malformed tensor (mismatched sizes)"); }
         for(i=0;i<x.length;i++) {
             z(x[i],k+1);
         }
@@ -590,7 +590,7 @@ t([[0,1],
 > numeric.t(0,1)
 t(0,1)
 > numeric.t("hello")
-Error: Malformed tensor
+Error: Malformed tensor (parameter must be a number or an array)
 > numeric.t([[1,2],[3,4]],[3,4])
 Error: The real and imaginary parts must be tensors of the same dimensions
 > numeric.t(1)()
@@ -609,7 +609,7 @@ t([[2,3],[5,6]])
 t(8)
      */
 function t(x,y) {
-    if(typeof t.__proto__ !== "undefined" && isT(x)) { return x; }
+    if(isT(x)) { return x; }
     var sx = size(x), sy = (typeof y === "undefined")?undefined:size(y),i;
     checkTensor(x,sx);
     if(typeof y !== "undefined") {

@@ -32,7 +32,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=33393d8d2ccdad96a0e747fcf288f221ec52e1527fc31a481f5caf790c69a3c3');
+		$incs = array(1 => '/scripts/numeric.js?key=1fcf76c03b585bf167136e8a103614215ba9521e79609d654e0d3fe72bc4551d');
 	}
 	$footer = <<<EOT
 <script>
@@ -43,7 +43,7 @@ if(isset($_GET['link'])) {
 </script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=33393d8d2ccdad96a0e747fcf288f221ec52e1527fc31a481f5caf790c69a3c3');
+	$incs = array(1 => '/scripts/numeric.js?key=1fcf76c03b585bf167136e8a103614215ba9521e79609d654e0d3fe72bc4551d');
 	$footer = ""; 
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));

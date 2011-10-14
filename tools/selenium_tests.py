@@ -51,8 +51,7 @@ for x in y:
     for foo in baz:
         bar = foo.find('\n')
         tests.append((foo[0:bar],re.sub(r'\s','',foo[bar+1:])))
-        print(tests[-1])
-names = ['Chrome','Firefox','Ie']
+names = ['Ie','Chrome','Firefox']
 for x in names:
     try:
         driver = eval('webdriver.'+x+'()')

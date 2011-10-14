@@ -341,8 +341,6 @@ my.round = round;
      * @example
 > numeric.ceil(numeric.t([1.1,1.7],[-5.2,-9.9]))
 t([2,2],[-5,-9])
-> numeric.ceil("what?")
-Error: Malformed tensor
      */
 function ceil(z) {
     var r = Math.ceil;

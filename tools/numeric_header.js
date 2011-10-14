@@ -237,7 +237,7 @@ t( [ [6         , 8         , 9          ],
  * etc... For example:
  <pre>
 > numeric.t([[1,2],[3,4,5]])
-Error: Malformed tensor
+Error: Malformed tensor (mismatched sizes)
  </pre>
  * Because javascript is a highly dynamic language, these sanity checks are not guaranteed to catch
  * all possible problems. You should be particularly careful if you access the <tt>T.s</tt>, <tt>T.x</tt>
