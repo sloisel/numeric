@@ -30,7 +30,7 @@ function exp(x) {
     return map(e,function (a,b) { return e(a)*c(b); },
                  function (a,b) { return e(a)*s(b); },x);
 }
-expo(exp);
+my.exp = exp;
 /**
      * The pointwise modulus of a tensor.
      * @example
@@ -51,7 +51,7 @@ function abs(z) {
     }
     return mkT(z.s,ret);
 }
-expo(abs);
+my.abs = abs;
 /** 
      * Pointwise complex conjugate of a tensor.
      * 
@@ -67,7 +67,7 @@ function conj(z) {
     var i = neg(imag(z));
     return mkT(z.s,z.x,i.x);
 }
-expo(conj)
+my.conj = conj
 /**
      * Pointwise negation of a tensor
      * 
@@ -85,7 +85,7 @@ function neg(z) {
                function(x,y) { return -x; },
                function(x,y) { return -y; },z)
 }
-expo(neg);
+my.neg = neg;
 
 /**
      * Pointwise cosine of a tensor.
@@ -104,7 +104,7 @@ function cos(z) {
                function (x,y) { return 0.5*c(x)*(e(-y)+e(y)); },
                function (x,y) { return 0.5*s(x)*(e(-y)-e(y)); }, z)
 }
-expo(cos);
+my.cos = cos;
 /**
      * Pointwise sine of a tensor.
      * 
@@ -122,7 +122,7 @@ function sin(z) {
                function (x,y) { return 0.5*s(x)*(e(-y)+e(y)); },
                function (x,y) { return 0.5*c(x)*(e(y)-e(-y)); }, z)
 }
-expo(sin);
+my.sin = sin;
 
 /**
      * Pointwise logarithm of tensor.
@@ -140,7 +140,7 @@ function log(z) {
                function (x,y) { return l(s(x*x+y*y));},
                function (x,y) { return a2(y,x);}, z);
 }
-expo(log);
+my.log = log;
 
 /**
      * Pointwise atan of tensor.
@@ -161,7 +161,7 @@ function atan(z) {
             function (x,y) { return 0.5*(l(s((1+y)*(1+y)+x*x))-l(s((1-y)*(1-y)+x*x)));},
             z);
 }
-expo(atan);
+my.atan = atan;
 /**
      * Pointwise atan2 of a real tensor.
      * 
@@ -214,7 +214,7 @@ function sqrt(z) {
     }
     return mkT(z.s,x,y);
 }
-expo(sqrt);
+my.sqrt = sqrt;
 
 /**
      * Raises a to the bth power. Actual formula is exp(mul(log(a),b)).
@@ -226,7 +226,7 @@ t(9.000)
 t([1,14.81],[0,9.834])
      */
 function pow(a,b) { return exp(mul(log(a),b)); }
-expo(pow);
+my.pow = pow;
 
 function iz(z) {
     var i,foo;
@@ -262,7 +262,7 @@ function acos(z) {
     iz(foo);
     return add(foo,Math.PI*0.5);
 }
-expo(acos);
+my.acos = acos;
 /**
      * The pointwise asin of a tensor. In the complex case, actual formula is
      * neg(mul(i,log(add(mul(i,z),sqrt(sub(1,mul(z,z))))))),
@@ -285,7 +285,7 @@ function asin(z) {
     iz(foo);
     return neg(foo);
 }
-expo(asin);
+my.asin = asin;
 
 /**
      * Pointwise atan2 of real tensors.
@@ -304,7 +304,7 @@ function atan2(z,w) {
     for(i=0;i<n;i++) ret[i] = Math.atan2(y[i],x[i]);
     return mkT(z.s,ret);
 }
-expo(atan2);
+my.atan2 = atan2;
 /**
      * Pointwise tangent of a tensor
      * 
@@ -319,7 +319,7 @@ function tan(z) {
     var a = sin(z), b = cos(z), c = div(a,b);
     return div(sin(z),cos(z));
     }
-expo(tan);
+my.tan = tan;
 /**
      * Pointwise rounding of a tensor.
      * 
@@ -334,7 +334,7 @@ function round(z) {
                function (x,y) { return r(y); },
                t(z));
 }
-expo(round);
+my.round = round;
 /**
      * Pointwise ceil of a tensor.
      * 
@@ -351,7 +351,7 @@ function ceil(z) {
                function (x,y) { return r(y); },
                t(z));
 }
-expo(ceil);
+my.ceil = ceil;
 /**
      * Pointwise floor of a tensor.
      * 
@@ -366,7 +366,7 @@ function floor(z) {
                function (x,y) { return r(y); },
                t(z));
 }
-expo(floor);
+my.floor = floor;
 
 /**
  * Computes the supremum of a tensor.
@@ -384,7 +384,7 @@ function sup(z) {
     for(i=0;i<n;i++) { foo = M(foo,x[i]); }
     return t(foo);
 }
-expo(sup);
+my.sup = sup;
 
 /**
  * Computes the supremum of a tensor.
@@ -402,7 +402,7 @@ function inf(z) {
     for(i=0;i<n;i++) { foo = M(foo,x[i]); }
     return t(foo);
 }
-expo(inf);
+my.inf = inf;
 
 /**
      * The real part of x.
@@ -416,5 +416,5 @@ t(2)
 t([2,3])
      */
 function real(x) { x = t(x); return mkT(x.s,x.x); }
-expo(real);
+my.real = real;
 

@@ -99,6 +99,6 @@ function QP(Q,c,A,b,maxit) {
     var bar = phase1(Q2,A2,b,c2,maxit);
     return sub(bar(run(n)),bar(run(n,2*n)));
 }
-expo(QP);
+my.QP = QP;
 
 

@@ -42,7 +42,7 @@ function same(x,y) {
     }
     return true;
 }
-expo(same);
+my.same = same;
 
 /**
  * Entrywise comparison for equality
@@ -80,7 +80,7 @@ function equal(x,y) {
     for(i=0;i<n;i++) { ret[i] = (xx[i] === yx[i] && xy[i] === yy[i])?1:0; }
     return mkT([ret.length],ret);
 }
-expo(equal);
+my.equal = equal;
 
 function zipbool(x,y,f) {
     x = R(t(x)); y = R(t(y));
@@ -101,7 +101,7 @@ t([0,1,0,0])
  * @returns
  */
 function gt(x,y) { return zipbool(x,y,function(a,b) { return a>b; }); }
-expo(gt);
+my.gt = gt;
 
 /**
  * Entrywise x < y
@@ -114,7 +114,7 @@ t([1,0,1,0])
  * @returns
  */
 function lt(x,y) { return zipbool(x,y,function(a,b) { return a<b; }); }
-expo(lt);
+my.lt = lt;
 
 /**
  * Entrywise x >= y
@@ -127,7 +127,7 @@ t([0,1,0,1])
  * @returns
  */
 function geq(x,y) { return zipbool(x,y,function(a,b) { return a>=b; }); }
-expo(geq);
+my.geq = geq;
 
 /**
  * Entrywise x <= y
@@ -140,7 +140,7 @@ t([1,0,1,1])
  * @returns
  */
 function leq(x,y) { return zipbool(x,y,function(a,b) { return a<=b; }); }
-expo(leq);
+my.leq = leq;
 
 /**
  * Entrywise negation.
@@ -155,7 +155,7 @@ function not(x) {
     x = R(t(x));
     return map(function(a) { return (a === 0)?1:0; },null,null,x);
 }
-expo(not);
+my.not = not;
 
 /**
  * Entrywise x && y
@@ -168,7 +168,7 @@ t([0,0,0,1])
  * @returns
  */
 function and(x,y) { return zipbool(x,y,function(a,b) { return a&&b; }); }
-expo(and);
+my.and = and;
 
 /**
  * Entrywise x || y
@@ -181,7 +181,7 @@ t([0,1,1,1])
  * @returns
  */
 function or(x,y) { return zipbool(x,y,function(a,b) { return a||b; }); }
-expo(or);
+my.or = or;
 
 /** 
  * Finds nonzero entries
@@ -202,7 +202,7 @@ function find(x) {
     for(i=0;i<n;i++) { if(a[i] !== 0 || b[i] !== 0) { ret.push(i); } }
     return mkT([ret.length],ret);
 }
-expo(find);
+my.find = find;
 
 /**
  * Returns true if any entries are nonzero.
@@ -225,7 +225,7 @@ function any(x) {
     for(i=0;i<n;i++) { if(a[i] !== 0 || b[i] !== 0) return true; }
     return false;
 }
-expo(any);
+my.any = any;
 
 /**
  * Returns true if all entries are nonzero.
@@ -248,4 +248,4 @@ function all(x) {
     for(i=0;i<n;i++) { if(a[i] === 0 && b[i] === 0) return false; }
     return true;
 }
-expo(all);
+my.all = all;

@@ -155,7 +155,7 @@ function prettyPrint(x) {
     f("ans",x,0);
     return ret.join("");
 }
-expo(prettyPrint);
+my.prettyPrint = prettyPrint; 
 
 /**
  * Plots
@@ -207,7 +207,7 @@ for(i=0;i<n;i++) {
 }
 return ret;
 }
-expo(plot);
+my.plot = plot;
 
 function R(z) { if(typeof z.y==="undefined") { return z; } throw new Error("tensor must be real"); }
 function P() {

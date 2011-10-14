@@ -162,6 +162,7 @@ foreach($incs as $i) {
 ?>
 <script src="/numeric/tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="/numeric/tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
+<script src="/numeric/tools/json2.js"></script>
 <body itemscope itemtype="http://schema.org/WebPage">
 <table><tr valign="center">
 	<td><img src="/numeric/resources/paperplane-small.png"></td>
@@ -219,6 +220,17 @@ foreach($incs as $i) {
 <div id="notsaved" class="notsaved"></div>
 <script>
 "use strict";
+if(!Array.indexOf){
+  Array.prototype.indexOf = function(obj){
+   for(var i=0; i<this.length; i++){
+    if(this[i]==obj){
+     return i;
+    }
+   }
+   return -1;
+  }
+}
+
 
 var ans;
 
@@ -242,7 +254,8 @@ var saver = { console:[] };
 var savename = null;
 var saves = [];
 var k;
-
+var retarded = false;
+if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ retarded = true; }
 function save() {
 	if(savename === null) { return; }
     localStorage.setItem(savename,JSON.stringify(saver));	
@@ -301,6 +314,7 @@ function go(k) {
 	clear = true;
 	current = k;
 	outputs[k].innerHTML = "<img src=\"/numeric/resources/wait16.gif\">";
+	var f1;
     var runit = function() {
 		try {
 			ans = window.eval(input.value);
@@ -309,7 +323,7 @@ function go(k) {
 			else { foo = ""; }
 		} catch(e) {
 			ans = undefined;
-			foo = e.toString();
+			foo = e.name+': '+e.message;
 			if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
 			{ foo += "\n\n"+e.stack.toString(); }
 			foo = foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
@@ -327,9 +341,11 @@ function keydown(e,k) {
 	checkpos(input);
 	resize(input);
 	setTimeout(function () { resize(input); },0);
+	var e = window.event?window.event:e;
     if(e.keyCode === 13 && e.shiftKey === false) {
 		setTimeout(function () { go(k); },0);
-        e.preventDefault();
+		if(window.event) e.returnValue = false;
+		else e.preventDefault();
 	}
 }
 
@@ -345,12 +361,14 @@ function mksel() {
 	saves = [];
 	var option = document.createElement("option");
 	option.text = "Load...";
-	loader.add(option,null);
+	if(retarded) loader.add(option);
+	else loader.add(option,null);
 	for(k=0;k<localStorage.length;k++) { 
 		saves[k] = localStorage.key(k);
 		option = document.createElement("option");
 		option.text = saves[k];
-		loader.add(option,null);
+		if(retarded) loader.add(option);
+		else loader.add(option,null);
 	}
 }
 mksel();
@@ -394,10 +412,11 @@ function mkinput(i) {
     ti.rows = 1;
     ti.spellcheck = false;
     ti.id = "in"+count;
-    count++;
     cell3.appendChild(ti);
 
 	cell6.className = "output";
+	cell6.id = "out"+count;
+    count++;
 	
     var n = inputs.length;
     inputs[n] = ti;

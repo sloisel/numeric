@@ -46,7 +46,7 @@ function add() {
     }
     return ret;
 }
-expo(add);
+my.add = add;
 
 /**
      * Subtracts tensors.
@@ -87,7 +87,7 @@ function sub() {
     }
     return ret;
 }
-expo(sub);
+my.sub = sub;
 
 /**
      * Multiplies tensors pointwise.
@@ -129,7 +129,7 @@ function mul() {
     }
     return ret;
 }
-expo(mul);
+my.mul = mul;
 
 /**
  * Pointwise division of tensor.
@@ -174,4 +174,4 @@ for(i=1;i<arguments.length;i++) {
 }
 return ret;
 }
-expo(div);
+my.div = div;

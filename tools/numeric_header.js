@@ -328,11 +328,11 @@ true
  */
 
 /** @exports numeric */
-( function(exports) {
+( function(my) {
     "use strict";
 
 /**#@+
  * @memberOf numeric
  */
-function expo(f) { exports[f.name] = f; }
+function expo(f) { exports[f.name?f.name:f.functionName] = f; }
 

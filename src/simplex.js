@@ -97,6 +97,6 @@ function LP(A,b,c,maxit) {
     var foo = simplex1(A0,b,c0,maxit);
     return sub(foo(run(0,n)),foo(run(n,2*n)));
 }
-expo(LP);
+my.LP = LP;
 
 

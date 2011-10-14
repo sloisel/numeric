@@ -101,7 +101,7 @@ function dot(a,b) {
     }
     return mkT([m,n],x,y);
 }
-expo(dot);
+my.dot = dot;
 
 //jsdoc bug above here
 
@@ -123,7 +123,7 @@ function Lsolve(L,b) {
     for(i=0;i<n;i++) { set(ret,i,div(sub(ret(i),dot(L(i,run(0,i)),ret(run(0,i)))),L(i,i))); }
     return ret;
 }
-expo(Lsolve);
+my.Lsolve = Lsolve;
 /**
      * Solve an upper triangular system.
      * 
@@ -140,7 +140,7 @@ function Usolve(U,b) {
     for(i=n-1;i>=0;i--) { set(ret,i,div(sub(ret(i),dot(U(i,run(i+1,n)),ret(run(i+1,n)))),U(i,i))); }
     return ret;
 }
-expo(Usolve);
+my.Usolve = Usolve;
 
 /**
      * Computes the LUP decomposition of a matrix.
@@ -181,7 +181,7 @@ function LUP(A) {
     }
     return {L:L, U:U, P:P};
 }
-expo(LUP);
+my.LUP = LUP;
 
 /**
      * Determinant of a matrix.
@@ -204,7 +204,7 @@ function det(A) {
     for(i=0;i<n;i++) { d = mul(d,U(i,i)); }
     return d;
 }
-expo(det);
+my.det = det;
 /**
      * The transpose of a matrix.
      * 
@@ -242,7 +242,7 @@ function transpose(A) {
     }
     return mkT([n,m],x2,y2);
 }
-expo(transpose);
+my.transpose = transpose;
 /**
      * The inverse of a matrix
      * 
@@ -261,7 +261,7 @@ function inv(A) {
     for(i=0;i<n;i++) { set(ret,null,i,Usolve(Z.U,Lsolve(Z.L,ret(null,i)))); }
     return ret;
 }
-expo(inv);
+my.inv = inv;
 /**
      * Solve a linear system.
      * 
@@ -274,7 +274,7 @@ function solve(A,b) {
     b = V(t(b));
     return Usolve(Z.U,Lsolve(Z.L,b(Z.P)));
 }
-expo(solve);
+my.solve = solve;
 /**
      * Computes the tensor product of two tensors.
      * 
@@ -320,7 +320,7 @@ function tensor(a,b) {
     ir = add(tensor(ra,ib),tensor(ia,rb));
     return mkT(rr.s,rr.x,ir.x);
 }
-expo(tensor);
+my.tensor = tensor;
 
 /**
  * QR decomposition.
@@ -358,4 +358,4 @@ function QR(A) {
     }
     return {Q:Q, R:R};
 }
-expo(QR);
+my.QR = QR;

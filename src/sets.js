@@ -18,7 +18,7 @@ function union() {
     for(i in foo) { if(foo.hasOwnProperty(i)) { ret.push(foo[i]); } }
     return t(ret);
 }
-expo(union);
+my.union = union;
 
 /**
  * Computes a set difference.
@@ -39,7 +39,7 @@ function setDiff(x,y) {
     for(i in foo) { if(foo.hasOwnProperty(i)) { ret.push(foo[i]); } }
     return t(ret);
 }
-expo(setDiff);
+my.setDiff = setDiff;
 
 /**
  * Computes a set intersection
@@ -59,4 +59,4 @@ function intersect() {
     for(i in ret) { if(ret.hasOwnProperty(i)) { z.push(ret[i]); } }
     return t(z);
 }
-expo(intersect);
+my.intersect = intersect;

@@ -3,7 +3,7 @@ function mkeps() {
     epsilon = 1;
     while(1+epsilon>1) { epsilon *= 0.5; }
     epsilon *=2;
-    exports.epsilon = epsilon;
+    my.epsilon = epsilon;
 }
 mkeps();
 
@@ -79,7 +79,7 @@ function digits(d) {
     }
     return _digits;
 }
-expo(digits);
+my.digits = digits;
 function fmtnum(x) {
     var ret = x.toPrecision(_digits);
     if(x === Number(ret)) {
@@ -111,7 +111,7 @@ function run() {
     var foo = _run(a,by,b);
     return mkT([foo.length],foo);
 }
-expo(run);
+my.run = run;
 
 /**
      * Repeats a given number to create a tensor.
@@ -138,7 +138,7 @@ function rep() {
     for(i=0;i<sz;i++) { y[i] = bar; }
     return mkT(s,x,y);
 }
-expo(rep);
+my.rep = rep;
 
 function V(z) { if(!isV) { throw new Error("Parameter must be a vector"); } return z; }
 /**
@@ -192,7 +192,7 @@ function diag(v,o,m,n) {
     }
     return ret;
 }
-expo(diag);
+my.diag = diag;
 
 /*
  * FIXME: The functions T0$, T0set, T1$, ..., Tnset have evolved organically. They were
@@ -512,7 +512,7 @@ function toArray(v) {
     }
     return f(0);
 }
-expo(toArray);
+my.toArray = toArray;
 
 function set() {
     var x = t(arguments[0]);
@@ -522,7 +522,7 @@ function set() {
     else if(x.s.length === 2) { return T2set.call(x,arguments[1],arguments[2],arguments[3]); }
     else { return Tnset.apply(x,Array.prototype.slice.call(arguments,1)); }
 }
-expo(set);
+my.set = set;
 
 /**
      * Checks whether x is a tensor.
@@ -532,8 +532,13 @@ false
 > numeric.isT(numeric.t(0))
 true
      */
-function isT(x) { return x.name === "Tensor"; } //return (Ts.indexOf(x.__proto__)>=0); }
-expo(isT);
+var isT;
+if(typeof set.name === "undefined") {
+    isT = function(x) { return x instanceof Function && x.s instanceof Array; }
+} else {
+    isT = function(x) { return x.name === "Tensor"; }
+}
+my.isT = isT;
 /**
      * Checks whether x is an order 0 tensor (a scalar).
      * @example
@@ -546,8 +551,8 @@ false
 > foo = numeric.t(1); numeric.set(foo,numeric.t(2,1)); foo
 t(2,1)
      */
-function isS(x) { return (x.name === "Tensor" && x.s.length === 0); } //return x.__proto__ === T0; }
-expo(isS);
+function isS(x) { return (isT(x) && x.s.length === 0); } //return x.__proto__ === T0; }
+my.isS = isS;
 /**
      * Checks whether x is an order 1 tensor (a vector)
      * @example
@@ -556,8 +561,8 @@ false
 > numeric.isV(numeric.t([1,2]))
 true
      */
-function isV(x) { return x.name === "Tensor" && x.s.length === 1; } //return x.__proto__ === T1; }
-expo(isV);
+function isV(x) { return isT(x) && x.s.length === 1; } //return x.__proto__ === T1; }
+my.isV = isV;
 /**
      * Checks whether x is an order 2 tensor (a matrix)
      * @example
@@ -568,8 +573,8 @@ false
 > numeric.isM(numeric.t([[1,2],[3,4]]))
 true
      */
-function isM(x) { return x.name === "Tensor" && x.s.length === 2; } //return x.__proto__ === T2; }
-expo(isM);
+function isM(x) { return isT(x) && x.s.length === 2; } //return x.__proto__ === T2; }
+my.isM = isM;
 
 /**
      * Create a real or complex tensor.
@@ -614,10 +619,10 @@ function t(x,y) {
     if(typeof y !== "undefined") { return mkT(sx,mkv(x),mkv(y)); }
     else { return mkT(sx,mkv(x)); }
 }
-expo(t);
+my.t = t;
 
 var i = t(0,1);
-exports.i = i;
+my.i = i;
 
 /**
      * Deep copy of a tensor
@@ -634,7 +639,7 @@ function copy(x) {
     if(typeof x.y === "undefined") { return mkT(x.s.slice(0),x.x.slice(0)); }
     return mkT(x.s.slice(0),x.x.slice(0),x.y.slice(0));
 }
-expo(copy);
+my.copy = copy;
 
 function mkf(x) {
     var foo;
@@ -662,7 +667,7 @@ function vec(v) {
     if(typeof v.y === "undefined") { return mkT([v.x.length],v.x); }
     return mkT([v.x.length],v.x,v.y);
 }
-expo(vec);
+my.vec = vec;
 
 /**
      * Reshapes a tensor.
@@ -682,7 +687,7 @@ function reshape(v,s) {
     if(typeof v.y === "undefined") { return mkT(s.x,v.x); }
     return mkT(s.x,v.x,v.y);
 }
-expo(reshape);
+my.reshape = reshape;
 
 function M(z) { if(!isM(z)) { throw new Error("Parameter must be a matrix"); } return z;}
 
@@ -706,7 +711,7 @@ function sum(v) {
     for(i=0;i<n;i++) y1 += y0[i];
     return mkT([],[x1],[y1]);
 }
-expo(sum);
+my.sum = sum;
 
 /**
  * Multiplies all the entries
@@ -734,7 +739,7 @@ function prod(v) {
     }
     return mkT([],[x1],[y1]);
 }
-expo(prod);
+my.prod = prod;
 
 /**
      * The imaginary part of x.
@@ -754,7 +759,7 @@ function imag(x) {
     }
     return mkT(x.s,x.y);
 }
-expo(imag);
+my.imag = imag;
 
 /**
      * The root-mean-square norm of v.
@@ -777,7 +782,7 @@ function norm2(v) {
     for(i=0;i<n;i++) { ret += foo[i]*foo[i]; }
     return t(Math.sqrt(ret));
 }
-expo(norm2);
+my.norm2 = norm2;
 
 function house(x) {
     x = t(x);
@@ -877,7 +882,7 @@ function cat() {
     if(typeof y === "undefined") { return mkT([count],x); }
     return mkT([count],x,y);
 }
-expo(cat);
+my.cat = cat;
 
 function getDiag(z) {
     z = M(t(z));
@@ -897,7 +902,7 @@ function getDiag(z) {
     }
     return mkT([p],x,y);
 }
-expo(getDiag);
+my.getDiag = getDiag;
 
 /**
      * Returns a random tensor of the given size
@@ -919,7 +924,7 @@ function random() {
     for(i=0;i<n;i++) { x[i] = Math.random(); }
     return mkT(s,x);
 }
-expo(random);
+my.random = random;
 
 /**
      * Returns the lower triangular portion of a matrix.
@@ -945,7 +950,7 @@ function lower(A,k) {
     }
     return ret;
 }
-expo(lower);
+my.lower = lower;
 /**
      * Returns the lower triangular portion of a matrix.
      * 
@@ -970,7 +975,7 @@ function upper(A,k) {
     }
     return ret;
 }
-expo(upper);
+my.upper = upper;
 
 /**
      * Sorts a vector.
@@ -988,7 +993,7 @@ function sortVector(z) {
             function (a,b) { if(x[a] > x[b]) return 1; if(x[a] < x[b]) return -1; return y[a]-y[b]; });
     return z(o);
 }
-expo(sortVector);
+my.sortVector = sortVector;
 
 /**
  * Assembles a block tensor
@@ -1050,4 +1055,4 @@ function block() {
     f(0);
     return ret;
 }
-expo(block);
+my.block = block;

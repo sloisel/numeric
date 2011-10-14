@@ -93,5 +93,5 @@ function eig(x) {
     var d = dot(dot(q,x),conj(transpose(q)));
     return {d:getDiag(d),v:dot(conj(transpose(q)),ev(d))};
 }
-expo(eig);
+my.eig = eig;
 
