@@ -13,9 +13,9 @@ fi
 cd $d0
 echo "deploy.sh: making db"
 php ./mkdb.php
-echo "deploy.sh: fetching index"
-curl http://$HOSTNAME/numeric/ > $d2/index.html
-if [ $1 != "--nodemo" ]; then
+#echo "deploy.sh: fetching index"
+#curl http://$HOSTNAME/numeric/ > $d2/index.html
+if [ "x$1" != "x--nodemo" ]; then
 	echo "deploy.sh: making demo"
 	python ./make_demo.py
 fi

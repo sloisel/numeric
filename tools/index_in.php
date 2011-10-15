@@ -16,7 +16,7 @@ if(isset($_POST['savedata'])) {
 	$d = mysql_real_escape_string($data);
 	$q = "insert ignore into blobs value ('$f','$d')";
 	$result = mysql_query($q) or die('Could save script: ' . mysql_error());
-	header('Location: /numeric/index.php?link=' . $_GET['link']);
+	header('Location: index.php?link=' . $_GET['link']);
 	exit;
 }
 

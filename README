@@ -42,12 +42,27 @@ follows:
 the rest of this, I denote the webroot by $webroot. For example, your
 webroot might be $webroot=~/public_html
 
-2. Get the git tree into $webroot/numeric
+2. Set up a file $webroot/.htaccess that will redirect traffic
+appropriately. This is what I have:
+RewriteEngine On
+RewriteRule ^staging/(.*)$     staging/$1 [L]
+RewriteRule ^scripts/(.*)$     scripts/$1 [L]
+RewriteRule ^numeric/(.*)$     numeric/$1 [L]
+RewriteRule ^(.*)$             numeric/$1 [L]
+The last rule ensures that, "by default", Apache reads from the
+numeric subdirectory. Therefore, accessing any content will look
+at the numeric subdirectory. The exception is that anything that
+starts with staging/ or scripts/. In that case, it is looked
+up in the staging/ or scripts/ subdirectory. This ensures that
+you can deploy to staging/ and test before you really deploy
+to numeric/.
 
-3. Decompress $webroot/numeric/tools/scripts.tar.gz and move it to
+3. Get the git tree into $webroot/numeric
+
+4. Decompress $webroot/numeric/tools/scripts.tar.gz and move it to
 $webroot/scripts
 
-4. Run $webroot/numeric/tools/deploy.sh at the command-line.
+5. Run $webroot/numeric/tools/deploy.sh at the command-line.
 
 Then, every time you make some changes to anything, run the deploy.sh
 command again.
@@ -58,7 +73,7 @@ Deploying to a live server
 There is support for deploying to a live server. To deploy to a live
 server, modify step 2 as follows.
 
-2'. Put your git tree in $webroot/somename/, where somename is a name
+3'. Put your git tree in $webroot/somename/, where somename is a name
 you choose.
 
 When you run deploy.sh, it will create the symlink $webroot/numeric/

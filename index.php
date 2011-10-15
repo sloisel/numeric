@@ -16,7 +16,7 @@ if(isset($_POST['savedata'])) {
 	$d = mysql_real_escape_string($data);
 	$q = "insert ignore into blobs value ('$f','$d')";
 	$result = mysql_query($q) or die('Could save script: ' . mysql_error());
-	header('Location: /numeric/index.php?link=' . $_GET['link']);
+	header('Location: index.php?link=' . $_GET['link']);
 	exit;
 }
 
@@ -210,12 +210,12 @@ foreach($incs as $i) {
    echo '<script src="' . $i . '"></script>';
 }
 ?>
-<script src="/numeric/tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
-<script src="/numeric/tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
-<script src="/numeric/tools/json2.js"></script>
+<script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
+<script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
+<script src="tools/json2.js"></script>
 <body itemscope itemtype="http://schema.org/WebPage">
 <table><tr valign="center">
-	<td><img src="/numeric/resources/paperplane-small.png"></td>
+	<td><img src="resources/paperplane-small.png"></td>
 	<td>
 		<font size=+2><b>Numeric Javascript Workshop.</b></font> <font color="#b0b0b0">(Beta)</font><br>
 		<table>
@@ -228,10 +228,10 @@ foreach($incs as $i) {
 			<tr>
 				<td class="menu">
 <!--					<a href="#" onclick="workshop.runall();" class="menu">[RUN]</a>-->
-					<form name="myform" action="/numeric/index.php" method="post">
+					<form name="myform" action="index.php" method="post">
 					<a href="/" class="menu">[NEW]</a>
 					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
-<!--					<a href="/numeric/about.html" class="menu">[ABOUT]</a>-->
+<!--					<a href="about.html" class="menu">[ABOUT]</a>-->
 					<a href="javascript: workshop.submit();" class="menu" id="permalink">[PERMALINK]</a>
 					<input type="hidden" name="savedata" value="">
 					</form>
@@ -240,15 +240,15 @@ foreach($incs as $i) {
 			<tr>
 				<td>
 					<b>
-					Try the <a href="/numeric/demo.html" itemprop="breadcrumb">Demo</a>,
-					or you can read more <a href="/numeric/about.html" itemprop="breadcrumb">about Numeric Javascript</a>.					
+					Try the <a href="demo.html" itemprop="breadcrumb" id="demolink">Demo</a>,
+					or you can read more <a href="about.html" itemprop="breadcrumb" id="aboutlink">about Numeric Javascript</a>.					
 					</b><br>
-					<a href="/numeric/lib/numeric.js" itemprop="breadcrumb">Download numeric.js</a> |
-				 	<a href="/numeric/lib/numeric-min.js" itemprop="breadcrumb">numeric-min.js</a> | 
-				 	<a href="https://github.com/sloisel/numeric" itemprop="breadcrumb">github repo</a> |
-				 	<a href="/numeric/doc/symbols/numeric.html" itemprop="breadcrumb">Documentation</a><br>
-					Author: <a href="http://www.ma.hw.ac.uk/~loisel/" itemprop="breadcrumb">S&eacute;bastien Loisel</a>.
-					Copyright 2011. <a href="/numeric/license.txt" itemprop="breadcrumb">MIT License</a>
+					<a href="lib/numeric.js" itemprop="breadcrumb" id="downloadlink">Download numeric.js</a> |
+				 	<a href="lib/numeric-min.js" itemprop="breadcrumb" id="downloadminlink">numeric-min.js</a> | 
+				 	<a href="https://github.com/sloisel/numeric/" itemprop="breadcrumb" id="githublink">github repo</a> |
+				 	<a href="doc/symbols/numeric.html" itemprop="breadcrumb" id="doclink">Documentation</a><br>
+					Author: <a href="http://www.ma.hw.ac.uk/~loisel/" itemprop="breadcrumb" id="authorlink">S&eacute;bastien Loisel</a>.
+					Copyright 2011. <a href="license.txt" itemprop="breadcrumb" id="licenselink">MIT License</a>
 				</td>
 			</tr>
 		</table>
@@ -363,7 +363,7 @@ function go(k) {
 	myfocus(inputs[order[n+1]]);
 	clear = true;
 	current = k;
-	outputs[k].innerHTML = "<img src=\"/numeric/resources/wait16.gif\">";
+	outputs[k].innerHTML = "<img src=\"resources/wait16.gif\">";
 	var f1;
     var runit = function() {
 		try {
@@ -596,7 +596,7 @@ function submit() {
 	var s = document.myform.savedata;
 	s.value = foo;
 	digest = Crypto.util.bytesToHex(digest);
-	f.action = "/numeric/index.php?link="+digest;
+	f.action = "index.php?link="+digest;
 	f.submit();
 	console.log(digest);
 }

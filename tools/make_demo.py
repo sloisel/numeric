@@ -53,9 +53,8 @@ def mkdemo(driver):
             input.send_keys('\n')
         pl = driver.find_element_by_id("permalink")
         pl.click()
-    except Exception as ex:
+    except:
         print "FAIL. Cannot create demo."
-        traceback.print_exc()
 
 if len(sys.argv) > 1:
     url = sys.argv[1]
@@ -67,7 +66,7 @@ done = 0
 for x in names:
     try:
         driver = eval('webdriver.'+x+'()')
-    except Exception as ex:
+    except:
         print 'Skipping',x
         continue
     print 'Using',x
