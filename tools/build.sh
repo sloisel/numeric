@@ -1,8 +1,20 @@
 #!/bin/bash
-rm -f ../numeric*.zip
+if [ -f buildpid.log ]; then
+	buildpid=`cat buildpid.log`
+	kill -9 $buildpid
+	rm buildpid.log
+fi
+echo $$ > buildpid.log
+if [ -f nodepid.log ]; then
+	nodepid=`cat nodepid.log`
+	kill -9 $nodepid
+	rm nodepid.log
+fi
 cat numeric_header.js ../src/*.js numeric_footer.js > ../lib/numeric.js
+./deploy.sh --nodemo
 node ./unit2.js &
+echo $! > nodepid.log
 java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
 ./mkdoc.sh > ../log/jsdoc.log 2>&1
 wait
-cd ../..
+rm -f buildpid.log nodepid.log

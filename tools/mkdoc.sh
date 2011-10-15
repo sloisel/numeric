@@ -10,4 +10,4 @@ echo "JSDoc:"
 rm -rf $ddoc
 mkdir $ddoc
 echo '*' > $ddoc/.gitignore
-java -jar jsrun.jar app/run.js -t=templates/jsdoc -d=$ddoc -r -v $djs
+java -jar jsrun.jar app/run.js -t=templates/jsdoc -d=$ddoc -r -v $djs/numeric.js

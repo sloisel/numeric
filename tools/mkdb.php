@@ -1,4 +1,6 @@
 <?php
+if(PHP_SAPI !== 'cli') { exit(0); }
+echo "Generating DB entries\n";
 $n = file_get_contents('../lib/numeric.js') or die('Could not get file');
 $ne = mysql_real_escape_string($n);
 $h = hash('sha256',$n) or die('Could not get hash');

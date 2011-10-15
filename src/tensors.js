@@ -525,18 +525,18 @@ function set() {
 my.set = set;
 
 /**
-     * Checks whether x is a tensor.
-     * @example
+ * Checks whether x is a tensor.
+ * @example
 > numeric.isT(1)
 false
 > numeric.isT(numeric.t(0))
 true
      */
-var isT;
+function isT() {};
 if(typeof set.name === "undefined") {
-    isT = function(x) { return x instanceof Function && x.s instanceof Array; }
+    /** @ignore */ isT = function(x) { return x instanceof Function && x.s instanceof Array; }
 } else {
-    isT = function(x) { return x.name === "Tensor"; }
+    /** @ignore */ isT = function(x) { return x.name === "Tensor"; }
 }
 my.isT = isT;
 /**

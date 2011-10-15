@@ -32,7 +32,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=1fcf76c03b585bf167136e8a103614215ba9521e79609d654e0d3fe72bc4551d');
+		$incs = array(1 => '/scripts/numeric.js?key=fe73ea6bb6bc2867b4af4f2ca3f6e9c69ddd13bd409d42a81db0b6b2d0ae0d66');
 	}
 	$footer = <<<EOT
 <script>
@@ -43,7 +43,7 @@ if(isset($_GET['link'])) {
 </script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=1fcf76c03b585bf167136e8a103614215ba9521e79609d654e0d3fe72bc4551d');
+	$incs = array(1 => '/scripts/numeric.js?key=fe73ea6bb6bc2867b4af4f2ca3f6e9c69ddd13bd409d42a81db0b6b2d0ae0d66');
 	$footer = ""; 
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
@@ -232,7 +232,7 @@ foreach($incs as $i) {
 					<a href="/" class="menu">[NEW]</a>
 					<a href="#" onclick="workshop.del();" class="menu">[DELETE FILE]</a>
 <!--					<a href="/numeric/about.html" class="menu">[ABOUT]</a>-->
-					<a href="javascript: workshop.submit();" class="menu">[PERMALINK]</a>
+					<a href="javascript: workshop.submit();" class="menu" id="permalink">[PERMALINK]</a>
 					<input type="hidden" name="savedata" value="">
 					</form>
 				</td>

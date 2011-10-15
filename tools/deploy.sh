@@ -1,6 +1,22 @@
 #!/bin/bash
-php ./mkdb.php
-d0=`dirname $0`
+dx=`dirname $0`
+cd $dx
+d0=`pwd`
+cd ..
+d1=`pwd`
+v=`basename $d1`
+cd ..
+d2=`pwd`
+if [ $v != "numeric" ]; then
+    rm numeric && ln -s $v numeric
+fi
 cd $d0
-curl http://$HOSTNAME/numeric/ > ../../index.html
-curl http://$HOSTNAME/numeric/index.php?link=79cfb087074a163a9a763ebe55a4f55545d33a50f54827474cc7e600a5c1ab35 > ../demo.html
+echo "deploy.sh: making db"
+php ./mkdb.php
+echo "deploy.sh: fetching index"
+curl http://$HOSTNAME/numeric/ > $d2/index.html
+if [ $1 != "--nodemo" ]; then
+	echo "deploy.sh: making demo"
+	python ./make_demo.py
+fi
+echo "deploy.sh: done"
