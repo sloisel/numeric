@@ -158,3 +158,11 @@ numeric.js is used. The file workshop.html also gets included.
 
 * numeric/tools/selenium_tests.py:
 Runs all the unit tests in one or more browsers using Selenium.
+
+* numeric/tools/selenium_links.py:
+Checks that the links in index.php go somewhere reasonable.
+
+* numeric/tools/make_demo.py:
+Uses Selenium to load the index.php and put in the demo. Then,
+it saves this demo using the permalink button. Finally, it downloads
+the demo into demo.php.

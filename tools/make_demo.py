@@ -61,7 +61,7 @@ if len(sys.argv) > 1:
 else:
     url = "http://127.0.0.1/staging/"
 demopath = os.path.abspath(os.path.dirname(os.path.abspath(sys.argv[0]))+'/..')
-names = ['Chrome','Firefox','Ie']
+names = ['Firefox','Chrome']
 done = 0
 for x in names:
     try:
@@ -81,7 +81,7 @@ for x in names:
     done = 1
     break
 if done:
-    print 'Fetching demo.html'
+    print 'Fetching demo.html at ',url
     urllib.urlretrieve(url,demopath+'/demo.html')
 else:
     print 'Could not generate demo.'

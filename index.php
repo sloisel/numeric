@@ -622,7 +622,8 @@ workshop.mkinput(0);
 </script>
 
 
-<?
+
+<?php
 echo $footer;
 ?>
 
