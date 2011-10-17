@@ -24,7 +24,9 @@ Dependencies
 ------------
 
 The library numeric.js itself is standalone, you do not need to
-install anything to use it.
+install anything to use it. However, if you want to host Javascript
+Workshop or use my development environment to make extensive changes
+to numeric.js, you will need additional tools; see below.
 
 Hosting your own Javascript Workshop
 ====================================
@@ -62,26 +64,17 @@ to numeric/.
 4. Decompress $webroot/numeric/tools/scripts.tar.gz and move it to
 $webroot/scripts
 
-5. Run $webroot/numeric/tools/deploy.sh at the command-line.
+5. Run $webroot/numeric/tools/mkdb.php at the command-line.
 
-Then, every time you make some changes to anything, run the deploy.sh
+Then, every time you make some changes to anything, run the mkdb.php
 command again.
 
 Deploying to a live server
 --------------------------
 
-There is support for deploying to a live server. To deploy to a live
-server, modify step 2 as follows.
-
-3'. Put your git tree in $webroot/somename/, where somename is a name
-you choose.
-
-When you run deploy.sh, it will create the symlink $webroot/numeric/
-and make it point to $webroot/somename/.  When you later want to
-deploy a newer version, get the new git tree to $webroot/newversion/,
-where newversion is a name you choose. Then run the new deploy.sh
-script. It should delete the old symlink and make a new one. You
-should then be able to delete the old tree.
+There is a two-step procedure for deploying to a live server so that
+the server hopefully never breaks. See the numeric/tools/deploy
+discussion below.
 
 Hacking numeric.js
 ==================
@@ -115,8 +108,8 @@ and numeric_footer.js in the tools subdirectory). In addition to
 performing this concatenation, the build.sh also runs a regression
 testing suite and also builds the documentation usign jsdoc-toolkit.
 
-Other scripts
--------------
+Main scripts
+------------
 
 The numeric/tools subdirectory contains the following custom tools:
 
@@ -140,6 +133,41 @@ time, which is not really a big deal.
 
 Note: build.sh expects to be called with its current directory set
 to numeric/tools.
+
+
+Deployment scripts
+------------------
+
+To deploy to a live web site without downtime, I have a two-step
+procedure. In this approach, the tree will be deployed to
+$webroot/vXXX, where XXX is a time stamp. Then, the symlink
+$webroot/staging -> $webroot/vXXX is created. Several tests are performed.
+If all is well then the symlink $webroot/numeric -> $webroot/vXXX is
+created, which deploys to the main web page.
+
+* numeric/tools/deploy/stage.sh
+This shell script makes a tarball of the current tree and uploads it
+to the web site (as specified in numeric/tools/deploy/config.sh).
+The new tarball is unpacked on the web server under $webroot/vXXX and
+then creates the symlink $webroot/staging -> $webroot/vXXX. 
+Subsequently, the test suites are run and the results are stored in
+$webroot/report.html
+
+* numeric/tools/deploy/deploy.sh
+After running stage.sh, you normally check report.html and perhaps
+manually check the staging/ folder on the web site. If all is good,
+the deploy.sh will move this staging deployment to the main web site.
+Assuming that we have the symlinks $webroot/numeric -> $webroot/vYYY
+and $webroot/staging -> $webroot/vXXX, first the link $webroot/numeric
+is deleted. Then, the symlink $webroot/numeric -> $webroot/vXXX is
+created. Finally, the symlink $webroot/staging is deleted. Any directory
+$webroot/v* which is no longer linked is deleted with rm -rf.
+
+After juggling the symlinks, a quick Selenium test is performed to
+ensure that the web site works properly.
+
+Auxiliary scripts
+-----------------
 
 * numeric/tools/unit2.js:
 It gets all the @example comments from /lib/numeric.js (also stuff in

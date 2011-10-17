@@ -48,6 +48,7 @@ EOT;
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 ?>
+
 WORKSHOPHTML
 
 <?php
@@ -55,6 +56,8 @@ echo $footer;
 ?>
 
 <script type="text/javascript">
+
+workshop.version = "VERSIONSTRING";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

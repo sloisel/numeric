@@ -12,6 +12,7 @@ mysql_query($q) or die('Could not insert value into db: ' . mysql_error());
 
 $foo = preg_replace('/NUMERICJSHASH/',$h,file_get_contents('index_in.php'));
 $foo = preg_replace('/WORKSHOPHTML/',file_get_contents('workshop.html'),$foo);
+$foo = preg_replace('/VERSIONSTRING/',$argv[1],$foo);
 $f = fopen('../index.php','w');
 fwrite($f,$foo);
 fclose($f);
