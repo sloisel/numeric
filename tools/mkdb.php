@@ -16,5 +16,4 @@ $foo = preg_replace('/VERSIONSTRING/',$argv[1],$foo);
 $f = fopen('../index.php','w');
 fwrite($f,$foo);
 fclose($f);
-
 ?>

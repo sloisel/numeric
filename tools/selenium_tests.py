@@ -18,7 +18,9 @@ def test(name,driver):
             try:
                 input = driver.find_element_by_id("in"+str(k))
                 input.send_keys(tests[k][0]+'\n')
-                output = driver.find_element_by_id("out"+str(k))
+                bar = "out"+str(k)
+                WebDriverWait(driver,20).until(lambda driver: driver.find_element_by_id(bar).text not in ["","<img src=\"resources/wait16.gif\">"])
+                output = driver.find_element_by_id(bar)
                 foo = re.sub(r'\s','',output.text)
                 if(tests[k][1][0:6]=="Error:"):
                     foo = foo[0:len(tests[k][1])]

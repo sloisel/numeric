@@ -32,7 +32,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=fe73ea6bb6bc2867b4af4f2ca3f6e9c69ddd13bd409d42a81db0b6b2d0ae0d66');
+		$incs = array(1 => '/scripts/numeric.js?key=ef5a6aca05c44f30254614ac1db9f46d5241901f072416d6f536e74e9a53a1b3');
 	}
 	$footer = <<<EOT
 <script>
@@ -43,7 +43,7 @@ if(isset($_GET['link'])) {
 </script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=fe73ea6bb6bc2867b4af4f2ca3f6e9c69ddd13bd409d42a81db0b6b2d0ae0d66');
+	$incs = array(1 => '/scripts/numeric.js?key=ef5a6aca05c44f30254614ac1db9f46d5241901f072416d6f536e74e9a53a1b3');
 	$footer = ""; 
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
@@ -283,8 +283,25 @@ if(!Array.indexOf){
 }
 
 
-var ans;
+var _retarded = false;
+if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ _retarded = true; }
 
+if(_retarded) {
+	_onmessage = function(ev) {}
+	_loaded = 0;
+	window.Worker = function(f) {
+		var worker = this;
+		worker.onmessage = function(ev) {};
+		worker.postMessage = function(ev) { _onmessage({data: ev}); };
+		var scr = document.createElement('script');
+		scr.src = f;
+		scr.type = 'text/javascript';
+		scr.onload = function() { _loaded = 1; }
+		document.body.appendChild(scr);
+		workerPostMessage = function(ev) { worker.onmessage({data: ev}); }
+	}
+	importScripts = function(z) {};
+}
 var workshop = (function () {
 
 var interactions = document.getElementById("interactions");
@@ -305,8 +322,6 @@ var saver = { console:[] };
 var savename = null;
 var saves = [];
 var k;
-var retarded = false;
-if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ retarded = true; }
 function save() {
 	if(savename === null) { return; }
     localStorage.setItem(savename,JSON.stringify(saver));	
@@ -345,7 +360,22 @@ function print(html) {
 	} else { if(clear) { return ""; } }
 	return outputs[current].innerHTML;
 }
-
+var w = new Worker('myworker.js');
+w.onmessage = function(ev) { alert(ev.data); }
+w.postMessage(JSON.stringify({imports:[<?php
+$foo = 0;
+foreach($incs as $i) {
+   if($foo != 0) { echo ","; }
+   $foo = 1;
+   echo '"'.$i.'"';
+}
+?>]}));
+w.onmessage = function(ev) {
+	var x = JSON.parse(ev.data);
+	outputs[x.k].innerHTML = x.o;
+	saver.console[x.n].output = x.o;
+	save();
+}
 function go(k) {
 	var input = inputs[k];
     var n = order.indexOf(k);
@@ -367,6 +397,8 @@ function go(k) {
 	outputs[k].innerHTML = "<img src=\"resources/wait16.gif\">";
 	var f1;
     var runit = function() {
+    	w.postMessage(JSON.stringify({k:k,n:n,e:input.value}));
+    	/*
 		try {
 			ans = window.eval(input.value);
 			current = -1;
@@ -383,6 +415,7 @@ function go(k) {
 		outputs[k].innerHTML += foo;
 		saver.console[n].output = foo;
 		save();
+		*/
 	}
 	setTimeout(runit,0);
 }
@@ -412,13 +445,13 @@ function mksel() {
 	saves = [];
 	var option = document.createElement("option");
 	option.text = "Load...";
-	if(retarded) loader.add(option);
+	if(_retarded) loader.add(option);
 	else loader.add(option,null);
 	for(k=0;k<localStorage.length;k++) { 
 		saves[k] = localStorage.key(k);
 		option = document.createElement("option");
 		option.text = saves[k];
-		if(retarded) loader.add(option);
+		if(_retarded) loader.add(option);
 		else loader.add(option,null);
 	}
 }
@@ -561,9 +594,7 @@ function loadit(e) {
 	if(foo<=0) { return; }
 	var bar = loader.options[foo].text;
 	savename = bar;
-	console.log('hello',savename);
 	restore();
-	console.log('hello1',savename);
 	titlecolor();
 	loader.selectedIndex = 0;
 }
@@ -575,7 +606,6 @@ function reset() {
 	inputs = [];
 	outputs = [];
 	saver = {console:[]};
-	ans = undefined;
 	savename = null;
 	title.value = "Untitled";
 	titlecolor();
@@ -599,7 +629,6 @@ function submit() {
 	digest = Crypto.util.bytesToHex(digest);
 	f.action = "index.php?link="+digest;
 	f.submit();
-	console.log(digest);
 }
 
 function runone(i,n) { if(i<n-1) { go(order[i]); setTimeout(function () { runone(i+1,n); } ); } }
@@ -615,7 +644,8 @@ return {restore:restore,
 	    del:del,
 	    print:print,
 	    submit:submit,
-	    download:download
+	    download:download,
+	    w:w
 	    }
 }());
 workshop.reset();
@@ -630,7 +660,7 @@ echo $footer;
 
 <script type="text/javascript">
 
-workshop.version = "2011-10-17_14-51-08";
+workshop.version = "2011-10-22_20-01-38";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);
