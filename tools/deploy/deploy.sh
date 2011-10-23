@@ -4,6 +4,12 @@ cd `dirname $0`
 source config.sh
 echo Fetching staging copy...
 curl $server/staging/ > staging-copy.html
+if grep Loisel staging-copy.html > /dev/null; then
+    echo "Fetched."
+else
+    echo "Staging copy does not work!"
+    exit 1
+fi
 echo Deploying...
 ssh $server -l $user -p 2222 "( cd $webroot && [ -L staging ] && foo=\`readlink staging\` && rm -f numeric && ln -s \$foo numeric && rm -f staging && numeric/tools/deploy/clean.sh && echo Deployment successful. ) || echo FAIL: Deployment unsuccessful."
 echo Comparing staging copy with live copy...

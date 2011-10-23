@@ -1,6 +1,21 @@
+// For use with jsdb
 "use strict";
-var fs = require('fs');
-var foo = fs.readFileSync('../lib/numeric.js').toString();
+console = { 
+    log: function() { 
+        var k; 
+        for(k=0;k<arguments.length;k++) { 
+            if(k>0) { write(' '); } 
+            write(arguments[k]); } 
+        writeln('');
+        system.stdout.flush();
+    }
+};
+function XMLHttpRequest() {
+    this.response = "";
+    this.open = function(get,url) { this.responseText = new Stream(url).readFile(); }
+    this.send = function() {}
+}
+var foo = new Stream('./lib/numeric.js').readFile();
 var bar = foo.match(/(@example[\s\S]*?(?=\n[\s]*\*))|(<pre>[\s\S]*?(?=<\/pre>))/g).join('\n').replace(/(@example)|(<pre>)/g,'').split('\n> ')
 var baz = [];
 var k,k0=0;
@@ -9,7 +24,7 @@ for(k=0;k<bar.length;k++) {
     if(j>0) { baz[k0] = [bar[k].substring(0,j),bar[k].substring(j+1)]; k0++; }
 }
 
-var numeric = require('../lib/numeric.js');
+if(!load('./lib/numeric.js')) { throw new Error("Could not load numeric.js"); }
 //var unit1 = numeric.test();
 //var unit_pass = unit1.unit_pass, unit_fail = unit1.unit_fail;
 var unit_pass = 0, unit_fail = 0;

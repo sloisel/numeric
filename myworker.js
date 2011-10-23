@@ -2,23 +2,23 @@ var _send = (typeof workerPostMessage !== 'undefined')?workerPostMessage:postMes
 var _myeval = eval;
 var _flag = 0;
 _onmessage = function(event) {
-    var ans, foo, x = JSON.parse(event.data);
-    if(typeof x.imports !== "undefined") {
-        for(foo=0;foo<x.imports.length;foo++) { importScripts(x.imports[foo]); }
+    var _ans, _foo, _x = JSON.parse(event.data);
+    if(typeof _x.imports !== "undefined") {
+        for(_foo=0;_foo<_x.imports.length;_foo++) { importScripts(_x.imports[_foo]); }
         return;
     }
     try {
-        ans = _myeval(x.e);
+        _ans = _myeval(_x.e);
         current = -1;
-        if(typeof(ans) !== "undefined") { foo = numeric.prettyPrint(ans,true); }
-        else { foo = ""; }
+        if(typeof(_ans) !== "undefined") { _foo = numeric.prettyPrint(_ans,true); }
+        else { _foo = ""; }
     } catch(e) {
-        ans = undefined;
-        foo = e.name+': '+e.message;
+        _ans = undefined;
+        _foo = e.name+': '+e.message;
         if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
-        { foo += "\n\n"+e.stack.toString(); }
-        foo = foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        { _foo += "\n\n"+e.stack.toString(); }
+        _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
     }
-    _send(JSON.stringify({k:x.k,n:x.n,o:foo}));
+    _send(JSON.stringify({k:_x.k,n:_x.n,o:_foo}));
 }
 if(typeof _retarded === "undefined") { onmessage = _onmessage; }

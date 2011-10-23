@@ -32,7 +32,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=ef5a6aca05c44f30254614ac1db9f46d5241901f072416d6f536e74e9a53a1b3');
+		$incs = array(1 => '/scripts/numeric.js?key=59a7b9cb649f989ca3d34a409dbf42f82afe51e0071a8f92b0246f0ddcb849aa');
 	}
 	$footer = <<<EOT
 <script>
@@ -43,7 +43,7 @@ if(isset($_GET['link'])) {
 </script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=ef5a6aca05c44f30254614ac1db9f46d5241901f072416d6f536e74e9a53a1b3');
+	$incs = array(1 => '/scripts/numeric.js?key=59a7b9cb649f989ca3d34a409dbf42f82afe51e0071a8f92b0246f0ddcb849aa');
 	$footer = ""; 
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
@@ -214,6 +214,7 @@ foreach($incs as $i) {
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <script src="tools/json2.js"></script>
+<script src="tools/date.js"></script>
 <body itemscope itemtype="http://schema.org/WebPage">
 <table><tr valign="center">
 	<td><img src="resources/paperplane-small.png"></td>
@@ -396,27 +397,7 @@ function go(k) {
 	current = k;
 	outputs[k].innerHTML = "<img src=\"resources/wait16.gif\">";
 	var f1;
-    var runit = function() {
-    	w.postMessage(JSON.stringify({k:k,n:n,e:input.value}));
-    	/*
-		try {
-			ans = window.eval(input.value);
-			current = -1;
-			if(typeof(ans) !== "undefined") { foo = numeric.prettyPrint(ans,true); }
-			else { foo = ""; }
-		} catch(e) {
-			ans = undefined;
-			foo = e.name+': '+e.message;
-			if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
-			{ foo += "\n\n"+e.stack.toString(); }
-			foo = foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-		}
-		if(clear) { outputs[k].innerHTML = ""; }
-		outputs[k].innerHTML += foo;
-		saver.console[n].output = foo;
-		save();
-		*/
-	}
+    var runit = function() { w.postMessage(JSON.stringify({k:k,n:n,e:input.value})); }
 	setTimeout(runit,0);
 }
 
@@ -660,7 +641,7 @@ echo $footer;
 
 <script type="text/javascript">
 
-workshop.version = "2011-10-22_20-01-38";
+workshop.version = "2011-10-23_17-56-19";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

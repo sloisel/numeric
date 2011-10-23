@@ -12,7 +12,7 @@ asking a server to compute something. Indeed, you do not need a
 powerful server (or any server at all) since your web app will perform
 all its calculations in the client.
 
-For further information, see http://www.numericjs.com/
+For further information, see http://numericjs.com/
 
 License
 -------
@@ -96,7 +96,8 @@ There is also some java stuff in the numeric/tools subdirectory
 (e.g. jsdoc-toolkit). I also have an eclipse project that
 automatically rebuilds the library every time I modify it and also
 automatically runs the regression suite. (I actually use Aptana
-Studio.) You will also need node.js
+Studio.) You will also need jsdb (the server-side javascript
+environment).
 
 Building
 --------
@@ -115,14 +116,9 @@ The numeric/tools subdirectory contains the following custom tools:
 
 * numeric/tools/build.sh: 
 Concatenates files and produces /lib/numeric.js, runs the unit tests
-by running numeric/tools/unit2.js in node.js, builds the documentation
+by running numeric/tools/unit3.js in jsdb, builds the documentation
 by calling numeric/tools/mkdoc.sh. I set it up so that it is
-automatically called by eclipse every time I modify a file. The
-build.sh also does a "quick deploy" by invoking deploy.sh --nodemo.
-This quick deploy occurs very quickly, before even the regression tests
-begin so you don't need to wait for the entire build process to complete.
-This is useful if you're quickly alt-tabbing between Eclipse and
-the browser to test modifications.
+automatically called by eclipse every time I modify a file.
 
 Note that Eclipse has no qualms about calling build.sh while another
 instance is still running. As a result, build.sh makes a small attempt
@@ -133,7 +129,6 @@ time, which is not really a big deal.
 
 Note: build.sh expects to be called with its current directory set
 to numeric/tools.
-
 
 Deployment scripts
 ------------------

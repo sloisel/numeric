@@ -163,6 +163,7 @@ foreach($incs as $i) {
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <script src="tools/json2.js"></script>
+<script src="tools/date.js"></script>
 <body itemscope itemtype="http://schema.org/WebPage">
 <table><tr valign="center">
 	<td><img src="resources/paperplane-small.png"></td>
@@ -345,27 +346,7 @@ function go(k) {
 	current = k;
 	outputs[k].innerHTML = "<img src=\"resources/wait16.gif\">";
 	var f1;
-    var runit = function() {
-    	w.postMessage(JSON.stringify({k:k,n:n,e:input.value}));
-    	/*
-		try {
-			ans = window.eval(input.value);
-			current = -1;
-			if(typeof(ans) !== "undefined") { foo = numeric.prettyPrint(ans,true); }
-			else { foo = ""; }
-		} catch(e) {
-			ans = undefined;
-			foo = e.name+': '+e.message;
-			if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
-			{ foo += "\n\n"+e.stack.toString(); }
-			foo = foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-		}
-		if(clear) { outputs[k].innerHTML = ""; }
-		outputs[k].innerHTML += foo;
-		saver.console[n].output = foo;
-		save();
-		*/
-	}
+    var runit = function() { w.postMessage(JSON.stringify({k:k,n:n,e:input.value})); }
 	setTimeout(runit,0);
 }
 

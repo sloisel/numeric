@@ -42,7 +42,7 @@ if url == "":
     url = "http://127.0.0.1/staging/"
 
 mainlinks = [("aboutlink","About Numeric Javascript"),
-             ("demolink","Hit enter in the blue boxes to evaluate them."),
+             ("demolink","Hit enter to evaluate a box."),
              ("downloadlink","numeric"),
              ("downloadminlink","numeric"),
              ("githublink","sloisel/numeric"),

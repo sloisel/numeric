@@ -11,12 +11,12 @@ import inspect
 import os
 
 demo = [
-'''// Hit enter in the blue boxes to evaluate them.
-// Let's start by creating a vector.
-x = numeric.run(0,0.05,6.3);''',
 '''// White boxes have been evaluated. Blue boxes have not been evaluated.
-// Let's make a plot.
-numeric.plot({x:x, y:numeric.sin(x)},{x:x,y:numeric.cos(x)});''',
+// Hit enter to evaluate a box.
+// Let's plot some financial data.
+dji = numeric.parseNumber(numeric.parseCSV(numeric.getURL("/get/ichart.finance.yahoo.com/table.csv?s=^DJI&a=0&b=1&c=2000&d=0&e=1&f=2020&g=d").responseText).Close);
+irx = numeric.parseNumber(numeric.parseCSV(numeric.getURL("/get/ichart.finance.yahoo.com/table.csv?s=^IRX&a=0&b=1&c=2000&d=0&e=1&f=2020&g=d").responseText).Close);
+numeric.plot({x: dji, y: irx});''',
 '''// Let's create a matrix.
 A = numeric.t([[7,-2,3,4,5],[1,1,4,1,2],[3,1,-5,6,1],[1,9,9,1,3],[3,1,4,1,5]]);''',
 '''// Let's find the eigenvalues and eigenvectors of A.

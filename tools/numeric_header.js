@@ -303,7 +303,7 @@ t([[1],[2.718]])
  */
 
 /*
-<pre>
+<pre >
 > delete global.num; delete global.t; delete global.z; delete global.w;
 true
 </pre>

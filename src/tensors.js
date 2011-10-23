@@ -531,7 +531,7 @@ my.set = set;
 false
 > numeric.isT(numeric.t(0))
 true
-     */
+ */ 
 function isT() {};
 if(typeof set.name === "undefined") {
     /** @ignore */ isT = function(x) { return x instanceof Function && x.s instanceof Array; }
