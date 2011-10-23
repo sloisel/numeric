@@ -247,7 +247,8 @@ foreach($incs as $i) {
 					<a href="lib/numeric.js" itemprop="breadcrumb" id="downloadlink">Download numeric.js</a> |
 				 	<a href="lib/numeric-min.js" itemprop="breadcrumb" id="downloadminlink">numeric-min.js</a> | 
 				 	<a href="https://github.com/sloisel/numeric/" itemprop="breadcrumb" id="githublink">github repo</a> |
-				 	<a href="doc/symbols/numeric.html" itemprop="breadcrumb" id="doclink">Documentation</a><br>
+				 	<a href="doc/symbols/numeric.html" itemprop="breadcrumb" id="doclink">Documentation</a> |
+				 	<a href="http://groups.google.com/group/numericjs">Forum</a><br>
 					Author: <a href="http://www.ma.hw.ac.uk/~loisel/" itemprop="breadcrumb" id="authorlink">S&eacute;bastien Loisel</a>.
 					Copyright 2011. <a href="license.txt" itemprop="breadcrumb" id="licenselink">MIT License</a>
 				</td>
@@ -640,7 +641,7 @@ echo $footer;
 
 <script type="text/javascript">
 
-workshop.version = "2011-10-23_19-45-23";
+workshop.version = "2011-10-23_23-30-22";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);
