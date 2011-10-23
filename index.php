@@ -103,7 +103,7 @@ textarea.input {
         margin-bottom:1px;
         padding:1px;
         border:2px solid #0000ff;
-        background-color: #f0f0ff;
+        background-color: #d0d0ff;
         width: 100%;
 		box-sizing: border-box;
 		-webkit-box-sizing:border-box;
@@ -214,7 +214,6 @@ foreach($incs as $i) {
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <script src="tools/json2.js"></script>
-<script src="tools/date.js"></script>
 <body itemscope itemtype="http://schema.org/WebPage">
 <table><tr valign="center">
 	<td><img src="resources/paperplane-small.png"></td>
@@ -641,7 +640,7 @@ echo $footer;
 
 <script type="text/javascript">
 
-workshop.version = "2011-10-23_17-56-19";
+workshop.version = "2011-10-23_19-45-23";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);
