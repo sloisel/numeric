@@ -97,8 +97,8 @@ There is also some java stuff in the numeric/tools subdirectory
 (e.g. jsdoc-toolkit). I also have an eclipse project that
 automatically rebuilds the library every time I modify it and also
 automatically runs the regression suite. (I actually use Aptana
-Studio.) You will also need jsdb (the server-side javascript
-environment).
+Studio.) You will also need d8 (the developer console that comes
+with Google v8).
 
 Building
 --------
@@ -117,7 +117,7 @@ The numeric/tools subdirectory contains the following custom tools:
 
 * numeric/tools/build.sh: 
 Concatenates files and produces /lib/numeric.js, runs the unit tests
-by running numeric/tools/unit3.js in jsdb, builds the documentation
+by running numeric/tools/unit3.js in d8, builds the documentation
 by calling numeric/tools/mkdoc.sh. I set it up so that it is
 automatically called by eclipse every time I modify a file.
 

@@ -12,7 +12,9 @@ if [ -f nodepid.log ]; then
 fi
 cat numeric_header.js ../src/*.js numeric_footer.js > ../lib/numeric.js
 cd ..
-jsdb ./tools/unit2.js &
+runjs=`which d8 || which jsdb`
+echo Using $runjs
+$runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
 cd tools
 java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
