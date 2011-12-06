@@ -1,0 +1,147 @@
+<html>
+<head>
+<style>
+td {
+	padding-left: 10px;
+	padding-right: 10px;
+	vertical-align: top;
+}
+body {
+	font-family: sans-serif;
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-bottom: 50px;
+}
+</style>
+<title>Benchmarking linear algebra</title>
+</head>
+<body>
+<font size="+2">Linear Algebra Benchmarks</font><br><br>
+
+Here are some linear algebra benchmarks comparing the performance of various linear algebra
+libraries in your browser for a range of matrix sizes.<br><br>
+
+<b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time. The reported
+number is the number of calls per second achieved.<br><br>
+
+<b>GC pauses:</b> It looks to me like GC pauses randomly perturb the results from time to time. To be sure, one should reload the page a few times and check that the results are consistent.
+<br><br><br>
+
+<script src="lib/numeric.js"></script>
+<script src="tools/sylvester.js"></script>
+<script src="tools/trunk/closure/goog/base.js"></script>
+<table id="bench">
+</table>
+<script>
+"use strict";
+goog.require('goog.math.Matrix');
+function bench(f) {
+	var k,n,d1,d2;
+	f();
+	d1 = new Date;
+	n = 1;
+	while(1) {
+		d2 = new Date;
+		if(d2-d1 > 50) { break; }
+		for(k=0;k<n;k++) f();
+		n*=2;
+	}
+	d1 = new Date;
+	for(k=0;k<n;k++) { f(); }
+	d2 = new Date;
+	return 1000*n/(d2-d1);
+}
+function mkA(n) {
+	var i,j,A=[];
+	for(i=0;i<n;i++) { A[i] = []; for(j=0;j<n;j++) { A[i][j] = Math.random(); } }
+	return A;
+}
+function mkV(n) {
+	var i,V=[];
+	for(i=0;i<n;i++) { V[i] = Math.random(); }
+	return V;
+}
+var benchmarks = [
+	[
+	'Create identity', [3,5,10,20,30,50,75,100],
+	function(n) { return bench(function() { numeric.identity(n); }); },
+	function(n) { return bench(function() { goog.math.Matrix.createIdentityMatrix(n); }); },
+	function(n) { return bench(function() { Matrix.I(n); }); },
+	],
+	[
+	'Matrix transpose', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n); return bench(function() { A.transpose(); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getTranspose(); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.transpose(); }); },
+	],
+	[
+	'Matrix-Vector product', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { A.dot(V); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(V); }); },
+	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.multiply(V); }); },
+	],
+	[
+	'Matrix-Matrix product', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n); return bench(function() { A.dot(A); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.multiply(A); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.multiply(A); }); },
+	],
+	[
+	'Matrix+Matrix sum', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n); return bench(function() { A.add(A); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.add(A); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.add(A); }); },
+	],
+	[
+	'Matrix inverse', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n); return bench(function() { A.inv(); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getInverse(); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); },
+	]
+];
+var k=0,b=0;
+//var names = ['Create identity','Matrix transpose','Matrix-Vector product','Matrix-Matrix product','Matrix inverse'];
+var libs = ['Numeric','Closure','Sylvester']
+numeric.precision = 6;
+function invbench() {
+	var A,ks,SA,GA,sz = benchmarks[b][1][k];
+	ks = sz.toString();
+	A = mkA(sz);
+	SA = $M(A);
+	GA = new goog.math.Matrix(A);
+	var cps = [];
+	for(i=2;i<benchmarks[b].length;i++) { cps[i-2] = benchmarks[b][i](sz); }
+	var speedup = 1000000,which=0;
+	var i;
+	for(i=1;i<cps.length;i++) {
+		if(cps[0]/cps[i] < speedup) { speedup = cps[0]/cps[i]; which = i; }
+	}
+	var foo = '<td>n='+ks+'</td>';
+	var color = '', uncolor='';
+	for(i=0;i<cps.length;i++) {
+		if(i === 0) { color = '<font color="#008000"><b>'; uncolor='</b></font>'; }
+		else if(i === which) { color = '<font color="#800000"><b>'; uncolor='</b></font>'; }
+		else { color = ''; uncolor=''; }
+		foo +=  '<td>'+color+cps[i].toPrecision(6)+uncolor+'</td>';
+	}
+	foo += '<td>Numeric/'+libs[which]+'='+speedup.toPrecision(3)+'</td>';
+	var t = document.getElementById('bench');
+	var r = t.insertRow(-1);
+	if(k === 0) { 
+		r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
+		              +'<td width=125px><b>Numeric</b></td>'
+	                  +'<td width=125px><b>Google Closure</b></td>'
+	                  +'<td width=125px><b>Sylvester</b></td>'
+	                  +'<td width=125px><b>Speedup</b></td>');
+		r = t.insertRow(-1); 
+	}
+	r.innerHTML = foo;
+	k++;
+	if(k === benchmarks[b][1].length) { k=0; b++; }
+	if(b < benchmarks.length) { setTimeout('invbench()',0); }
+}
+
+window.onload = invbench;
+</script>
+</body>
