@@ -32,7 +32,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=59a7b9cb649f989ca3d34a409dbf42f82afe51e0071a8f92b0246f0ddcb849aa');
+		$incs = array(1 => '/scripts/numeric.js?key=a9a45ae054f83799158f6bde90cb277b5d2d1bb3a6e6070ce40f69215c8b6459');
 	}
 	$footer = <<<EOT
 <script>
@@ -43,7 +43,7 @@ if(isset($_GET['link'])) {
 </script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=59a7b9cb649f989ca3d34a409dbf42f82afe51e0071a8f92b0246f0ddcb849aa');
+	$incs = array(1 => '/scripts/numeric.js?key=a9a45ae054f83799158f6bde90cb277b5d2d1bb3a6e6070ce40f69215c8b6459');
 	$footer = ""; 
 }
 header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
@@ -475,7 +475,7 @@ function mkinput(i) {
     var ti = document.createElement("textarea");
     ti.className = "input";
     ti.rows = 1;
-    ti.spellcheck = false;
+    ti.spellcheck = "false";
     ti.id = "in"+count;
     cell3.appendChild(ti);
 
@@ -641,7 +641,7 @@ echo $footer;
 
 <script type="text/javascript">
 
-workshop.version = "2011-10-23_23-30-22";
+workshop.version = "noversion";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

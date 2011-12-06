@@ -11,6 +11,7 @@ if [ -f nodepid.log ]; then
 	rm -f nodepid.log
 fi
 cat numeric_header.js ../src/*.js numeric_footer.js > ../lib/numeric.js
+php mkdb.php noversion
 cd ..
 runjs=`which d8 || which jsdb`
 echo Using $runjs
