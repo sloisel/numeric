@@ -25,12 +25,31 @@ libraries in your browser for a range of matrix sizes.<br><br>
 <b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time. The reported
 number is the number of calls per second achieved.<br><br>
 
-<b>GC pauses:</b> It looks to me like GC pauses randomly perturb the results from time to time. To be sure, one should reload the page a few times and check that the results are consistent.
+<b>Why does Numeric perform better?</b> Many matrix algorithms feature an inner loop that looks like <tt>for(j=0;j&lt;n;j++) A[i][j] = ...</tt>
+This is equivalent to <tt>Ai = A[i]; for(j=0;j&lt;n;j++) Ai[j] = ...</tt> but I've manually hoisted the indexing <tt>[i]</tt> out of the loop. Why can't the
+JIT do it? I don't know, but apparently it's not able to do it. When the JITs get better, this trick might
+not be so useful anymore.<br><br>
+
+<b>GC pauses?</b>
+If you reload the page, the benchmark will run again and will give slightly different results.
+This could be due to GC pauses or other background tasks, DOM updates, etc...
+To get an idea of the impact of this, load this page in two or more different tabs (not at the same time,
+one after the other) and switch between the tabs and see the differences in the performance chart. In
+order to smooth this jitter, all benchmarks run 5 times and the median performance is reported.
 <br><br><br>
 
 <script src="lib/numeric.js"></script>
 <script src="tools/sylvester.js"></script>
 <script src="tools/trunk/closure/goog/base.js"></script>
+<script src="tools/jquery-1.7.1.min.js"></script>
+<script src="tools/jquery.flot.min.js"></script>
+<table><tr>
+<b>Performance chart with Numeric normalized at 1:</b>
+<td id="placeholder" style="width:600px;height:300px;"></td>
+<td id="legend" style="width:100px;height:100px"></td>
+</tr>
+</table>
+<br>
 <table id="bench">
 </table>
 <script>
@@ -100,22 +119,46 @@ var benchmarks = [
 	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); },
 	]
 ];
+
 var k=0,b=0;
-//var names = ['Create identity','Matrix transpose','Matrix-Vector product','Matrix-Matrix product','Matrix inverse'];
-var libs = ['Numeric','Closure','Sylvester']
+var libs = ['Numeric','Closure','Sylvester'];
+var datasets = [];
+var l;
+var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
+for(l=0;l<libs.length;l++) { datasets[l] = { data: [], label: libs[l], color: colors[l], points: { show: true }, lines: { show: true } }; }
+l=1;
+var l0,xticks = [];
+for(b=0;b<benchmarks.length;b++) {
+	l0 = l;
+	for(k=0;k<benchmarks[b][1].length;k++) {
+		datasets[0].data.push([l,1]);
+		l++;
+	}
+	xticks.push([(l0+l)*0.5,benchmarks[b][0]]);
+	datasets[0].data.push(null);
+}
+k=0;
+b=0;
+var count = 1;
+
 numeric.precision = 6;
 function invbench() {
 	var A,ks,SA,GA,sz = benchmarks[b][1][k];
+	var i,j;
 	ks = sz.toString();
 	A = mkA(sz);
 	SA = $M(A);
 	GA = new goog.math.Matrix(A);
-	var cps = [];
-	for(i=2;i<benchmarks[b].length;i++) { cps[i-2] = benchmarks[b][i](sz); }
+	var c0 = [[],[],[]];
+	for(j=0;j<5;j++) {
+		for(i=2;i<benchmarks[b].length;i++) { c0[i-2][j] = benchmarks[b][i](sz); }
+	}
+	var cps = [],foo;
+	for(i=0;i<3;i++) { foo = c0[i].sort(function(a,b) { return a-b; }); cps[i] = foo[2]; }
 	var speedup = 1000000,which=0;
-	var i;
 	for(i=1;i<cps.length;i++) {
 		if(cps[0]/cps[i] < speedup) { speedup = cps[0]/cps[i]; which = i; }
+		datasets[i].data.push([count,cps[i]/cps[0]]);
 	}
 	var foo = '<td>n='+ks+'</td>';
 	var color = '', uncolor='';
@@ -123,7 +166,7 @@ function invbench() {
 		if(i === 0) { color = '<font color="#008000"><b>'; uncolor='</b></font>'; }
 		else if(i === which) { color = '<font color="#800000"><b>'; uncolor='</b></font>'; }
 		else { color = ''; uncolor=''; }
-		foo +=  '<td>'+color+cps[i].toPrecision(6)+uncolor+'</td>';
+		foo +=  '<td>'+color+(cps[i].toPrecision(8))+uncolor+'</td>';
 	}
 	foo += '<td>Numeric/'+libs[which]+'='+speedup.toPrecision(3)+'</td>';
 	var t = document.getElementById('bench');
@@ -138,8 +181,13 @@ function invbench() {
 	}
 	r.innerHTML = foo;
 	k++;
-	if(k === benchmarks[b][1].length) { k=0; b++; }
+	if(k === benchmarks[b][1].length) {
+		k=0; b++;
+		for(i=1;i<cps.length;i++) datasets[i].data.push(null);
+	}
 	if(b < benchmarks.length) { setTimeout('invbench()',0); }
+	$.plot($("#placeholder"), datasets, {legend: {container: '#legend'}, xaxis:{ticks:xticks, tickLength:0}});
+	count++;
 }
 
 window.onload = invbench;
