@@ -1,0 +1,403 @@
+<head>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="resources/style.css">
+<title>Numeric Javascript: Benchmarks</title>
+</head>
+<body>
+<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
+<table class="nav"><tr class="nav">
+<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
+<td class="navmain">
+<b>Numeric Javascript: Benchmarks</b>
+<ul class="nav">
+	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
+	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
+	<li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
+	<li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
+</ul>
+<ul class="nav">
+	<li class="sep">DOWNLOADS:</li>
+	<li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
+	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+</ul>
+</table>
+<!--
+This allows regression tests to run predictably:
+<pre>
+> numeric.seedrandom.seedrandom('1'); Math.random = numeric.seedrandom.random; Math.random();
+0.2694
+</pre>
+-->
+ <a href="http://www.numericjs.com/">Numeric Javascript</a> is
+  library that provides many useful functions for numerical
+ calculations, particularly for linear algebra (vectors and matrices). 
+ You can create vectors and matrices and multiply them:
+<pre>
+> A = [[1,2,3],[4,5,6]];
+[[1,2,3],
+ [4,5,6]]
+> x = [7,8,9]
+[7,8,9]
+> numeric.dot(A,x);
+[50,122]
+</pre>
+ The example shown above can be executed in the
+ <a href="http://www.numericjs.com/workshop.php">Javascript Workshop</a> or at any
+ Javascript prompt. In the example above, a matrix <tt>A</tt> and a vector <tt>x</tt> are created
+ and multiplied using the <tt>numeric.dot()</tt> function, and the result of this matrix-vector 
+ product is printed.<br><br>
+ 
+ The <tt>numeric</tt> library provides functions that implement most of the usual Javascript
+ operators for vectors and matrices:
+<pre>
+> y = [10,1,2];
+[10,1,2]
+> numeric['+'](x,y)
+[17,9,11]
+> numeric['>'](x,y)
+[false,true,true]
+</pre>
+ These operators can also be called with plain Javascript function names:
+<pre>
+> numeric.add(x,y)
+[17,9,11]
+</pre>
+
+The function <tt>numeric.inv()</tt> can be used to compute the inverse of an invertible matrix:
+<pre>
+> A = [[1,2,3],[4,5,6],[7,1,9]]
+[[1,2,3],
+ [4,5,6],
+ [7,1,9]]
+> Ainv = numeric.inv(A);
+[[-0.9286,0.3571,0.07143],
+ [-0.1429,0.2857,-0.1429],
+ [0.7381,-0.3095,0.07143]]
+</pre>
+
+ The <tt>Math</tt> object functions have also been adapted to work on Arrays as follows:
+<pre>
+> numeric.exp([1,2]);
+[2.718,7.389]
+> numeric.exp([[1,2],[3,4]])
+[[2.718,7.389],[20.09,54.60]]
+> numeric.abs([-2,3])
+[2,3]
+> numeric.acos([0.1,0.2])
+[1.471,1.369]
+> numeric.asin([0.1,0.2])
+[0.1002,0.2014]
+> numeric.atan([1,2])
+[0.7854,1.107]
+> numeric.ceil([-2.2,3.3])
+[-2,4]
+> numeric.floor([-2.2,3.3])
+[-3,3]
+> numeric.log([1,2])
+[0,0.6931]
+> numeric.round([-2.2,3.3])
+[-2,3]
+> numeric.sin([1,2])
+[0.8415,0.9093]
+> numeric.sqrt([1,2])
+[1,1.414]
+> numeric.tan([1,2])
+[1.557,-2.185]
+</pre>
+
+The function <tt>numeric.dim()</tt> allows you to compute the dimensions of an Array.
+
+<pre>
+> numeric.dim([1,2])
+[2]
+> numeric.dim([[1,2,3],[4,5,6]])
+[2,3]
+> x = [[1,2,3],[4,5,6]]
+[[1,2,3],[4,5,6]]
+</pre>
+
+You can perform a deep comparison of Arrays using <tt>numeric.same()</tt>:
+<pre>
+> numeric.same([1,2],[1,2])
+true
+> numeric.same([1,2],[1,2,3])
+false
+> numeric.same([1,2],[[1],[2]])
+false
+> numeric.same([[1,2],[3,4]],[[1,2],[3,4]])
+true
+> numeric.same([[1,2],[3,4]],[[1,2],[3,5]])
+false
+> numeric.same([[1,2],[2,4]],[[1,2],[3,4]])
+false
+</pre>
+
+You can loop over Arrays as you normally would. However, in order to quickly generate optimized
+loops, the <tt>numeric</tt> library provides a few efficient loop-generation mechanisms. For example, the
+<tt>numeric.mapreduce()</tt> function can be used to make a function that computes the sum of all the
+entries of an Array.
+
+<pre>
+> sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3])
+6
+> sum([[1,2,3],[4,5,6]])
+21
+</pre>
+
+The functions <tt>numeric.any()</tt> and <tt>numeric.all()</tt> allow you to check whether any or all entries
+of an Array are boolean true values.
+<pre>
+> numeric.any([false,true])
+true
+> numeric.any([[0,0,3.14],[0,false,0]])
+true
+> numeric.any([0,0,false])
+false
+> numeric.all([false,true])
+false
+> numeric.all([[1,4,3.14],["no",true,-1]])
+true
+> numeric.all([0,0,false])
+false
+</pre>
+
+You can also create "pointwise" functions. This is how you create a vector sum function:
+
+<pre>
+> add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4])
+[4,6]
+</pre>
+
+The standard arithmetic operations have been vectorized:
+<pre>
+> numeric.addVV([1,2],[3,4])
+[4,6]
+> numeric.addVS([1,2],3)
+[4,5]
+</pre>
+
+There are also polymorphic functions:
+<pre>
+> numeric.add(1,[2,3])
+[3,4]
+> numeric.add([1,2,3],[4,5,6])
+[5,7,9]
+</pre>
+
+The other arithmetic operations are available:
+<pre>
+> numeric.sub([1,2],[3,4])
+[-2,-2]
+> numeric.mul([1,2],[3,4])
+[3,8]
+> numeric.div([1,2],[3,4])
+[0.3333,0.5]
+</pre>
+
+The in-place operators (such as +=) are also available:
+<pre>
+> v = [1,2,3,4]; numeric.addeq(v,3); v
+[4,5,6,7]
+> numeric.subeq([1,2,3],[5,3,1])
+[-4,-1,2]
+</pre>
+
+You can create a multidimensional Array from a given value using <tt>numeric.rep()</tt>
+<pre>
+> numeric.rep([3],5)
+[5,5,5]
+> numeric.rep([2,3],0)
+[[0,0,0],
+ [0,0,0]]
+</pre>
+
+Matrix products are implemented in the function the functions 
+<tt>numeric.dotVV()</tt>
+<tt>numeric.dotVM()</tt>
+<tt>numeric.dotMV()</tt>
+<tt>numeric.dotMM()</tt>:
+<pre>
+> numeric.dotVV([1,2],[3,4])
+11
+> numeric.dotVM([1,2],[[3,4],[5,6]])
+[13,16]
+> numeric.dotMV([[1,2],[3,4]],[5,6])
+[17,39]
+> numeric.dotMMbig([[1,2],[3,4]],[[5,6],[7,8]])
+[[19,22],
+ [43,50]]
+> numeric.dotMMsmall([[1,2],[3,4]],[[5,6],[7,8]])
+[[19,22],
+ [43,50]]
+> numeric.dot([1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9])
+285
+</pre>
+
+The function <tt>numeric.dot()</tt> is "polymorphic" and selects the appropriate Matrix product:
+
+<pre>
+> numeric.dot([1,2,3],[4,5,6])
+32
+> numeric.dot([[1,2,3],[4,5,6]],[7,8,9])
+[50,122]
+</pre>
+
+<!--
+<pre>
+> n = 41; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+> n = 42; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+> n = 43; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+> n = 44; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+> n = 45; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+> n = 46; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12
+true
+</pre> 
+-->
+
+You can create a diagonal matrix using <tt>numeric.diag()</tt>
+<pre>
+> numeric.diag([1,2,3])
+[[1,0,0],
+ [0,2,0],
+ [0,0,3]]
+</pre>
+
+The function <tt>numeric.identity()</tt> returns the identity matrix.
+<pre>
+> numeric.identity(3)
+[[1,0,0],
+ [0,1,0],
+ [0,0,1]]
+</pre>
+
+Random Arrays can also be created:
+<pre >
+> numeric.random([2,3])
+[[0.05303,0.1537,0.7280],
+ [0.3839,0.08818,0.6316]]
+</pre>
+
+You can generate a vector of evenly spaced values:
+
+<pre>
+> numeric.linspace(1,5);
+[1,2,3,4,5]
+> numeric.linspace(1,3,5);
+[1,1.5,2,2.5,3]
+</pre>
+
+The determinant:
+<pre>
+> numeric.det([[1,2],[3,4]]);
+-2
+> numeric.det([[6,8,4,2,8,5],[3,5,2,4,9,2],[7,6,8,3,4,5],[5,5,2,8,1,6],[3,2,2,4,2,2],[8,3,2,2,4,1]]);
+-1404
+</pre>
+
+The transpose:
+<pre>
+> numeric.transpose([[1,2,3],[4,5,6]])
+[[1,4],
+ [2,5],
+ [3,6]]
+> numeric.transpose([[1,2,3,4,5,6,7,8,9,10,11,12]])
+[[ 1],
+ [ 2],
+ [ 3],
+ [ 4],
+ [ 5],
+ [ 6],
+ [ 7],
+ [ 8],
+ [ 9],
+ [10],
+ [11],
+ [12]]
+</pre>
+
+You can compute the 2-norm of an Array, which is the square root of the sum of the squares of the entries.
+<pre>
+> numeric.norm2([1,2])
+2.236
+</pre>
+
+Computing the tensor product of two vectors:
+<pre>
+> numeric.tensor([1,2],[3,4,5])
+[[3,4,5],
+ [6,8,10]]
+</pre>
+
+There are also some data manipulation functions. You can parse dates:
+<pre>
+> numeric.parseDate(['1/13/2013','2001-5-9, 9:31']);
+[1.358e12,9.894e11]
+</pre>
+Parse floating point quantities:
+<pre>
+> numeric.parseFloat(['12','0.1'])
+[12,0.1]
+</pre>
+Parse CSV files:
+<pre>
+> numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4')
+[[     "a",     "b",     "c"],
+ [       1,     2.3,     0.3],
+ [ 4.000e6, -5.3e-8,   62800]]
+</pre>
+
+You can also fetch a URL:
+<pre>
+> numeric.getURL('tools/helloworld.txt').responseText
+"Hello, world!"
+</pre>
+
+You can transform a matrix to Upper Hessenberg form:
+<pre>
+> A = [[1,2,3],[4,5,6],[7,3,5]]; QH = numeric.toUpperHessenberg(A);
+{ H: [[         1,-3.597,-0.2481],
+      [    -8.062, 8.877, 0.7846],
+      [-8.882e-16, 3.785, 1.123 ]],
+  Q: [[1,      0,      0],
+      [0,-0.4961,-0.8682],
+      [0,-0.8682, 0.4961]] }
+> numeric.norm2(numeric.sub(QH.H,numeric.dot(QH.Q,numeric.dot(A,numeric.transpose(QH.Q)))))<1e15;
+true
+> A = numeric.random([40,40]); QH = numeric.toUpperHessenberg(A); numeric.norm2(numeric.sub(QH.H,numeric.dot(QH.Q,numeric.dot(A,numeric.transpose(QH.Q)))))<1e12;
+true
+</pre>
+
+Also upper block triangular form:
+<pre>
+> A = [[1,2,5],[3,5,0],[7,-3,5]]; QH = numeric.toUpperHessenberg(A);
+{
+	H:
+	[[     1, -5.384, 0.1313],
+	 [-7.616,  3.914, -2.534],
+	 [0     , 0.4655,  6.086]],
+	Q:
+	[[1,      0,      0],
+	 [0,-0.3939,-0.9191],
+	 [0,-0.9191, 0.3939]]
+}
+> QB = numeric.QRFrancis(QH.H);
+{
+	Q:
+	[[ 0.7268,  0.6862,-0.03109],
+	 [-0.6755,  0.7222,  0.1487],
+	 [ 0.1245,-0.08704,  0.9884]],
+	B:
+	[[0,1],
+	 [2,2]]}
+> numeric.dot(QB.Q,numeric.dot(QH.H,numeric.transpose(QB.Q)))
+[[ -4.065,     1.870,  -2.264],
+ [0.02559,     8.739,  -2.340],
+ [      0,-1.110e-16,   6.326]]
+</pre>
+
+<br><br><br>

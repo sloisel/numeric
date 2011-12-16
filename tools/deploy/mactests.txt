@@ -1,99 +1,24 @@
 Link testing.
 Using Firefox
-0 PASS: aboutlink ==> About Numeric Javascript in page
-1 FAIL: demolink ==> Hit enter to evaluate a box. not in page
+0 PASS: linkhome ==> library for numerical computations in page
+1 PASS: linkworkshop ==> IN in page
+2 FAIL: linkdoc ==> Class Index not in page
 Traceback (most recent call last):
   File "selenium_links.py", line 24, in test
     assert(x[1] in foo)
 AssertionError
-2 PASS: downloadlink ==> numeric in page
-3 PASS: downloadminlink ==> numeric in page
-4 PASS: githublink ==> sloisel/numeric in page
-5 PASS: doclink ==> JsDoc Reference - numeric in page
-6 PASS: authorlink ==> Loisel in page
-7 PASS: licenselink ==> license in page
-Link testing complete. PASS: 7 FAIL: 1 Total: 8
+3 FAIL: linklib ==> @namespace The numeric library not in page
+Traceback (most recent call last):
+  File "selenium_links.py", line 24, in test
+    assert(x[1] in foo)
+AssertionError
+4 PASS: linklibmin ==> var numeric={};numeric in page
+Link testing complete. PASS: 3 FAIL: 2 Total: 5
 Fetching http://numericjs.com/staging/lib/numeric.js
 In-browser unit tests.
 Using Chrome
-0 PASS: 1 ==> 1
-1 PASS: [1,2].dim() ==> [2]
-2 PASS: [[1,2,3],[4,5,6]].dim() ==> [2,3]
-3 PASS: x = [[1,2,3],[4,5,6]] ==> [[1,2,3],[4,5,6]]
-4 PASS: [1,2].same([1,2]) ==> true
-5 PASS: [1,2].same([1,2,3]) ==> false
-6 PASS: [1,2].same([[1],[2]]) ==> false
-7 PASS: [1,2].dot([3,4]) ==> 11
-8 PASS: [1,2].dot([[3,4],[5,6]]) ==> [13,16]
-9 PASS: [[1,2],[3,4]].dot([5,6]) ==> [17,39]
-10 PASS: [[1,2],[3,4]].dot([[5,6],[7,8]]) ==> [[19,22],[43,50]]
-11 PASS: numeric.rep([3],5) ==> [5,5,5]
-12 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
-13 PASS: numeric.identity(2) ==> [[1,0],[0,1]]
-14 PASS: [[1,2],[3,4]].inv() ==> [[-2.000,1.000],[1.500,-0.5000]]
-15 PASS: x = [[1,2,3,4],[1,3,1,7],[3,1,2,0],[-3,-3,1,9]]; x.dot(x.inv()); ==> [[1.000,0,0,0],[-1.110e-16,1,0,-1.110e-16],[1.110e-16,-1.110e-16,1,-8.674e-17],[-1.110e-16,0,-1.110e-16,1.000]]
-16 PASS: [1,2].add([3,4]) ==> [4,6]
-17 PASS: [[1,2],[3,4]].add([[5,6],[7,8]]) ==> [[6,8],[10,12]]
-18 PASS: [1,2].sub([3,4]) ==> [-2,-2]
-19 PASS: [1,2].mul([3,4]) ==> [3,8]
-20 PASS: [1,2].div([3,4]) ==> [0.3333,0.5]
-21 PASS: [1,2].exp(); ==> [2.718,7.389]
-22 PASS: [[1,2],[3,4]].exp() ==> [[2.718,7.389],[20.09,54.60]]
-23 PASS: [-2,3].abs() ==> [2,3]
-24 PASS: [0.1,0.2].acos() ==> [1.471,1.369]
-25 PASS: [0.1,0.2].asin() ==> [0.1002,0.2014]
-26 PASS: [1,2].atan() ==> [0.7854,1.107]
-27 PASS: [-2.2,3.3].ceil() ==> [-2,4]
-28 PASS: [-2.2,3.3].floor() ==> [-3,3]
-29 PASS: [1,2].log() ==> [0,0.6931]
-30 PASS: [-2.2,3.3].round() ==> [-2,3]
-31 PASS: [1,2].sin() ==> [0.8415,0.9093]
-32 PASS: [1,2].sqrt() ==> [1,1.414]
-33 PASS: [1,2].tan() ==> [1.557,-2.185]
-34 PASS: [[1,2,3],[4,5,6]].transpose() ==> [[1,4],[2,5],[3,6]]
-35 PASS: [[1,2,3,4,5,6,7,8,9,10,11,12]].transpose() ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
-36 PASS: [[1,2],[3,4]].isSymmetric() ==> false
-37 PASS: [[1,2],[2,3]].isSymmetric() ==> true
-Chrome testing complete. PASS: 38 FAIL: 0 Total: 38
+Chrome testing complete. PASS: 0 FAIL: 0 Total: 0
 Fetching http://numericjs.com/staging/lib/numeric.js
 In-browser unit tests.
 Using Firefox
-0 PASS: 1 ==> 1
-1 PASS: [1,2].dim() ==> [2]
-2 PASS: [[1,2,3],[4,5,6]].dim() ==> [2,3]
-3 PASS: x = [[1,2,3],[4,5,6]] ==> [[1,2,3],[4,5,6]]
-4 PASS: [1,2].same([1,2]) ==> true
-5 PASS: [1,2].same([1,2,3]) ==> false
-6 PASS: [1,2].same([[1],[2]]) ==> false
-7 PASS: [1,2].dot([3,4]) ==> 11
-8 PASS: [1,2].dot([[3,4],[5,6]]) ==> [13,16]
-9 PASS: [[1,2],[3,4]].dot([5,6]) ==> [17,39]
-10 PASS: [[1,2],[3,4]].dot([[5,6],[7,8]]) ==> [[19,22],[43,50]]
-11 PASS: numeric.rep([3],5) ==> [5,5,5]
-12 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
-13 PASS: numeric.identity(2) ==> [[1,0],[0,1]]
-14 PASS: [[1,2],[3,4]].inv() ==> [[-2.000,1.000],[1.500,-0.5000]]
-15 PASS: x = [[1,2,3,4],[1,3,1,7],[3,1,2,0],[-3,-3,1,9]]; x.dot(x.inv()); ==> [[1.000,0,0,0],[-1.110e-16,1,0,-1.110e-16],[1.110e-16,-1.110e-16,1,-8.674e-17],[-1.110e-16,0,-1.110e-16,1.000]]
-16 PASS: [1,2].add([3,4]) ==> [4,6]
-17 PASS: [[1,2],[3,4]].add([[5,6],[7,8]]) ==> [[6,8],[10,12]]
-18 PASS: [1,2].sub([3,4]) ==> [-2,-2]
-19 PASS: [1,2].mul([3,4]) ==> [3,8]
-20 PASS: [1,2].div([3,4]) ==> [0.3333,0.5]
-21 PASS: [1,2].exp(); ==> [2.718,7.389]
-22 PASS: [[1,2],[3,4]].exp() ==> [[2.718,7.389],[20.09,54.60]]
-23 PASS: [-2,3].abs() ==> [2,3]
-24 PASS: [0.1,0.2].acos() ==> [1.471,1.369]
-25 PASS: [0.1,0.2].asin() ==> [0.1002,0.2014]
-26 PASS: [1,2].atan() ==> [0.7854,1.107]
-27 PASS: [-2.2,3.3].ceil() ==> [-2,4]
-28 PASS: [-2.2,3.3].floor() ==> [-3,3]
-29 PASS: [1,2].log() ==> [0,0.6931]
-30 PASS: [-2.2,3.3].round() ==> [-2,3]
-31 PASS: [1,2].sin() ==> [0.8415,0.9093]
-32 PASS: [1,2].sqrt() ==> [1,1.414]
-33 PASS: [1,2].tan() ==> [1.557,-2.185]
-34 PASS: [[1,2,3],[4,5,6]].transpose() ==> [[1,4],[2,5],[3,6]]
-35 PASS: [[1,2,3,4,5,6,7,8,9,10,11,12]].transpose() ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
-36 PASS: [[1,2],[3,4]].isSymmetric() ==> false
-37 PASS: [[1,2],[2,3]].isSymmetric() ==> true
-Firefox testing complete. PASS: 38 FAIL: 0 Total: 38
+Firefox testing complete. PASS: 0 FAIL: 0 Total: 0

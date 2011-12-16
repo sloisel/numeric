@@ -20,8 +20,8 @@ function XMLHttpRequest() {
 }
 var foo;
 if(typeof system !== "undefined") { foo = new Stream('./lib/numeric.js').readFile(); }
-else { foo = read('./lib/numeric.js'); }
-var bar = foo.match(/(@example[\s\S]*?(?=\n[\s]*\*))|(<pre>[\s\S]*?(?=<\/pre>))/g).join('\n').replace(/(@example)|(<pre>)/g,'').split('\n> ')
+else { foo = read('./documentation.html'); }
+var bar = foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\n> ')
 var baz = [];
 var k,k0=0;
 for(k=0;k<bar.length;k++) {

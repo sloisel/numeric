@@ -15,11 +15,18 @@ if(isset($_POST['savedata'])) {
 	if($f === "") { exit; }
 	$d = mysql_real_escape_string($data);
 	$q = "insert ignore into blobs value ('$f','$d')";
-	$result = mysql_query($q) or die('Could save script: ' . mysql_error());
-	header('Location: index.php?link=' . $_GET['link']);
+	$result = mysql_query($q) or die('Could not save script: ' . mysql_error());
+	header('Location: workshop.php?link=' . $_GET['link']);
 	exit;
 }
 
+header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+?>
+
+WORKSHOPHTML
+
+<script>
+<?php
 $incs = NULL;
 
 if(isset($_GET['link'])) {
@@ -34,28 +41,24 @@ if(isset($_GET['link'])) {
 	if(is_null($incs)) {
 		$incs = array(1 => '/scripts/numeric.js?key=NUMERICJSHASH');
 	}
-	$footer = <<<EOT
-<script>
+	echo <<<EOT
 (function () {
-	var foo = $restore;
-	workshop.download(foo);
+	var _restore = $restore;
+	$(document).ready(function () { workshop.restore(_restore); } );
 }());
-</script>
 EOT;
 } else {
-	$incs = array(1 => '/scripts/numeric.js?key=NUMERICJSHASH');
-	$footer = ""; 
+	echo <<<EOT
+(function () {
+	var _restore = ((typeof localStorage.savedata !== "undefined")?
+	                (JSON.parse(localStorage.savedata)):
+	                {inputs: [], outputs: [], 
+	                 scripts: ["/scripts/numeric.js?key=NUMERICJSHASH"] });
+	$(document).ready(function () { workshop.restore(_restore); } );
+}());
+EOT;
 }
-header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 ?>
-
-WORKSHOPHTML
-
-<?php
-echo $footer;
-?>
-
-<script type="text/javascript">
 
 workshop.version = "VERSIONSTRING";
 

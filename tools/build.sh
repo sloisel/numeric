@@ -10,7 +10,8 @@ if [ -f nodepid.log ]; then
 	kill -9 $nodepid || true
 	rm -f nodepid.log
 fi
-cat numeric_header.js ../src/*.js numeric_footer.js > ../lib/numeric.js
+cat ../src/numeric.js ../src/seedrandom.js > ../lib/numeric.js
+cp ../src/documentation.html ..
 php mkdb.php noversion
 cd ..
 runjs=`which d8 || which jsdb`
@@ -18,7 +19,7 @@ echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
 cd tools
-java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
+#java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
 ./mkdoc.sh > ../log/jsdoc.log 2>&1
 wait
 rm -f buildpid.log

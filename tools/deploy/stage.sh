@@ -19,7 +19,12 @@ echo "stage.sh: linking staging to v$version on $server"
 ssh $server -p 2222 -l $user "( tar xvfz numeric.tar.gz && mv numeric $webroot/v$version && cd $webroot && rm -f staging && ln -s v$version staging && cd staging/tools && php mkdb.php $version && deploy/clean.sh && echo Staging successful. ) || echo FAIL: Staging."
 echo "stage.sh: launching IE unit tests"
 cd numeric/tools
-osascript deploy/launchie.scpt
+if [ "x$1" == "x--without-IE" ]; then
+    echo Skipping IE...
+    echo Skipped IE > deploy/wintests.log
+else
+    osascript deploy/launchie.scpt
+fi
 echo "stage.sh: checking links on $server/staging"
 logfile=deploy/mactests.txt
 rm -f $logfile

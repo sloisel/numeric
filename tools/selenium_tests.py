@@ -16,9 +16,9 @@ def test(name,driver):
             t=t+1
             foo = ""
             try:
-                input = driver.find_element_by_id("in"+str(k))
+                input = driver.find_element_by_id("text_"+str(k+1))
                 input.send_keys(tests[k][0]+'\n')
-                bar = "out"+str(k)
+                bar = "out_"+str(k+1)
                 WebDriverWait(driver,5).until(lambda driver: driver.find_element_by_id(bar).text not in ["","<img src=\"resources/wait16.gif\">"])
                 output = driver.find_element_by_id(bar)
                 foo = re.sub(r'\s','',output.text)
@@ -46,15 +46,15 @@ else:
 if url == "":
     url = "http://127.0.0.1/staging/"
 
-u0 = url + 'lib/numeric.js'
+u0 = url + 'documentation.html'
 print 'Fetching',u0
 njs = urllib.urlopen(u0).read()
-y = re.findall(r'(@example[\s\S]*?(?=\n[\s]*\*))|(<pre>[\s\S]*?(?=<\/pre>))',njs)
+y = re.findall(r'<pre>[\s\S]*?(?=<\/pre>)',njs)
 tests = [];
 
 print "In-browser unit tests."
 for x in y:
-    baz = ((x[0]+x[1]).split('\n> '))[1:]
+    baz = x.split('\n> ')[1:]
     for foo in baz:
         bar = foo.find('\n')
         tests.append((foo[0:bar],re.sub(r'\s','',foo[bar+1:])))
@@ -63,7 +63,7 @@ try:
     driver = eval('webdriver.'+client+'()')
     print "Using",client
     driver.implicitly_wait(2)
-    driver.get(url)
+    driver.get(url+'workshop.php')
     test(client,driver)
 except:
     print "Could not use browser",client

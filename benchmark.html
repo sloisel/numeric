@@ -1,195 +1,240 @@
 <html>
 <head>
-<style>
-td {
-	padding-left: 10px;
-	padding-right: 10px;
-	vertical-align: top;
-}
-body {
-	font-family: sans-serif;
-	margin-top: 10px;
-	margin-left: 20px;
-	margin-right: 20px;
-	margin-bottom: 50px;
-}
-</style>
-<title>Benchmarking linear algebra</title>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="resources/style.css">
+<title>Numeric Javascript: Benchmarks</title>
 </head>
 <body>
-<font size="+2">Linear Algebra Benchmarks</font><br><br>
+<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
+<table class="nav"><tr class="nav">
+<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
+<td class="navmain">
+<b>Numeric Javascript: Benchmarks</b>
+<ul class="nav">
+	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
+	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
+	<li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
+	<li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
+</ul>
+<ul class="nav">
+	<li class="sep">DOWNLOADS:</li>
+	<li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
+	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+</ul>
+</table>
 
-Here are some linear algebra benchmarks comparing the performance of various linear algebra
-libraries in your browser for a range of matrix sizes.<br><br>
+We are now running a linear algebra performance benchmark in your browser! Please ensure that your seatbelt
+is fastened and your tray table is upright while we invert 100x100 matrices.<br><br>
 
-<b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time. The reported
-number is the number of calls per second achieved.<br><br>
+<b>Performance (<a href="http://en.wikipedia.org/wiki/FLOPS">MFLOPS</a>)</b>
+<div style="width:1000px;overflow:hidden;font-size:14px;">
+<div id="placeholder" style="width:700px;height:500px;float:left;"></div>
+<div id="legend" style="width:250px;height:100px;overflow:hidden;"></div>
+</div>
+<br>
 
-<b>Why does Numeric perform better?</b> Many matrix algorithms feature an inner loop that looks like <tt>for(j=0;j&lt;n;j++) A[i][j] = ...</tt>
-This is equivalent to <tt>Ai = A[i]; for(j=0;j&lt;n;j++) Ai[j] = ...</tt> but I've manually hoisted the indexing <tt>[i]</tt> out of the loop. Why can't the
-JIT do it? I don't know, but apparently it's not able to do it. When the JITs get better, this trick might
-not be so useful anymore.<br><br>
+<b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time.
+The number of function calls per seconds is converted into a FLOP rate. As we move right within each test, the matrix size increases.<br><br>
+
+<b>What tricks are used to increase performance in Numeric?</b>
+<ul>
+	<li>Replace inner loop <tt>for(j=0;j&lt;n;j++) A[i][j]</tt> by the equivalent <tt>Ai = A[i]; for(j=0;j&lt;n;j++) Ai[j]</tt> ("hoisting" the <tt>[i]</tt> out of the loop</tt>).
+	<li>Preallocate Arrays: <tt>A = new Array(n)</tt> instead of <tt>A = []</tt>.
+	<li>Use <tt>Array</tt> objects directly (abstractions slow you down). Getters and setters are bad.
+	<li>Use <tt>for(j=n-1;j&gt;=0;j--)</tt> if it is faster.
+	<li>Do not put anything in <tt>Array.prototype</tt>. If you modify <tt>Array.prototype</tt>, it slows down everything significantly.
+	<li>Big Matrix*Matrix product: transpose the second matrix and rearrange the loops to exploit locality.
+	<li>Unroll loops.
+	<li>Don't nest functions.
+	<li>Don't call functions, inline them manually. Except...
+	<li>...big functions can confuse the JIT. If a new code path is run in a function, the function can be deoptimized by the JIT.
+	<li>Avoid polymorphism.
+	<li>Localize references. For example: replace <tt>for(i=n-1;i>=0;i--) x[i] = Math.random();</tt> by <tt>rnd = Math.random; for(i=n-1;i>=0;i--) x[i] = rnd();</tt>. (Make sure <tt>rnd</tt> and <tt>x</tt> really are local variables!)
+	<li>Deep lexical scopes are bad. You can create a function without much of a lexical scope by using
+		<tt>new Function('...');</tt>.
+</ul>
+<br>
 
 <b>GC pauses?</b>
 If you reload the page, the benchmark will run again and will give slightly different results.
 This could be due to GC pauses or other background tasks, DOM updates, etc...
 To get an idea of the impact of this, load this page in two or more different tabs (not at the same time,
-one after the other) and switch between the tabs and see the differences in the performance chart. In
-order to smooth this jitter, all benchmarks run 5 times and the median performance is reported.
+one after the other) and switch between the tabs and see the differences in the performance chart.
 <br><br><br>
+
+<table id="bench"></table>
 
 <script src="lib/numeric.js"></script>
 <script src="tools/sylvester.js"></script>
 <script src="tools/trunk/closure/goog/base.js"></script>
+<!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
 <script src="tools/jquery-1.7.1.min.js"></script>
 <script src="tools/jquery.flot.min.js"></script>
-<table><tr>
-<b>Performance chart with Numeric normalized at 1:</b>
-<td id="placeholder" style="width:600px;height:300px;"></td>
-<td id="legend" style="width:100px;height:100px"></td>
-</tr>
-</table>
-<br>
-<table id="bench">
-</table>
+
 <script>
 "use strict";
+
+// Guess which browser needs this.
+if (!('map' in Array.prototype)) {
+    Array.prototype.map= function(mapper, that /*opt*/) {
+        var other= new Array(this.length);
+        for (var i= 0, n= this.length; i<n; i++)
+            if (i in this)
+                other[i]= mapper.call(that, this[i], i, this);
+        return other;
+    };
+}
+
 goog.require('goog.math.Matrix');
-function bench(f) {
-	var k,n,d1,d2;
-	f();
-	d1 = new Date;
-	n = 1;
-	while(1) {
-		d2 = new Date;
-		if(d2-d1 > 50) { break; }
-		for(k=0;k<n;k++) f();
-		n*=2;
-	}
-	d1 = new Date;
-	for(k=0;k<n;k++) { f(); }
-	d2 = new Date;
-	return 1000*n/(d2-d1);
-}
-function mkA(n) {
-	var i,j,A=[];
-	for(i=0;i<n;i++) { A[i] = []; for(j=0;j<n;j++) { A[i][j] = Math.random(); } }
-	return A;
-}
-function mkV(n) {
-	var i,V=[];
-	for(i=0;i<n;i++) { V[i] = Math.random(); }
-	return V;
-}
+var bench = numeric.bench;
+var mkA = function(n) { return numeric.random([n,n]); }
+var mkV = function(n) { return numeric.random([n]); }
 var benchmarks = [
 	[
-	'Create identity', [3,5,10,20,30,50,75,100],
+	'abs(vector)', [3,10,30,100,300,1000,3000],
+	function(n) { var V = mkV(n); return bench(function() { numeric.abs(V); }); },
+	function(n) { var V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.toArray().map(Math.abs); }); },
+	function(n) { var V = $V(mkV(n)); return bench(function() { V.map(Math.abs); }); }
+	],
+	[
+	'Create identity', [3,10,30,100,300,1000],
 	function(n) { return bench(function() { numeric.identity(n); }); },
 	function(n) { return bench(function() { goog.math.Matrix.createIdentityMatrix(n); }); },
-	function(n) { return bench(function() { Matrix.I(n); }); },
+	function(n) { return bench(function() { Matrix.I(n); }); }
 	],
 	[
-	'Matrix transpose', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { A.transpose(); }); },
+	'Matrix transpose', [3,10,30,100,300,1000],
+	function(n) { var A = mkA(n); return bench(function() { numeric.transpose(A); }); },
 	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getTranspose(); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.transpose(); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.transpose(); }); }
 	],
 	[
-	'Matrix-Vector product', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { A.dot(V); }); },
+	'Matrix-Vector product', [3,10,30,100,300,1000],
+	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(A,V); }); },
 	function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(V); }); },
-	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.multiply(V); }); },
+	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.multiply(V); }); }
+	],
+	[
+	'Vector-Matrix product', [3,10,30,100,300,1000],
+	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(V,A); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.multiply(A); }); },
+	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.transpose().multiply(V); }); }
+	],
+	['Ax+b', [3,10,30,100,300,1000],
+	function(n) { var A = mkA(n), x = mkV(n), b = mkV(n); return bench(function() { numeric.addeq(numeric.dot(A,x),b); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)), x = new goog.math.Matrix([mkV(n)]).getTranspose(), b = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(x).add(b); }); },
+	function(n) { var A = $M(mkA(n)), x = $V(mkV(n)), b = $V(mkV(n)); return bench(function() { A.multiply(x).add(b); }); }
 	],
 	[
 	'Matrix-Matrix product', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { A.dot(A); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.multiply(A); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.multiply(A); }); },
+	function(n) { var A = mkA(n), B = mkA(n); return bench(function() { numeric.dot(A,B); }); },
+	function(n) { var A = new goog.math.Matrix(mkA(n)), B = new goog.math.Matrix(mkA(n)); return bench(function() { A.multiply(B); }); },
+	function(n) { var A = $M(mkA(n)), B = $M(mkA(n)); return bench(function() { A.multiply(B); }); }
 	],
 	[
-	'Matrix+Matrix sum', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { A.add(A); }); },
+	'Matrix-Matrix sum', [3,5,10,20,30,50,75,100],
+	function(n) { var A = mkA(n); return bench(function() { numeric.add(A,A); }); },
 	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.add(A); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.add(A); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.add(A); }); }
 	],
 	[
 	'Matrix inverse', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { A.inv(); }); },
+	function(n) { var A = mkA(n); return bench(function() { numeric.inv(A); }); },
 	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getInverse(); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); },
+	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
 	]
 ];
 
+var pwr = [1,2,2,2,2,2,3,2,3];
+
 var k=0,b=0;
-var libs = ['Numeric','Closure','Sylvester'];
+var libs = ['Numeric','Closure 5 Dec 2011','Sylvester 5 Dec 2011'];
 var datasets = [];
 var l;
 var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
-for(l=0;l<libs.length;l++) { datasets[l] = { data: [], label: libs[l], color: colors[l], points: { show: true }, lines: { show: true } }; }
+for(l=0;l<libs.length;l++) { 
+	datasets[l] = { 
+		data: [], 
+		label: libs[l], 
+		color: colors[l], 
+		points: { show: true }, 
+		lines: { show: true } 
+		};
+}
 l=1;
 var l0,xticks = [];
 for(b=0;b<benchmarks.length;b++) {
 	l0 = l;
 	for(k=0;k<benchmarks[b][1].length;k++) {
-		datasets[0].data.push([l,1]);
 		l++;
 	}
 	xticks.push([(l0+l)*0.5,benchmarks[b][0]]);
-	datasets[0].data.push(null);
 }
 k=0;
 b=0;
 var count = 1;
-
+var MSIE = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
 numeric.precision = 6;
-function invbench() {
-	var A,ks,SA,GA,sz = benchmarks[b][1][k];
-	var i,j;
+var c0 = [[],[],[]];
+function invbench(b,k,lib,rep) {
+	var ks,sz = benchmarks[b][1][k];
+	var i,j,foo;
 	ks = sz.toString();
-	A = mkA(sz);
-	SA = $M(A);
-	GA = new goog.math.Matrix(A);
-	var c0 = [[],[],[]];
-	for(j=0;j<5;j++) {
-		for(i=2;i<benchmarks[b].length;i++) { c0[i-2][j] = benchmarks[b][i](sz); }
+	if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
+	else { foo = benchmarks[b][lib+2]; c0[lib][rep] = foo(sz); }
+	rep++;
+	if(rep === 3) { rep = 0; lib++; }
+	if(lib+2 === benchmarks[b].length) {
+		k++;
+		lib=0;
+		var cps = [];
+		var mi = 1e6/Math.pow(benchmarks[b][1][k-1],pwr[b]);
+		for(i=0;i<3;i++) {
+			cps[i] = (c0[i][0]+c0[i][1]+c0[i][2])/(3*mi);
+		}
+		for(i=0;i<cps.length;i++) {
+			datasets[i].data.push([count,cps[i]]);
+		}
+		var foo = '<td>n='+ks+'</td>';
+		var color = '', uncolor='';
+		for(i=0;i<cps.length;i++) {
+			foo +=  '<td>'+cps[i].toPrecision(8)+'</td>';
+		}
+		if(!MSIE) {
+			var t = document.getElementById('bench');
+			var r = t.insertRow(-1);
+			if(k === 1) { 
+				r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
+			    	          +'<td width=125px><b>Numeric</b></td>'
+		            	      +'<td width=125px><b>Google Closure</b></td>'
+		                	  +'<td width=125px><b>Sylvester</b></td>');
+				r = t.insertRow(-1); 
+			}
+			r.innerHTML = foo;
+		}
+		$.plot($("#placeholder"), datasets, 
+		    { 
+		   	  legend: {container: '#legend'}, 
+	    	  xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
+	    	  yaxis:  {ticks:20}
+    		});
+	    c0 = [[],[],[]];
+		count++;
 	}
-	var cps = [],foo;
-	for(i=0;i<3;i++) { foo = c0[i].sort(function(a,b) { return a-b; }); cps[i] = foo[2]; }
-	var speedup = 1000000,which=0;
-	for(i=1;i<cps.length;i++) {
-		if(cps[0]/cps[i] < speedup) { speedup = cps[0]/cps[i]; which = i; }
-		datasets[i].data.push([count,cps[i]/cps[0]]);
-	}
-	var foo = '<td>n='+ks+'</td>';
-	var color = '', uncolor='';
-	for(i=0;i<cps.length;i++) {
-		if(i === 0) { color = '<font color="#008000"><b>'; uncolor='</b></font>'; }
-		else if(i === which) { color = '<font color="#800000"><b>'; uncolor='</b></font>'; }
-		else { color = ''; uncolor=''; }
-		foo +=  '<td>'+color+(cps[i].toPrecision(8))+uncolor+'</td>';
-	}
-	foo += '<td>Numeric/'+libs[which]+'='+speedup.toPrecision(3)+'</td>';
-	var t = document.getElementById('bench');
-	var r = t.insertRow(-1);
-	if(k === 0) { 
-		r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
-		              +'<td width=125px><b>Numeric</b></td>'
-	                  +'<td width=125px><b>Google Closure</b></td>'
-	                  +'<td width=125px><b>Sylvester</b></td>'
-	                  +'<td width=125px><b>Speedup</b></td>');
-		r = t.insertRow(-1); 
-	}
-	r.innerHTML = foo;
-	k++;
 	if(k === benchmarks[b][1].length) {
+		for(i=0;i<cps.length;i++) datasets[i].data.push(null);
 		k=0; b++;
-		for(i=1;i<cps.length;i++) datasets[i].data.push(null);
 	}
-	if(b < benchmarks.length) { setTimeout('invbench()',0); }
-	$.plot($("#placeholder"), datasets, {legend: {container: '#legend'}, xaxis:{ticks:xticks, tickLength:0}});
-	count++;
+	if(b < benchmarks.length) { 
+		setTimeout('invbench('+b.toString()
+		                  +','+k.toString()
+		                  +','+lib.toString()
+		                  +','+rep.toString()
+		                  +')',MSIE?10:0); }
 }
 
-window.onload = invbench;
+window.onload = function() { invbench(0,0,0,0); }
 </script>
+
+<br><br><br>
 </body>

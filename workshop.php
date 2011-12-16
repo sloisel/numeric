@@ -1,3 +1,28 @@
+<?php
+
+function con() {
+    mysql_connect() or die('Could not connect: '.mysql_error);
+    mysql_select_db('sloisel_numeric') or die('Could not select db: ' . mysql_error());
+}
+con();
+
+if(isset($_POST['savedata'])) {
+	$data = $_POST['savedata'];
+	if (get_magic_quotes_gpc())  
+ 		$data = stripslashes($data);
+	json_decode($data) or die("json error");
+	$f = hash('sha256',$data);
+	if($f === "") { exit; }
+	$d = mysql_real_escape_string($data);
+	$q = "insert ignore into blobs value ('$f','$d')";
+	$result = mysql_query($q) or die('Could not save script: ' . mysql_error());
+	header('Location: workshop.php?link=' . $_GET['link']);
+	exit;
+}
+
+header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+?>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -329,3 +354,54 @@ return {
 </script>
 
 <br><br><br>
+
+
+<script>
+<?php
+$incs = NULL;
+
+if(isset($_GET['link'])) {
+	$f = $_GET['link'];
+	if(!preg_match('/^[0-9a-fA-F]*$/',$f)) { exit; }
+	$q = "select v from blobs where k = '".$f."'";
+	$result = mysql_query($q) or die('Could not fetch script: ' . mysql_error());
+	$s = mysql_fetch_row($result) or die ('Could not fetch field: ' . mysql_error());
+	$restore = $s[0];
+	$foo = json_decode($restore,true) or die("json error");
+	$incs = $foo['scripts'];
+	if(is_null($incs)) {
+		$incs = array(1 => '/scripts/numeric.js?key=54ad53df117332255d5b82212af0464790d56ba7028159c5240cd3985789eee8');
+	}
+	echo <<<EOT
+(function () {
+	var _restore = $restore;
+	$(document).ready(function () { workshop.restore(_restore); } );
+}());
+EOT;
+} else {
+	echo <<<EOT
+(function () {
+	var _restore = ((typeof localStorage.savedata !== "undefined")?
+	                (JSON.parse(localStorage.savedata)):
+	                {inputs: [], outputs: [], 
+	                 scripts: ["/scripts/numeric.js?key=54ad53df117332255d5b82212af0464790d56ba7028159c5240cd3985789eee8"] });
+	$(document).ready(function () { workshop.restore(_restore); } );
+}());
+EOT;
+}
+?>
+
+workshop.version = "2011-12-16_17-53-20";
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23862738-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+

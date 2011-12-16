@@ -1,6 +1,9 @@
 var _send = (typeof workerPostMessage !== 'undefined')?workerPostMessage:postMessage;
 var _myeval = eval;
 var _flag = 0;
+var workshop = (typeof workshop === "undefined")?{}:workshop;
+workshop.plot = function(p,o,s) { _send(JSON.stringify({k:workshop.current.k,n:workshop.current.n,p:p,o:o,s:s})); }
+
 _onmessage = function(event) {
     var _ans, _foo, _x = JSON.parse(event.data);
     if(typeof _x.imports !== "undefined") {
@@ -8,8 +11,9 @@ _onmessage = function(event) {
         return;
     }
     try {
+        workshop.current = {k:_x.k, n:_x.n};
         _ans = _myeval(_x.e);
-        current = -1;
+        workshop.current = undefined;
         if(typeof(_ans) !== "undefined") { _foo = numeric.prettyPrint(_ans,true); }
         else { _foo = ""; }
     } catch(e) {
