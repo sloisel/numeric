@@ -1,0 +1,87 @@
+<html>
+<head>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="resources/style.css">
+<title>Numeric Javascript</title>
+<body>
+<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
+<table class="nav"><tr class="nav">
+<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
+<td class="navmain">
+<b>Numeric Javascript</b>
+<ul class="nav">
+	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
+	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
+	<li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
+	<li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
+</ul>
+<ul class="nav">
+	<li class="sep">DOWNLOADS:</li>
+	<li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
+	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+</ul>
+</table>
+
+<a href="http://www.numericjs.com/">Numeric Javascript</a>
+is a library for numerical computations in Javascript. You can write Javascript
+programs that manipulate matrices, solve linear problems, find eigenvalues and
+solve optimization problems in the browser using <a href="workshop.php">Numeric Workshop</a>
+or in your own web pages by <a href="lib/numeric.js">downloading numeric.js</a>. You can also use
+Numeric Javascript outside the browser in any Javascript environment.<br><br>
+
+<div style="float:right; text-align:center;">
+<a href="workshop.php"><img src="resources/workshop.png" width=400><br>
+Numeric Workshop</a>
+</div>
+
+<h1>Workshop</h1>
+
+The <a href="workshop.php">Workshop</a> is a Javascript console that can be used to experiment with
+Numeric Javascript by writing a "Worksheet" of Javascript commands. This Worksheet can be saved and
+shared simply by sharing a permanent link to the Worksheet.<br><br>
+
+The Workshop also includes extensive and portable plotting facilities using the
+<a href="http://code.google.com/p/flot/">Flot</a> plotting library.
+
+<h1>Performance</h1>
+
+Although Javascript does not reach the same performance as native programs, the Numeric Javascript
+library is carefully tuned to obtain the best possible performance for a Javascript program. You
+can compare the performance of Numeric, <a href="http://sylvester.jcoglan.com/">Sylvester</a> and
+<a href="http://code.google.com/closure/">Google Closure</a>'s 
+<a href="http://code.google.com/p/closure-library/source/browse/trunk/closure/goog/math/matrix.js">Matrix</a>
+object using our <a href="benchmark.html">Benchmark</a>.
+
+<h1>Correctness</h1>
+
+Numeric Javascript contains a set of unit tests that are automatically run in several browsers. You can
+view the <a href="report.html">report</a> that is automatically generated.
+
+<h1>About the Author</h1>
+
+I am <a href="http://www.ma.hw.ac.uk/~loisel/">S&eacute;bastien Loisel</a>.
+You can use the following bibtex entry:
+
+<pre>
+@misc{
+numericjs,
+Author = {S{\'e}bastien Loisel},
+Title = {Numeric Javascript},
+howpublished = {\url{http://www.numericjs.com/}} }
+</pre>
+
+<br><br><br>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23862738-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>

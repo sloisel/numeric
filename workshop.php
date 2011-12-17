@@ -391,7 +391,7 @@ EOT;
 }
 ?>
 
-workshop.version = "2011-12-16_23-53-06";
+workshop.version = "2011-12-17_09-16-28";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);
