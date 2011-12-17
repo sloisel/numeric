@@ -381,7 +381,7 @@ EOT;
 } else {
 	echo <<<EOT
 (function () {
-	var _restore = ((typeof localStorage.savedata !== "undefined")?
+	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
 	                 scripts: ["/scripts/numeric.js?key=54ad53df117332255d5b82212af0464790d56ba7028159c5240cd3985789eee8"] });
@@ -391,7 +391,7 @@ EOT;
 }
 ?>
 
-workshop.version = "2011-12-16_17-53-20";
+workshop.version = "2011-12-16_23-53-06";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

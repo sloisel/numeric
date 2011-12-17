@@ -43,8 +43,8 @@ if url == "":
 
 mainlinks = [("linkhome","library for numerical computations"),
              ("linkworkshop","IN"),
-             ("linkdoc","Class Index"),
-             ("linklib","@namespace The numeric library"),
+             ("linkdoc","vectors and matrices"),
+             ("linklib","use strict"),
              ("linklibmin","var numeric={};numeric"),]
 driver=0
 print "Link testing."

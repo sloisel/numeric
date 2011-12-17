@@ -122,7 +122,7 @@ div.button2 {
     -o-user-select: none;
     user-select: none;
 }
-div.interactions { width:100%; }
+div.interactions { width:100%; clear:both; }
 div.spacer { width:5px; }
 div.inner { width:100%; display:table-row; }
 div.input {

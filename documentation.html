@@ -8,7 +8,7 @@
 <table class="nav"><tr class="nav">
 <td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
 <td class="navmain">
-<b>Numeric Javascript: Benchmarks</b>
+<b>Numeric Javascript: Documentation</b>
 <ul class="nav">
 	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
 	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
@@ -28,10 +28,10 @@ This allows regression tests to run predictably:
 0.2694
 </pre>
 -->
- <a href="http://www.numericjs.com/">Numeric Javascript</a> is
-  library that provides many useful functions for numerical
- calculations, particularly for linear algebra (vectors and matrices). 
- You can create vectors and matrices and multiply them:
+<a href="http://www.numericjs.com/">Numeric Javascript</a> is
+library that provides many useful functions for numerical
+calculations, particularly for linear algebra (vectors and matrices). 
+You can create vectors and matrices and multiply them:
 <pre>
 > A = [[1,2,3],[4,5,6]];
 [[1,2,3],
@@ -41,14 +41,15 @@ This allows regression tests to run predictably:
 > numeric.dot(A,x);
 [50,122]
 </pre>
- The example shown above can be executed in the
- <a href="http://www.numericjs.com/workshop.php">Javascript Workshop</a> or at any
- Javascript prompt. In the example above, a matrix <tt>A</tt> and a vector <tt>x</tt> are created
- and multiplied using the <tt>numeric.dot()</tt> function, and the result of this matrix-vector 
- product is printed.<br><br>
+The example shown above can be executed in the
+<a href="http://www.numericjs.com/workshop.php">Javascript Workshop</a> or at any
+Javascript prompt. The Workshop provides plotting capabilities:<br>
+<img src="resources/workshop.png"><br>
+The function <tt>workshop.plot()</tt> is essentially the <a href="http://code.google.com/p/flot/">flot</a>
+plotting command.<br><br>
  
- The <tt>numeric</tt> library provides functions that implement most of the usual Javascript
- operators for vectors and matrices:
+The <tt>numeric</tt> library provides functions that implement most of the usual Javascript
+operators for vectors and matrices:
 <pre>
 > y = [10,1,2];
 [10,1,2]
@@ -75,7 +76,7 @@ The function <tt>numeric.inv()</tt> can be used to compute the inverse of an inv
  [0.7381,-0.3095,0.07143]]
 </pre>
 
- The <tt>Math</tt> object functions have also been adapted to work on Arrays as follows:
+The <tt>Math</tt> object functions have also been adapted to work on Arrays as follows:
 <pre>
 > numeric.exp([1,2]);
 [2.718,7.389]

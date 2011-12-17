@@ -50,7 +50,7 @@ EOT;
 } else {
 	echo <<<EOT
 (function () {
-	var _restore = ((typeof localStorage.savedata !== "undefined")?
+	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
 	                 scripts: ["/scripts/numeric.js?key=NUMERICJSHASH"] });

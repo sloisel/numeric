@@ -17,9 +17,11 @@ def test(name,driver):
             t=t+1
             foo = ""
             try:
-                input = driver.find_element_by_id("in"+str(k))
+                input = driver.find_element_by_id("text_"+str(k+1))
                 input.send_keys(tests[k][0]+'\n')
-                output = driver.find_element_by_id("out"+str(k))
+                bar = "out_"+str(k+1)
+                WebDriverWait(driver,5).until(lambda driver: driver.find_element_by_id(bar).text not in ["","<img src=\"resources/wait16.gif\">"])
+                output = driver.find_element_by_id(bar)
                 foo = re.sub(r'\s','',output.text)
                 if(tests[k][1][0:6]=="Error:"):
                     foo = foo[0:len(tests[k][1])]
@@ -51,7 +53,7 @@ try:
     driver = eval('webdriver.'+client+'()')
     print "Using",client
     driver.implicitly_wait(2)
-    driver.get(url)
+    driver.get(url+'workshop.php')
     test(client,driver)
 except:
     print "Could not use browser",client
