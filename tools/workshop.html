@@ -9,11 +9,11 @@
 <title>Numeric Javascript: Workshop</title>
 <!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
 <script src="tools/jquery-1.7.1.min.js"></script>
-<script src="tools/jquery.flot.min.js"</script>
+<script src="tools/jquery.flot.min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <script src="tools/json2.js"></script>
-<body>
+<body onload="workshop.startup()">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
 <table class="nav"><tr class="nav">
 <td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
@@ -31,6 +31,11 @@
 	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
 </ul>
 </table>
+
+<div style="display:none;border:5px solid green;margin:10px;" id="divupdate">
+There is a more recent version of <tt>numeric.js</tt> than the one that is loaded in this worksheet.
+<a href="javascript: workshop.update();">Click here</a> to reload the page with the latest version of the library.
+</div>
 
 <form name="myform" action="workshop.php" method="post">
 <ul class="nav">
@@ -149,9 +154,8 @@ function saveit() {
 	}
 }
 
-function outputChanged(k,o,clear) {
+function outputChanged(k,o) {
 	var i = divorder.indexOf(k);
-	if(clear) { savedata.outputs[i] = []; }
 	savedata.outputs[i].push(o);
 	saveit();
 }
@@ -159,7 +163,7 @@ function outputChanged(k,o,clear) {
 w.onmessage = function(ev) {
 	var x = JSON.parse(ev.data);
 	var y = $('#out_'+x.k.toString())[0];
-	if(clear[x.k]) y.innerHTML = '';
+	if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[divorder.indexOf(x.k)] = []; }
 	if(typeof x.p !== "undefined") {
 		var plotid = "plot_"+plotcount.toString();
 		plotcount++;
@@ -168,19 +172,20 @@ w.onmessage = function(ev) {
 			setTimeout(function () { 
 				plotit(plotid,x); 
 				setTimeout(function () { 
-					outputChanged(x.k,x,clear); 
+					outputChanged(x.k,x); 
 				},0); 
 			},0); 
-		}(clear[x.k]));
+		}());
 		clear[x.k] = false;
 		return;
 	}
 	else { 
-		y.innerHTML += x.o; 
-		(function (clear) { 
+		x.o = x.o.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+		y.innerHTML += x.o;
+		(function () { 
 			setTimeout(function() { 
 				outputChanged(x.k,x.o,clear); },0) 
-			}(clear[x.k]));
+			}());
 		clear[x.k] = false;
 	}
 }
@@ -242,6 +247,9 @@ function inputChanged(k){
 
 function restore2(foo) {
 	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
+	if(foo.scripts.indexOf(workshop.updateVersion)<0) {
+		$("#divupdate").css({display: 'block'});
+	}
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
 	var input,output,i,j;
 	for(i=1;i<foo.inputs.length;i++) {
@@ -252,7 +260,7 @@ function restore2(foo) {
 		if(typeof foo.outputs[i] === "undefined") { continue; }
 		for(j=0;j<foo.outputs[i].length;j++) {
 			if(typeof foo.outputs[i][j] === "string") {
-				output.innerHTML += foo.outputs[i];
+				output.innerHTML += foo.outputs[i][j];
 			} else {
 				(function(i,j) {
 					var plotid = "plot_"+plotcount.toString();
@@ -300,6 +308,11 @@ function reset() {
 	localStorage.clear();
 	window.location.replace('workshop.php');
 }
+function update() {
+	savedata.scripts = [workshop.updateVersion];
+	localStorage.savedata = JSON.stringify(savedata);
+	window.location.reload();
+}
 
 function submit() {
 	var f = document.myform;
@@ -321,7 +334,8 @@ return {
 	    savedata:savedata,
 	    restore:restore,
 	    reset:reset,
-	    submit:submit
+	    submit:submit,
+	    update:update
 	    }
 }());
 //workshop.reset();

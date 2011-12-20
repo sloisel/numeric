@@ -19,8 +19,7 @@ echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
 cd tools
-#java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
-./mkdoc.sh > ../log/jsdoc.log 2>&1
+java -jar closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js=../lib/numeric.js --js_output_file=../lib/numeric-min.js > ../log/closure-compiler.log 2>&1
 wait
 rm -f buildpid.log
 rm -f nodepid.log

@@ -34,11 +34,11 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 <title>Numeric Javascript: Workshop</title>
 <!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
 <script src="tools/jquery-1.7.1.min.js"></script>
-<script src="tools/jquery.flot.min.js"</script>
+<script src="tools/jquery.flot.min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
 <script src="tools/json2.js"></script>
-<body>
+<body onload="workshop.startup()">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
 <table class="nav"><tr class="nav">
 <td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
@@ -56,6 +56,11 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
 </ul>
 </table>
+
+<div style="display:none;border:5px solid green;margin:10px;" id="divupdate">
+There is a more recent version of <tt>numeric.js</tt> than the one that is loaded in this worksheet.
+<a href="javascript: workshop.update();">Click here</a> to reload the page with the latest version of the library.
+</div>
 
 <form name="myform" action="workshop.php" method="post">
 <ul class="nav">
@@ -174,9 +179,8 @@ function saveit() {
 	}
 }
 
-function outputChanged(k,o,clear) {
+function outputChanged(k,o) {
 	var i = divorder.indexOf(k);
-	if(clear) { savedata.outputs[i] = []; }
 	savedata.outputs[i].push(o);
 	saveit();
 }
@@ -184,7 +188,7 @@ function outputChanged(k,o,clear) {
 w.onmessage = function(ev) {
 	var x = JSON.parse(ev.data);
 	var y = $('#out_'+x.k.toString())[0];
-	if(clear[x.k]) y.innerHTML = '';
+	if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[divorder.indexOf(x.k)] = []; }
 	if(typeof x.p !== "undefined") {
 		var plotid = "plot_"+plotcount.toString();
 		plotcount++;
@@ -193,19 +197,20 @@ w.onmessage = function(ev) {
 			setTimeout(function () { 
 				plotit(plotid,x); 
 				setTimeout(function () { 
-					outputChanged(x.k,x,clear); 
+					outputChanged(x.k,x); 
 				},0); 
 			},0); 
-		}(clear[x.k]));
+		}());
 		clear[x.k] = false;
 		return;
 	}
 	else { 
-		y.innerHTML += x.o; 
-		(function (clear) { 
+		x.o = x.o.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+		y.innerHTML += x.o;
+		(function () { 
 			setTimeout(function() { 
 				outputChanged(x.k,x.o,clear); },0) 
-			}(clear[x.k]));
+			}());
 		clear[x.k] = false;
 	}
 }
@@ -267,6 +272,9 @@ function inputChanged(k){
 
 function restore2(foo) {
 	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
+	if(foo.scripts.indexOf(workshop.updateVersion)<0) {
+		$("#divupdate").css({display: 'block'});
+	}
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
 	var input,output,i,j;
 	for(i=1;i<foo.inputs.length;i++) {
@@ -277,7 +285,7 @@ function restore2(foo) {
 		if(typeof foo.outputs[i] === "undefined") { continue; }
 		for(j=0;j<foo.outputs[i].length;j++) {
 			if(typeof foo.outputs[i][j] === "string") {
-				output.innerHTML += foo.outputs[i];
+				output.innerHTML += foo.outputs[i][j];
 			} else {
 				(function(i,j) {
 					var plotid = "plot_"+plotcount.toString();
@@ -325,6 +333,11 @@ function reset() {
 	localStorage.clear();
 	window.location.replace('workshop.php');
 }
+function update() {
+	savedata.scripts = [workshop.updateVersion];
+	localStorage.savedata = JSON.stringify(savedata);
+	window.location.reload();
+}
 
 function submit() {
 	var f = document.myform;
@@ -346,7 +359,8 @@ return {
 	    savedata:savedata,
 	    restore:restore,
 	    reset:reset,
-	    submit:submit
+	    submit:submit,
+	    update:update
 	    }
 }());
 //workshop.reset();
@@ -370,28 +384,29 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=54ad53df117332255d5b82212af0464790d56ba7028159c5240cd3985789eee8');
+		$incs = array(1 => '/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166');
 	}
 	echo <<<EOT
-(function () {
+workshop.startup = (function () {
 	var _restore = $restore;
-	$(document).ready(function () { workshop.restore(_restore); } );
-}());
+	workshop.restore(_restore);
+});
 EOT;
 } else {
 	echo <<<EOT
-(function () {
+workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=54ad53df117332255d5b82212af0464790d56ba7028159c5240cd3985789eee8"] });
-	$(document).ready(function () { workshop.restore(_restore); } );
-}());
+	                 scripts: ["/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166"] });
+	workshop.restore(_restore);
+});
 EOT;
 }
 ?>
 
-workshop.version = "2011-12-17_09-16-28";
+workshop.version = "noversion";
+workshop.updateVersion = "/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

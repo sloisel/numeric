@@ -90,6 +90,8 @@ The <tt>Math</tt> object functions have also been adapted to work on Arrays as f
 [0.1002,0.2014]
 > numeric.atan([1,2])
 [0.7854,1.107]
+> numeric.atan2([1,2],[3,4])
+[0.3218,0.4636]
 > numeric.ceil([-2.2,3.3])
 [-2,4]
 > numeric.floor([-2.2,3.3])
@@ -234,6 +236,16 @@ Matrix products are implemented in the function the functions
 285
 </pre>
 
+Unary operators:
+<pre>
+> numeric.neg([1,-2,3])
+[-1,2,-3]
+> numeric.isFinite([10,NaN,Infinity])
+[true,false,false]
+> numeric.isNaN([10,NaN,Infinity])
+[false,true,false]
+</pre>
+
 The function <tt>numeric.dot()</tt> is "polymorphic" and selects the appropriate Matrix product:
 
 <pre>
@@ -358,47 +370,147 @@ You can also fetch a URL:
 "Hello, world!"
 </pre>
 
-You can transform a matrix to Upper Hessenberg form:
+
+You can also manipulate complex numbers:
 <pre>
-> A = [[1,2,3],[4,5,6],[7,3,5]]; QH = numeric.toUpperHessenberg(A);
-{ H: [[         1,-3.597,-0.2481],
-      [    -8.062, 8.877, 0.7846],
-      [-8.882e-16, 3.785, 1.123 ]],
-  Q: [[1,      0,      0],
-      [0,-0.4961,-0.8682],
-      [0,-0.8682, 0.4961]] }
-> numeric.norm2(numeric.sub(QH.H,numeric.dot(QH.Q,numeric.dot(A,numeric.transpose(QH.Q)))))<1e15;
-true
-> A = numeric.random([40,40]); QH = numeric.toUpperHessenberg(A); numeric.norm2(numeric.sub(QH.H,numeric.dot(QH.Q,numeric.dot(A,numeric.transpose(QH.Q)))))<1e12;
-true
+> z = new numeric.T(3,4);
+{x: 3, y: 4}
+> z.add(5)
+{x: 8, y: 4}
+> w = new numeric.T(2,8);
+{x: 2, y: 8}
+> z.add(w)
+{x: 5, y: 12}
+> z.mul(w)
+{x: -26, y: 32}
+> z.div(w)
+{x:0.5588,y:-0.2353}
+> z.sub(w)
+{x:1, y:-4}
 </pre>
 
-Also upper block triangular form:
+Complex vectors and matrices can also be handled:
 <pre>
-> A = [[1,2,5],[3,5,0],[7,-3,5]]; QH = numeric.toUpperHessenberg(A);
-{
-	H:
-	[[     1, -5.384, 0.1313],
-	 [-7.616,  3.914, -2.534],
-	 [0     , 0.4655,  6.086]],
-	Q:
-	[[1,      0,      0],
-	 [0,-0.3939,-0.9191],
-	 [0,-0.9191, 0.3939]]
-}
-> QB = numeric.QRFrancis(QH.H);
-{
-	Q:
-	[[ 0.7268,  0.6862,-0.03109],
-	 [-0.6755,  0.7222,  0.1487],
-	 [ 0.1245,-0.08704,  0.9884]],
-	B:
-	[[0,1],
-	 [2,2]]}
-> numeric.dot(QB.Q,numeric.dot(QH.H,numeric.transpose(QB.Q)))
-[[ -4.065,     1.870,  -2.264],
- [0.02559,     8.739,  -2.340],
- [      0,-1.110e-16,   6.326]]
+> z = new numeric.T([1,2],[3,4]);
+{x: [1,2], y: [3,4]}
+> z.abs()
+{x:[2,2.828],y:}
+> z.conj()
+{x:[1,2],y:[-3,-4]}
+> z.norm2()
+5.477
+> z.exp()
+{x:[-2.691,-4.830],y:[0.3836,-5.592]}
+> z.cos()
+{x:[-1.528,-2.459],y:[0.1658,-2.745]}
+> z.sin()
+{x:[0.2178,-2.847],y:[1.163,2.371]}
+> z.log()
+{x:[0.6931,1.040],y:[1.249,1.107]}
 </pre>
+
+Complex matrices:
+<pre>
+> A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]);
+{x:[[1, 2],
+	[3, 4]],
+ y:[[0, 1],
+    [2,-1]]}
+> A.inv();
+{x:[[0.1250,0.125],
+	[  0.25,    0]],
+ y:[[   0.5,-0.25],
+    [-0.375,0.125]]}
+> A.inv().dot(A)
+{x:[[1,         0],
+	[0,         1]],
+ y:[[0,-2.776e-17],
+    [0,         0]]}
+> A.get([1,1])
+{x: 4, y: -1}
+> A.transpose()
+{ x: [[1, 3],
+	  [2, 4]], 
+  y: [[0, 2],
+      [1,-1]] }
+> A.transjugate()
+{ x: [[ 1, 3],
+	  [ 2, 4]], 
+  y: [[ 0,-2],
+      [-1, 1]] }
+> numeric.T.rep([2,2],new numeric.T(2,3));
+{ x: [[2,2],
+	  [2,2]],
+  y: [[3,3],
+      [3,3]] }
+</pre>
+
+Eigenvalues:
+<pre>
+> A = [[1,2,5],[3,5,0],[7,-3,5]];
+[[ 1, 2, 5],
+ [ 3, 5, 0],
+ [ 7,-3, 5]]
+> B = numeric.eig(A);
+{lambda:{x:[8.742,-4.068,6.326],y:},
+ E: {x: [[-0.5634,-0.7281,-0.4034 ],
+ 	     [-0.4516, 0.2409,-0.9127 ],
+ 	     [-0.6918, 0.6417,-0.06462]],
+ 	 y:}}
+> C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv());
+{x:[[1.000,2     ,5        ],
+	[3    ,5     ,8.882e-16],
+	[7    ,-3.000,5.000    ]],
+y:}
+> C.sub(A).norm2()<1e-14
+true
+</pre>
+Note that eigenvalues and eigenvectors are returned as complex numbers (type <tt>numeric.T</tt>). This is because
+eigenvalues are often complex even when the matrix is real. For example:
+<pre>
+> B = numeric.eig([[1,2,3,4],[-1,1,-1,1],[3,3,9,13],[1,14,1,0]])
+{lambda:{x: [-5.312 ,-0.09390,  8.203  ,  8.203  ],
+         y: [0      ,0       , -2.213  ,  2.213  ]},
+      E:{x:[[ 0.1120,-0.7849 ,  0.2936 , -0.01754],
+      	    [ 0.2330, 0.01638, -0.1545 ,  0.08076],
+      	    [ 0.6089, 0.5767 ,  0.9220 , -0.07533],
+      	    [-0.7499,-0.2261 , -0.07583,  0.1470 ]],
+      	 y:[[      0,       0,  0.01754, -0.2936 ],
+      	    [      0,       0, -0.08076,  0.1545 ],
+      	    [      0,       0,  0.07533, -0.9220 ],
+      	    [      0,       0,  -0.1470,  0.07583]]}}
+> B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv())
+{x:[[     1.000,     2.000,     3.000,     4.000],
+	[    -1    ,     1.000,    -1    ,     1.000],
+	[     3.000,     3.000,     9.000,    13.00 ],
+	[     1.000,    14.00 ,     1.000, 5.995e-15]],
+ y:[[-1.110e-16,-1.776e-15,-4.441e-16, 8.882e-16],
+    [ 1.388e-16,-2.665e-15,-2.220e-16,-8.882e-16],
+    [-4.441e-16,-7.105e-15,-1.776e-15,-5.329e-15],
+    [ 1.665e-16, 6.217e-15, 1.138e-15, 2.887e-15]]}
+</pre>
+This matrix has two real eigenvalues (-5.312 and -0.09390) and a pair of complex eigenvalues 0.8203 +/- 2.213i.
+
+<!--
+	Some further tests.
+<pre>
+> n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12
+true
+> n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+</pre>
+-->
 
 <br><br><br>

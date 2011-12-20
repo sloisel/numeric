@@ -42,25 +42,26 @@ if(isset($_GET['link'])) {
 		$incs = array(1 => '/scripts/numeric.js?key=NUMERICJSHASH');
 	}
 	echo <<<EOT
-(function () {
+workshop.startup = (function () {
 	var _restore = $restore;
-	$(document).ready(function () { workshop.restore(_restore); } );
-}());
+	workshop.restore(_restore);
+});
 EOT;
 } else {
 	echo <<<EOT
-(function () {
+workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
 	                 scripts: ["/scripts/numeric.js?key=NUMERICJSHASH"] });
-	$(document).ready(function () { workshop.restore(_restore); } );
-}());
+	workshop.restore(_restore);
+});
 EOT;
 }
 ?>
 
 workshop.version = "VERSIONSTRING";
+workshop.updateVersion = "/scripts/numeric.js?key=NUMERICJSHASH";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

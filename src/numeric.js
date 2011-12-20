@@ -2,6 +2,9 @@
 
 var numeric = {};
 
+/*
+ * 1. Utility functions
+ */
 numeric.bench = function bench (f,interval) {
     var t1,t2,n,i;
     if(typeof interval === "undefined") { interval = 15; }
@@ -53,7 +56,7 @@ numeric.prettyPrint = function(x) {
             return false;
         }
         if(x === null) { ret.push("null"); return false; }
-        if(typeof x === "function") { ret.push(x.toString().replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;')); return true; }
+        if(typeof x === "function") { ret.push(x.toString()); return true; }
         if('length' in x) {
             var flag = false;
             ret.push('[');
@@ -71,6 +74,61 @@ numeric.prettyPrint = function(x) {
     return ret.join('');
 }
 
+numeric.parseDate = function parseDate(d) {
+    function foo(d) {
+        if(typeof d === 'string') { return Date.parse(d.replace(/-/g,'/')); }
+        if(!(d instanceof Array)) { throw new Error("parseDate: parameter must be arrays of strings"); }
+        var ret = [],k;
+        for(k=0;k<d.length;k++) { ret[k] = foo(d[k]); }
+        return ret;
+    }
+    return foo(d);
+}
+
+numeric.parseFloat = function parseFloat_(d) {
+    function foo(d) {
+        if(typeof d === 'string') { return parseFloat(d); }
+        if(!(d instanceof Array)) { throw new Error("parseFloat: parameter must be arrays of strings"); }
+        var ret = [],k;
+        for(k=0;k<d.length;k++) { ret[k] = foo(d[k]); }
+        return ret;
+    }
+    return foo(d);
+}
+
+numeric.parseCSV = function parseCSV(t) {
+    var foo = t.split('\n');
+    var j,k;
+    var ret = [];
+    var pat = /(([^'",]*)|('[^']*')|("[^"]*")),/g;
+    var patnum = /^\s*(([+-]?[0-9]+(\.[0-9]*)?(e[+-]?[0-9]+)?)|([+-]?[0-9]*(\.[0-9]+)?(e[+-]?[0-9]+)?))\s*$/;
+    var stripper = function(n) { return n.substr(0,n.length-1); }
+    var count = 0;
+    for(k=0;k<foo.length;k++) {
+      var bar = (foo[k]+",").match(pat),baz;
+      if(bar.length>0) {
+          ret[count] = [];
+          for(j=0;j<bar.length;j++) {
+              baz = stripper(bar[j]);
+              if(patnum.test(baz)) { ret[count][j] = parseFloat(baz); }
+              else ret[count][j] = baz;
+          }
+          count++;
+      }
+    }
+    return ret;
+}
+
+numeric.getURL = function getURL(url) {
+    var client = new XMLHttpRequest();
+    client.open("GET",url,false);
+    client.send();
+    return client;
+}
+
+/*
+ * 2. Linear algebra with Arrays.
+ */
 numeric._dim = function _dim(x) {
     var ret = [];
     while(typeof x === "object") { ret.push(x.length); x = x[0]; }
@@ -273,6 +331,21 @@ numeric.diag = function diag(d) {
     }
     return A;
 }
+numeric.getDiag = function(A) {
+    var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = new Array(n);
+    for(i=n-1;i>=3;i-=4) { 
+        i1 = i-1; i2 = i-2; i3 = i-3;
+        ret[i] = A[i][i];
+        ret[i1] = A[i1][i1];
+        ret[i2] = A[i2][i2];
+        ret[i3] = A[i3][i3];
+    }
+    while(i>=0) {
+        ret[i] = A[i][i];
+        i--;
+    }
+    return ret;
+}
 
 numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)); }
 numeric.pointwise = function pointwise(params,body,setup) {
@@ -325,50 +398,49 @@ numeric._biforeach = (function _biforeach(x,y,s,k,f) {
 numeric.any = numeric.mapreduce('if(xi) return true;','false');
 numeric.all = numeric.mapreduce('if(!xi) return false;','true');
 
-;
-(function () {
-    numeric.ops2 = { 
-            add: '+',
-            sub: '-',
-            mul: '*',
-            div: '/',
-            mod: '%',
-            and: '&&',
-            or:  '||',
-            eq:  '===',
-            neq: '!==',
-            lt:  '<',
-            gt:  '>',
-            leq: '<=',
-            geq: '>=',
-            band: '&',
-            bor: '|',
-            bxor: '^',
-            lshift: '<<',
-            rshift: '>>',
-            rrshift: '>>>'
-    };
-    numeric.opseq = {
-            addeq: '+=',
-            subeq: '-=',
-            muleq: '*=',
-            diveq: '/=',
-            modeq: '%=',
-            lshifteq: '<<=',
-            rshifteq: '>>=',
-            rrshifteq: '>>>=',
-            andeq: '&=',
-            oreq: '|=',
-            xoreq: '^='
-    }
-    numeric.mathfuns = ['abs','acos','asin','atan','ceil','cos',
-                        'exp','floor','log','round','sin','sqrt','tan'];
-    numeric.ops1 = {
-            neg: '-',
-            not: '!',
-            bnot: '~'
-    }
+numeric.ops2 = { 
+        add: '+',
+        sub: '-',
+        mul: '*',
+        div: '/',
+        mod: '%',
+        and: '&&',
+        or:  '||',
+        eq:  '===',
+        neq: '!==',
+        lt:  '<',
+        gt:  '>',
+        leq: '<=',
+        geq: '>=',
+        band: '&',
+        bor: '|',
+        bxor: '^',
+        lshift: '<<',
+        rshift: '>>',
+        rrshift: '>>>'
+};
+numeric.opseq = {
+        addeq: '+=',
+        subeq: '-=',
+        muleq: '*=',
+        diveq: '/=',
+        modeq: '%=',
+        lshifteq: '<<=',
+        rshifteq: '>>=',
+        rrshifteq: '>>>=',
+        andeq: '&=',
+        oreq: '|=',
+        xoreq: '^='
+};
+numeric.mathfuns = ['abs','acos','asin','atan','ceil','cos',
+                    'exp','floor','log','round','sin','sqrt','tan'];
+numeric.ops1 = {
+        neg: '-',
+        not: '!',
+        bnot: '~'
+};
 
+(function () {
     var i,o;
     for(i in numeric.ops2) {
         if(numeric.ops2.hasOwnProperty(i)) {
@@ -388,13 +460,19 @@ numeric.all = numeric.mapreduce('if(!xi) return false;','true');
     for(i in numeric.ops1) {
         if(numeric.ops1.hasOwnProperty(i)) {
             o = numeric.ops1[i];
-            numeric[i] = numeric.pointwise(['x[i]'],'ret[i] = '+o+'x[i];');
+            numeric[i+'V'] = numeric.pointwise(['x[i]'],'ret[i] = '+o+'x[i];');
+            numeric[i] = Function('x','if(typeof x === "object") return numeric.'+i+'V(x);\nreturn '+o+'(x);');
         }
     }
     for(i=0;i<numeric.mathfuns.length;i++) {
         o = numeric.mathfuns[i];
-        numeric[o] = numeric.pointwise(['x[i]'],'ret[i] = fun(x[i]);','var fun = Math.'+o+';');
+        numeric[o+'V'] = numeric.pointwise(['x[i]'],'ret[i] = fun(x[i]);','var fun = Math.'+o+';');
+        numeric[o] = Function('x','if(typeof x === "object") return numeric.'+o+'V(x);\nreturn Math.'+o+'(x);');
     }
+    numeric.isNaNV = numeric.pointwise(['x[i]'],'ret[i] = isNaN(x[i]);');
+    numeric.isNaN = function isNaN(x) { if(typeof x === "object") return numeric.isNaNV(x); return isNaN(x); }
+    numeric.isFiniteV = numeric.pointwise(['x[i]'],'ret[i] = isFinite(x[i]);');
+    numeric.isFinite = function isNaN(x) { if(typeof x === "object") return numeric.isFiniteV(x); return isFinite(x); }
     for(i in numeric.opseq) {
         if(numeric.opseq.hasOwnProperty(i)) {
             numeric[i+'S'] = new Function('x','y',
@@ -413,13 +491,24 @@ numeric.all = numeric.mapreduce('if(!xi) return false;','true');
     }
 }());
 
-numeric.nclone = function(x) {}
-numeric.nclone = numeric.pointwise(['x[i]'],'ret[i] = x[i];');
+numeric.atan2VV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = atan2(x[i],y[i]);','var atan2 = Math.atan2;');
+numeric.atan2VS = numeric.pointwise(['x[i]','y'],'ret[i] = atan2(x[i],y);','var atan2 = Math.atan2;');
+numeric.atan2SV = numeric.pointwise(['x','y[i]'],'ret[i] = atan2(x,y[i]);','var atan2 = Math.atan2;');
+numeric.atan2 = function atan2(x,y) {
+    if(typeof x === "object") {
+        if(typeof y === "object") return numeric.atan2VV(x,y);
+        return numeric.atan2VS(x,y);
+    }
+    if (typeof y === "object") return numeric.atan2SV(x,y);
+    return Math.atan2(x,y);
+}
+
+numeric.clone = numeric.pointwise(['x[i]'],'ret[i] = x[i];');
 
 numeric.inv = function inv(x) {
     var s = numeric.dim(x), abs = Math.abs;
     if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: inv() only works on square matrices'); }
-    var n = s[0], ret = numeric.identity(n),i,j,k,A = numeric.nclone(x),Aj,Ai,Ij,Ii,alpha,temp,k0,k1,k2,k3;
+    var n = s[0], ret = numeric.identity(n),i,j,k,A = numeric.clone(x),Aj,Ai,Ij,Ii,alpha,temp,k0,k1,k2,k3;
     var P = numeric.linspace(0,n-1), Q = numeric.rep([n],0);
     for(j=0;j<n-1;j++) {
         k=j;
@@ -481,7 +570,7 @@ numeric.inv = function inv(x) {
 numeric.det = function det(x) {
     var s = numeric.dim(x);
     if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: det() only works on square matrices'); }
-    var n = s[0], ret = 1,i,j,k,A = numeric.nclone(x),Aj,Ai,alpha,temp,k1,k2,k3;
+    var n = s[0], ret = 1,i,j,k,A = numeric.clone(x),Aj,Ai,alpha,temp,k1,k2,k3;
     for(j=0;j<n-1;j++) {
         k=j;
         for(i=j+1;i<n;i++) { if(Math.abs(A[i][j]) > Math.abs(A[k][j])) { k = i; } }
@@ -509,9 +598,7 @@ numeric.det = function det(x) {
 }
 
 numeric.transpose = function transpose(x) {
-    var s = numeric.dim(x);
-    if(s.length !== 2) { throw new Error('numeric: transpose() can only be used on matrices'); }
-    var i,j,j1,j2,j3,m = s[0],n = s[1], ret=new Array(n),Ai;
+    var i,j,j1,j2,j3,m = x.length,n = x[0].length, ret=new Array(n),Ai;
     for(j=0;j<n;j++) ret[j] = new Array(m);
     for(i=0;i<m;i++) {
         Ai = x[i];
@@ -523,6 +610,22 @@ numeric.transpose = function transpose(x) {
             ret[j3][i] = Ai[j3];
         }
         while(j>=0) { ret[j][i] = Ai[j]; j--; }
+    }
+    return ret;
+}
+numeric.negtranspose = function negtranspose(x) {
+    var i,j,j1,j2,j3,m = x.length,n = x[0].length, ret=new Array(n),Ai;
+    for(j=0;j<n;j++) ret[j] = new Array(m);
+    for(i=0;i<m;i++) {
+        Ai = x[i];
+        for(j=n-1;j>=3;j-=4) {
+            j1 = j-1; j2 = j-2; j3 = j-3;
+            ret[j][i] = -Ai[j];
+            ret[j1][i] = -Ai[j1];
+            ret[j2][i] = -Ai[j2];
+            ret[j3][i] = -Ai[j3];
+        }
+        while(j>=0) { ret[j][i] = -Ai[j]; j--; }
     }
     return ret;
 }
@@ -605,67 +708,130 @@ numeric.tensor = function tensor(x,y) {
     return A;
 }
 
-function house(x) {
-    var v = numeric.nclone(x);
-    var alpha = x[0]/Math.abs(x[0])*numeric.norm2(x);
-    v[0] += alpha;
-    var foo = numeric.norm2(v);
-    var i,n=v.length;
-    for(i=0;i<n;i++) v[i] /= foo;
-    return v;
-}
+// 3. The Tensor type T
+numeric.T = function T(x,y) { this.x = x; this.y = y; }
 
-numeric.toUpperHessenberg = function toUpperHessenberg(me) {
-    var s = numeric.dim(me);
-    if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: toUpperHessenberg() only works on square matrices'); }
-    var m = s[0], i,j,k,x,v,A = numeric.nclone(me),B,C,Ai,Ci,Q = numeric.identity(m),Qi;
-    for(j=0;j<m-2;j++) {
-        x = new Array(m-j-1);
-        for(i=j+1;i<m;i++) { x[i-j-1] = A[i][j]; }
-        v = house(x);
-        B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
-        C = numeric.tensor(v,numeric.dot(v,B));
-        for(i=j+1;i<m;i++) { Ai = A[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Ai[k] -= 2*Ci[k-j]; }
-        B = numeric.getBlock(A,[0,j+1],[m-1,m-1]);
-        C = numeric.tensor(numeric.dot(B,v),v);
-        for(i=0;i<m;i++) { Ai = A[i]; Ci = C[i]; for(k=j+1;k<m;k++) Ai[k] -= 2*Ci[k-j-1]; }
-        B = new Array(m-j-1);
-        for(i=j+1;i<m;i++) B[i-j-1] = Q[i];
-        C = numeric.tensor(v,numeric.dot(v,B));
-        for(i=j+1;i<m;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
+numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
+    if(typeof setup !== "string") {
+        var k;
+        setup = '';
+        for(k in numeric) {
+            if(numeric.hasOwnProperty(k) && (rr.indexOf(k)>=0 || rc.indexOf(k)>=0 || cr.indexOf(k)>=0 || cc.indexOf(k)>=0) && k.length>1) {
+                setup += 'var '+k+' = numeric.'+k+';\n';
+            }
+        }
     }
-    return {H:A, Q:Q};
+    return Function(['y'],
+            'var x = this;\n'+
+            'if(!(y instanceof numeric.T)) { y = new numeric.T(y); }\n'+
+            setup+'\n'+
+            'if(x.y) {'+
+            '  if(y.y) {'+
+            '    return new numeric.T('+cc+');\n'+
+            '  }\n'+
+            '  return new numeric.T('+cr+');\n'+
+            '}\n'+
+            'if(y.y) {\n'+
+            '  return new numeric.T('+rc+');\n'+
+            '}\n'+
+            'return new numeric.T('+rr+');\n'
+    );
 }
 
-numeric.cdot = function cdot(A,B) {
-    if(typeof A.y === "undefined") {
-        if(typeof B.y === "undefined") return { x: numeric.dot(A.x,B.x) };
-        return { x: numeric.dot(A.x,B.x), y: numeric.dot(A.x, B.y)};
+numeric.T.prototype.add = numeric.Tbinop(
+        'add(x.x,y.x)',
+        'add(x.x,y.x),y.y',
+        'add(x.x,y.x),x.y',
+        'add(x.x,y.x),add(x.y,y.y)');
+numeric.T.prototype.sub = numeric.Tbinop(
+        'sub(x.x,y.x)',
+        'sub(x.x,y.x),neg(y.y)',
+        'sub(x.x,y.x),x.y',
+        'sub(x.x,y.x),sub(x.y,y.y)');
+numeric.T.prototype.mul = numeric.Tbinop(
+        'mul(x.x,y.x)',
+        'mul(x.x,y.x),mul(x.x,y.y)',
+        'mul(x.x,y.x),mul(x.y,y.x)',
+        'sub(mul(x.x,y.x),mul(x.y,y.y)),add(mul(x.x,y.y),mul(x.y,y.x))');
+
+numeric.T.prototype.reciprocal = function reciprocal() {
+    var mul = numeric.mul, div = numeric.div;
+    if(this.y) {
+        var d = numeric.add(mul(this.x,this.x),mul(this.y,this.y));
+        return new numeric.T(div(this.x,d),div(numeric.neg(this.y),d));
     }
-    if(typeof B.y === "undefined") return { x: numeric.dot(A.x,B.x), y: numeric.dot(A.y,B.x) };
-    return {x: numeric.subeq(numeric.dot(A.x,B.x),numeric.dot(A.y,B.y)),
-            y: numeric.addeq(numeric.dot(A.x,B.y),numeric.dot(A.y,B.x))};
+    return new T(div(1,this.x));
+}
+numeric.T.prototype.div = function div(y) {
+    if(!(y instanceof numeric.T)) y = new numeric.T(y);
+    if(y.y) { return this.mul(y.reciprocal()); }
+    var div = numeric.div;
+    if(this.y) { return new numeric.T(div(this.x,y.x),div(this.y,y.x)); }
+    return new numeric.T(div(this.x,y.x));
+}
+numeric.T.prototype.dot = numeric.Tbinop(
+        'dot(x.x,y.x)',
+        'dot(x.x,y.x),dot(x.x,y.y)',
+        'dot(x.x,y.x),dot(x.y,y.x)',
+        'sub(dot(x.x,y.x),dot(x.y,y.y)),add(dot(x.x,y.y),dot(x.y,y.x))'
+        );
+numeric.T.prototype.transpose = function transpose() {
+    var t = numeric.transpose, x = this.x, y = this.y;
+    if(y) { return new numeric.T(t(x),t(y)); }
+    return new numeric.T(t(x));
+}
+numeric.T.prototype.transjugate = function transjugate() {
+    var t = numeric.transpose, x = this.x, y = this.y;
+    if(y) { return new numeric.T(t(x),numeric.negtranspose(y)); }
+    return new numeric.T(t(x));
+}
+numeric.Tunop = function Tunop(r,c,s) {
+    if(typeof s !== "string") { s = ''; }
+    return Function(
+            'var x = this;\n'+
+            s+'\n'+
+            'if(x.y) {'+
+            '  '+c+';\n'+
+            '}\n'+
+            r+';\n'    
+    );
 }
 
-numeric.csub = function csub(A,B) {
-    if(typeof A.y === "undefined") {
-        if(typeof B.y === "undefined") return { x: numeric.sub(A.x,B.x) };
-        return { x: numeric.sub(A.x,B.x), y: numeric.neg(B.y)};
-    }
-    if(typeof(B.y === "undefined")) return { x: numeric.sub(A.x,B.x), y: A.y };
-    return {x: numeric.sub(A.x,B.x), y: numeric.sub(A.y,B.y) };
-}
-
-numeric.cnorm2 = function(A) {
-    if(typeof A.y === "undefined") { return numeric.norm2(A.x); }
-    return Math.sqrt(numeric.norm2Squared(A.x)+numeric.norm2Squared(A.y));
-}
-
-numeric.cinv = function cinv(A) {
-    if(typeof A.y === "undefined") { return { x: numeric.inv(A.x) }; }
+numeric.T.prototype.exp = numeric.Tunop(
+        'return new numeric.T(ex)',
+        'return new numeric.T(mul(cos(x.y),ex),mul(sin(x.y),ex))',
+        'var ex = numeric.exp(x.x), cos = numeric.cos, sin = numeric.sin, mul = numeric.mul;');
+numeric.T.prototype.conj = numeric.Tunop(
+        'return new numeric.T(x.x);',
+        'return new numeric.T(x.x,numeric.neg(x.y));');
+numeric.T.prototype.neg = numeric.Tunop(
+        'return new numeric.T(neg(x.x));',
+        'return new numeric.T(neg(x.x),neg(x.y));',
+        'var neg = numeric.neg;');
+numeric.T.prototype.sin = numeric.Tunop(
+        'return new numeric.T(numeric.sin(x.x))',
+        'return x.exp().sub(x.neg().exp()).div(new numeric.T(0,2));');
+numeric.T.prototype.cos = numeric.Tunop(
+        'return new numeric.T(numeric.cos(x.x))',
+        'return x.exp().add(x.neg().exp()).div(2);');
+numeric.T.prototype.abs = numeric.Tunop(
+        'return new numeric.T(numeric.abs(x.x));',
+        'return new numeric.T(numeric.sqrt(numeric.add(mul(x.x,x.x),(x.y,x.y))));',
+        'var mul = numeric.mul;');
+numeric.T.prototype.log = numeric.Tunop(
+        'return new numeric.T(numeric.log(x.x));',
+        'var theta = new numeric.T(numeric.atan2(x.y,x.x)), r = x.abs();\n'+
+        'return new numeric.T(numeric.log(r.x),theta.x);');
+numeric.T.prototype.norm2 = numeric.Tunop(
+        'return numeric.norm2(x.x);',
+        'var f = numeric.norm2Squared;\n'+
+        'return Math.sqrt(f(x.x)+f(x.y));');
+numeric.T.prototype.inv = function inv() {
+    var A = this;
+    if(typeof A.y === "undefined") { return new numeric.T(numeric.inv(A.x)); }
     var n = A.x.length, i, j, k;
     var Rx = numeric.identity(n),Ry = numeric.rep([n,n],0);
-    var Ax = numeric.nclone(A.x), Ay = numeric.nclone(A.y);
+    var Ax = numeric.clone(A.x), Ay = numeric.clone(A.y);
     var Aix, Aiy, Ajx, Ajy, Rix, Riy, Rjx, Rjy;
     var i,j,k,d,d1,ax,ay,bx,by,temp;
     for(i=0;i<n;i++) {
@@ -724,17 +890,200 @@ numeric.cinv = function cinv(A) {
             }
         }
     }
-    return {x:Rx, y:Ry};
+    return new numeric.T(Rx,Ry);
+}
+numeric.T.prototype.get = function get(i) {
+    var x = this.x, y = this.y, k = 0, ik, n = i.length;
+    if(y) {
+        while(k<n) {
+            ik = i[k];
+            x = x[ik];
+            y = y[ik];
+            k++;
+        }
+        return new numeric.T(x,y);
+    }
+    while(k<n) {
+        ik = i[k];
+        x = x[ik];
+        k++;
+    }
+    return new numeric.T(x);
+}
+numeric.T.prototype.set = function set(i,v) {
+    var x = this.x, y = this.y, k = 0, ik, n = i.length, vx = v.x, vy = v.y;
+    if(n===0) {
+        if(vy) { this.y = vy; }
+        else if(y) { this.y = undefined; }
+        this.x = x;
+        return this;
+    }
+    if(vy) {
+        if(y) { /* ok */ }
+        else {
+            y = numeric.rep(numeric.dim(x),0);
+            this.y = y;
+        }
+        while(k<n-1) {
+            ik = i[k];
+            x = x[ik];
+            y = y[ik];
+            k++;
+        }
+        ik = i[k];
+        x[ik] = vx;
+        y[ik] = vy;
+        return this;
+    }
+    if(y) {
+        while(k<n-1) {
+            ik = i[k];
+            x = x[ik];
+            y = y[ik];
+            k++;
+        }
+        ik = i[k];
+        x[ik] = vx;
+        if(vx instanceof Array) y[ik] = numeric.rep(numeric.dim(vx),0);
+        else y[ik] = 0;
+        return this;
+    }
+    while(k<n-1) {
+        ik = i[k];
+        x = x[ik];
+        k++;
+    }
+    ik = i[k];
+    x[ik] = vx;
+    return this;
+}
+numeric.T.prototype.getRows = function getRows(i0,i1) {
+    var n = i1-i0+1, j;
+    var rx = new Array(n), ry, x = this.x, y = this.y;
+    for(j=i0;j<=i1;j++) { rx[j-i0] = x[j]; }
+    if(y) {
+        ry = new Array(n);
+        for(j=i0;j<=i1;j++) { ry[j-i0] = y[j]; }
+        return new numeric.T(rx,ry);
+    }
+    return new numeric.T(rx);
+}
+numeric.T.prototype.setRows = function setRows(i0,i1,A) {
+    var j;
+    var rx = this.x, ry = this.y, x = A.x, y = A.y;
+    for(j=i0;j<=i1;j++) { rx[j] = x[j-i0]; }
+    if(y) {
+        if(!ry) { ry = numeric.rep(numeric.dim(rx),0); this.y = ry; }
+        for(j=i0;j<=i1;j++) { ry[j] = y[j-i0]; }
+    } else if(ry) {
+        for(j=i0;j<=i1;j++) { ry[j] = numeric.rep([x[j-i0].length],0); }
+    }
+    return this;
+}
+numeric.T.prototype.getRow = function getRow(k) {
+    var x = this.x, y = this.y;
+    if(y) { return new numeric.T(x[k],y[k]); }
+    return new numeric.T(x[k]);
+}
+numeric.T.prototype.setRow = function setRow(i,v) {
+    var rx = this.x, ry = this.y, x = v.x, y = v.y;
+    rx[i] = x;
+    if(y) {
+        if(!ry) { ry = numeric.rep(numeric.dim(rx),0); this.y = ry; }
+        ry[i] = y;
+    } else if(ry) {
+        ry = numeric.rep([x.length],0);
+    }
+    return this;
 }
 
+numeric.T.prototype.getBlock = function getBlock(from,to) {
+    var x = this.x, y = this.y, b = numeric.getBlock;
+    if(y) { return new numeric.T(b(x,from,to),b(y,from,to)); }
+    return new numeric.T(b(x,from,to));
+}
+numeric.T.prototype.setBlock = function setBlock(from,to,A) {
+    if(!(A instanceof numeric.T)) A = new numeric.T(A);
+    var x = this.x, y = this.y, b = numeric.setBlock, Ax = A.x, Ay = A.y;
+    if(Ay) {
+        if(!y) { this.y = numeric.rep(numeric.dim(this),0); y = this.y; }
+        b(x,from,to,Ax);
+        b(y,from,to,Ay);
+        return this;
+    }
+    b(x,from,to,Ax);
+    if(y) b(y,from,to,numeric.rep(numeric.dim(Ax),0));
+}
+numeric.T.rep = function rep(s,v) {
+    var T = numeric.T;
+    if(!(v instanceof T)) v = new T(v);
+    var x = v.x, y = v.y, r = numeric.rep;
+    if(y) return new T(r(s,x),r(s,y));
+    return new T(r(s,x));
+}
+numeric.T.diag = function diag(d) {
+    if(!(d instanceof numeric.T)) d = new numeric.T(d);
+    var x = d.x, y = d.y, diag = numeric.diag;
+    if(y) return new numeric.T(diag(x),diag(y));
+    return new numeric.T(diag(x));
+}
+numeric.T.eig = function eig() {
+    if(this.y) { throw new Error('eig: not implemented for complex matrices.'); }
+    return numeric.eig(this.x);
+}
+numeric.T.identity = function identity(n) { return new numeric.T(numeric.identity(n)); }
+numeric.T.prototype.getDiag = function getDiag() {
+    var n = numeric;
+    var x = this.x, y = this.y;
+    if(y) { return new n.T(n.getDiag(x),n.getDiag(y)); }
+    return new n.T(n.getDiag(x));
+}
+
+// 4. Eigenvalues of real matrices
+
+function house(x) {
+    var v = numeric.clone(x);
+    var s = x[0] >= 0 ? 1 : -1;
+    var alpha = s*numeric.norm2(x);
+    v[0] += alpha;
+    var foo = numeric.norm2(v);
+    if(foo === 0) { v = numeric.random([v.length]); foo = numeric.norm2(v); }
+    var i,n=v.length;
+    for(i=0;i<n;i++) v[i] /= foo;
+    return v;
+}
+
+numeric.toUpperHessenberg = function toUpperHessenberg(me) {
+    var s = numeric.dim(me);
+    if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: toUpperHessenberg() only works on square matrices'); }
+    var m = s[0], i,j,k,x,v,A = numeric.clone(me),B,C,Ai,Ci,Q = numeric.identity(m),Qi;
+    for(j=0;j<m-2;j++) {
+        x = new Array(m-j-1);
+        for(i=j+1;i<m;i++) { x[i-j-1] = A[i][j]; }
+        v = house(x);
+        B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
+        C = numeric.tensor(v,numeric.dot(v,B));
+        for(i=j+1;i<m;i++) { Ai = A[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Ai[k] -= 2*Ci[k-j]; }
+        B = numeric.getBlock(A,[0,j+1],[m-1,m-1]);
+        C = numeric.tensor(numeric.dot(B,v),v);
+        for(i=0;i<m;i++) { Ai = A[i]; Ci = C[i]; for(k=j+1;k<m;k++) Ai[k] -= 2*Ci[k-j-1]; }
+        B = new Array(m-j-1);
+        for(i=j+1;i<m;i++) B[i-j-1] = Q[i];
+        C = numeric.tensor(v,numeric.dot(v,B));
+        for(i=j+1;i<m;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
+    }
+    return {H:A, Q:Q};
+}
 
 numeric.QRFrancis = function(H,maxiter) {
     if(typeof maxiter === "undefined") { maxiter = 10000; }
-    H = numeric.nclone(H);
+    H = numeric.clone(H);
+    var H0 = numeric.clone(H);
     var s = numeric.dim(H),m=s[0],x,v,a,b,c,d,det,tr, Hloc, Q = numeric.identity(m), Qi, Hi, B, C, Ci,i,j,k,iter;
     if(m<3) { return {Q:Q, B:[ [0,m-1] ]}; }
     var epsilon = 3e-16;
     for(iter=0;iter<maxiter;iter++) {
+        if(numeric.any(numeric.isNaN(H))) { console.log(H); console.log(H0);throw new Error('WHOA');}
         for(j=0;j<m-1;j++) {
             if(Math.abs(H[j+1][j]) < epsilon*(Math.abs(H[j][j])+Math.abs(H[j+1][j+1]))) {
                 var QH1 = numeric.QRFrancis(numeric.getBlock(H,[0,0],[j,j]),maxiter);
@@ -766,7 +1115,7 @@ numeric.QRFrancis = function(H,maxiter) {
         } else {
             Hloc = numeric.add(numeric.sub(numeric.dot(Hloc,Hloc),
                                            numeric.mul(Hloc,tr)),
-                               numeric.mul(numeric.identity(3),det));
+                               numeric.diag(numeric.rep([3],det))); //numeric.mul(numeric.identity(3),det));
         }
         x = [Hloc[0][0],Hloc[1][0],Hloc[2][0]];
         v = house(x);
@@ -797,62 +1146,87 @@ numeric.QRFrancis = function(H,maxiter) {
             for(i=j+1;i<=J;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
         }
     }
+    if(console) { console.log(numeric.prettyPrint(H)); }
     throw new Error('numeric: eigenvalue iteration does not converge -- increase maxiter?');
 }
 
-
-numeric.parseDate = function parseDate(d) {
-    function foo(d) {
-        if(typeof d === 'string') { return Date.parse(d.replace(/-/g,'/')); }
-        if(!(d instanceof Array)) { throw new Error("parseDate: parameter must be arrays of strings"); }
-        var ret = [],k;
-        for(k=0;k<d.length;k++) { ret[k] = foo(d[k]); }
-        return ret;
+numeric.eig = function eig(A,maxiter) {
+    var QH = numeric.toUpperHessenberg(A);
+    var QB = numeric.QRFrancis(QH.H,maxiter);
+    var T = numeric.T;
+    var n = A.length,i,k,flag = false,B = QB.B,H = numeric.dot(QB.Q,numeric.dot(QH.H,numeric.transpose(QB.Q)));
+    var Q = new T(numeric.dot(QB.Q,QH.Q)),Q0;
+    var m = B.length,j;
+    var a,b,c,d,p1,p2,disc,x,y,p,q,n1,n2;
+    var sqrt = Math.sqrt;
+    for(k=0;k<m;k++) {
+        i = B[k][0];
+        if(i === B[k][1]) {
+            // nothing
+        } else {
+            j = i+1;
+            a = H[i][i];
+            b = H[i][j];
+            c = H[j][i];
+            d = H[j][j];
+            p1 = -a-d;
+            p2 = a*d-b*c;
+            disc = p1*p1-4*p2;
+            if(disc>=0) {
+                if(p1<0) x = -0.5*(p1-sqrt(disc));
+                else     x = -0.5*(p1+sqrt(disc));
+                n1 = (a-x)*(a-x)+b*b;
+                n2 = c*c+(d-x)*(d-x);
+                if(n1>n2) {
+                    n1 = sqrt(n1);
+                    p = (a-x)/n1;
+                    q = b/n1;
+                } else {
+                    n2 = sqrt(n2);
+                    p = c/n2;
+                    q = (d-x)/n2;
+                }
+                Q0 = new T([[q,-p],[p,q]]);
+                Q.setRows(i,j,Q0.dot(Q.getRows(i,j)));
+            } else {
+                x = -0.5*p1;
+                y = 0.5*sqrt(-disc);
+                n1 = (a-x)*(a-x)+b*b;
+                n2 = c*c+(d-x)*(d-x);
+                if(n1>n2) {
+                    n1 = sqrt(n1+y*y);
+                    p = (a-x)/n1;
+                    q = b/n1;
+                    x = 0;
+                    y /= n1;
+                } else {
+                    n2 = sqrt(n2+y*y);
+                    p = c/n2;
+                    q = (d-x)/n2;
+                    x = y/n2;
+                    y = 0;
+                }
+                Q0 = new T([[q,-p],[p,q]],[[x,y],[y,-x]]);
+                Q.setRows(i,j,Q0.dot(Q.getRows(i,j)));
+            }
+        }
     }
-    return foo(d);
-}
-
-numeric.parseFloat = function parseFloat_(d) {
-    function foo(d) {
-        if(typeof d === 'string') { return parseFloat(d); }
-        if(!(d instanceof Array)) { throw new Error("parseFloat: parameter must be arrays of strings"); }
-        var ret = [],k;
-        for(k=0;k<d.length;k++) { ret[k] = foo(d[k]); }
-        return ret;
+    var R = Q.dot(A).dot(Q.transjugate()), n = A.length, E = numeric.T.identity(n);
+    for(j=0;j<n;j++) {
+        if(j>0) {
+            for(k=j-1;k>=0;k--) {
+                x = R.getRow(k).getBlock([k],[j-1]);
+                y = E.getRow(j).getBlock([k],[j-1]);
+                E.set([j,k],(R.get([k,j]).neg().sub(x.dot(y))).div(R.get([k,k]).sub(R.get([j,j]))));
+            }
+        }
     }
-    return foo(d);
-}
-
-numeric.parseCSV = function parseCSV(t) {
-    var foo = t.split('\n');
-    var j,k;
-    var ret = [];
-    var pat = /(([^'",]*)|('[^']*')|("[^"]*")),/g;
-    var patnum = /^\s*(([+-]?[0-9]+(\.[0-9]*)?(e[+-]?[0-9]+)?)|([+-]?[0-9]*(\.[0-9]+)?(e[+-]?[0-9]+)?))\s*$/;
-    var stripper = function(n) { return n.substr(0,n.length-1); }
-    var count = 0;
-    for(k=0;k<foo.length;k++) {
-      var bar = (foo[k]+",").match(pat),baz;
-      if(bar.length>0) {
-          ret[count] = [];
-          for(j=0;j<bar.length;j++) {
-              baz = stripper(bar[j]);
-              if(patnum.test(baz)) { ret[count][j] = parseFloat(baz); }
-              else ret[count][j] = baz;
-          }
-          count++;
-      }
+    for(j=0;j<n;j++) {
+        x = E.getRow(j);
+        E.setRow(j,x.div(x.norm2()));
     }
-    return ret;
-}
-
-numeric.getURL = function getURL(url) {
-    var client = new XMLHttpRequest();
-    client.open("GET",url,false);
-    client.send();
-    return client;
-}
-
-
-;
+    E = E.transpose();
+    E = Q.transjugate().dot(E);
+    return { lambda:R.getDiag(), E:E };
+};
 
