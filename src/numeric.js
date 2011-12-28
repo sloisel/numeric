@@ -121,6 +121,20 @@ numeric.parseCSV = function parseCSV(t) {
     return ret;
 }
 
+numeric.toCSV = function toCSV(A) {
+    var s = numeric.dim(A);
+    var i,j,m,n,row,ret;
+    m = s[0];
+    n = s[1];
+    ret = [];
+    for(i=0;i<m;i++) {
+        row = [];
+        for(j=0;j<m;j++) { row[j] = numeric.prettyPrint(A[i][j]); }
+        ret[i] = row.join(', ');
+    }
+    return ret.join('\n')+'\n';
+}
+
 numeric.getURL = function getURL(url) {
     var client = new XMLHttpRequest();
     client.open("GET",url,false);
@@ -1565,20 +1579,21 @@ coord.LUsolve = function LUsolve(lu,b) {
 };
 
 coord.grid = function grid(n,shape) {
-    var ret = numeric.rep([n,n],-1);
+    if(typeof n === "number") n = [n,n];
+    var ret = numeric.rep(n,-1);
     var i,j,count;
     if(typeof shape !== "function") {
         switch(shape) {
         case 'L':
-            shape = function(i,j) { return i!=0 && i!=(n-1) && j!=0 && j!=(n-1) && (i<n/2 || j<n/2); }
+            shape = function(i,j) { return (i>=n[0]/2 || j<n[1]/2); }
             break;
         default:
-            shape = function(i,j) { return i!=0 && i!=(n-1) && j!=0 && j!=(n-1); };
+            shape = function(i,j) { return true; };
             break;
         }
     }
     count=0;
-    for(i=0;i<n;i++) for(j=0;j<n;j++) 
+    for(i=1;i<n[0]-1;i++) for(j=1;j<n[1]-1;j++) 
         if(shape(i,j)) {
             ret[i][j] = count;
             count++;

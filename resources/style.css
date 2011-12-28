@@ -7,6 +7,7 @@ body {
 	font-size: 18px;
 	height: 100%;
 }
+pre { font-size:15px; }
 h1 {
 	font-size: 22px;
 }

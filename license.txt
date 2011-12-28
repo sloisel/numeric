@@ -1,3 +1,5 @@
+(See also licenses in the resources subdirectory.)
+
 Numeric Javascript
 Copyright (C) 2011 by Sébastien Loisel
 
