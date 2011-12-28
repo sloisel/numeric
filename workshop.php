@@ -80,17 +80,17 @@ There is a more recent version of <tt>numeric.js</tt> than the one that is loade
 
 <script>
 "use strict";
-if(!Array.indexOf){
-  Array.prototype.indexOf = function(obj){
-   for(var i=0; i<this.length; i++){
-    if(this[i]==obj){
+var _indexOf;
+if(typeof Array.indexOf === "undefined") {
+    _indexOf = function(t,obj){
+   for(var i=0; i<t.length; i++){
+    if(t[i]==obj){
      return i;
     }
    }
    return -1;
   }
-}
-
+} else _indexOf = function(t,obj) { return t.indexOf(obj); }
 
 var _retarded = false;
 if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ _retarded = true; }
@@ -180,7 +180,7 @@ function saveit() {
 }
 
 function outputChanged(k,o) {
-	var i = divorder.indexOf(k);
+	var i = _indexOf(divorder,k);
 	savedata.outputs[i].push(o);
 	saveit();
 }
@@ -188,7 +188,7 @@ function outputChanged(k,o) {
 w.onmessage = function(ev) {
 	var x = JSON.parse(ev.data);
 	var y = $('#out_'+x.k.toString())[0];
-	if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[divorder.indexOf(x.k)] = []; }
+	if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[_indexOf(divorder,x.k)] = []; }
 	if(typeof x.p !== "undefined") {
 		var plotid = "plot_"+plotcount.toString();
 		plotcount++;
@@ -216,7 +216,7 @@ w.onmessage = function(ev) {
 }
 function mkdiv(i) {
 	divcount++;
-	var foo = divorder.indexOf(i);
+	var foo = _indexOf(divorder,i);
 	divorder.splice(foo+1,0,divcount);
 	savedata.inputs.splice(foo+1,0,'');
 	savedata.outputs.splice(foo+1,0,[]);
@@ -234,7 +234,7 @@ function mkdiv(i) {
 	);
 }
 function rmdiv(i) {
-	var foo = divorder.indexOf(i);
+	var foo = _indexOf(divorder,i);
 	divorder.splice(foo,1);
 	$('#input_'+i.toString()).remove();
 	$('#output_'+i.toString()).remove();
@@ -244,7 +244,7 @@ function rmdiv(i) {
 
 function go(k) {
 	var input = $('#text_'+k.toString())[0];
-    var n = divorder.indexOf(k);
+    var n = _indexOf(divorder,k);
     var foo = divorder[n+1];
     if(typeof foo === "number") {
        	myfocus($('#text_'+foo.toString())[0]);
@@ -262,7 +262,7 @@ function go(k) {
 }
 
 function inputChanged(k){
-	var i = divorder.indexOf(k);
+	var i = _indexOf(divorder,k);
 	var input = $('#text_'+k.toString())[0];
 	if(input.value === cache[k]) input.className = "runned";
 	else { input.className = "input"; cache[k] = null; }
@@ -272,7 +272,7 @@ function inputChanged(k){
 
 function restore2(foo) {
 	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
-	if(foo.scripts.indexOf(workshop.updateVersion)<0) {
+	if(_indexOf(foo.scripts,workshop.updateVersion)<0) {
 		$("#divupdate").css({display: 'block'});
 	}
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
@@ -387,7 +387,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=8f508d55e9d8d9dabc59bdd18876d3b13a5f306571ce62bc0240b48f981df671');
+		$incs = array(1 => '/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044');
 	}
 	echo <<<EOT
 workshop.startup = (function () {
@@ -401,15 +401,15 @@ workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=8f508d55e9d8d9dabc59bdd18876d3b13a5f306571ce62bc0240b48f981df671"] });
+	                 scripts: ["/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044"] });
 	workshop.restore(_restore);
 });
 EOT;
 }
 ?>
 
-workshop.version = "noversion";
-workshop.updateVersion = "/scripts/numeric.js?key=8f508d55e9d8d9dabc59bdd18876d3b13a5f306571ce62bc0240b48f981df671";
+workshop.version = "2011-12-28_17-40-55";
+workshop.updateVersion = "/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

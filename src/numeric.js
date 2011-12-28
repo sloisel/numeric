@@ -728,6 +728,7 @@ numeric.tensor = function tensor(x,y) {
 numeric.T = function T(x,y) { this.x = x; this.y = y; }
 
 numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
+    var io = numeric.indexOf;
     if(typeof setup !== "string") {
         var k;
         setup = '';
@@ -1175,7 +1176,6 @@ numeric.QRFrancis = function(H,maxiter) {
             for(i=j+1;i<=J;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
         }
     }
-    if(console) { console.log(numeric.prettyPrint(H)); }
     throw new Error('numeric: eigenvalue iteration does not converge -- increase maxiter?');
 }
 
