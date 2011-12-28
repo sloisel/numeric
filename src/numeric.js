@@ -24,6 +24,7 @@ numeric.bench = function bench (f,interval) {
 }
 
 numeric.precision = 4;
+numeric.largeArray = 50;
 
 numeric.prettyPrint = function(x) {
     function fmtnum(x) {
@@ -43,21 +44,22 @@ numeric.prettyPrint = function(x) {
     var ret = [];
     function foo(x) {
         var k;
-        if(typeof x === "undefined") { ret.push(""); return false; }
+        if(typeof x === "undefined") { ret.push(Array(numeric.precision+8).join(' ')); return false; }
         if(typeof x === "string") { ret.push('"'+x+'"'); return false; }
         if(typeof x === "boolean") { ret.push(x.toString()); return false; }
-        if(typeof x === "number") { 
+        if(typeof x === "number") {
             var a = fmtnum(x);
             var b = x.toPrecision(numeric.precision);
-            var c = x.toString();
-            if(b.length < a.length) a = b;
-            if(c.length < a.length) a = c;
+            var c = parseFloat(x.toString()).toString();
+            var d = [a,b,c,parseFloat(a).toString(),parseFloat(b).toString(),parseFloat(c).toString()];
+            for(k=1;k<d.length;k++) { if(d[k].length < a.length) a = d[k]; }
             ret.push(Array(numeric.precision+8-a.length).join(' ')+a);
             return false;
         }
         if(x === null) { ret.push("null"); return false; }
         if(typeof x === "function") { ret.push(x.toString()); return true; }
         if('length' in x) {
+            if(x.length > numeric.largeArray) { ret.push('...Large Array...'); return true; }
             var flag = false;
             ret.push('[');
             for(k=0;k<x.length;k++) { if(k>0) { ret.push(','); if(flag) ret.push('\n '); } flag = foo(x[k]); }
@@ -333,7 +335,7 @@ numeric.diag = function diag(d) {
 }
 numeric.getDiag = function(A) {
     var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = new Array(n);
-    for(i=n-1;i>=3;i-=4) { 
+    for(i=n-1;i>=3;i-=4) {
         i1 = i-1; i2 = i-2; i3 = i-3;
         ret[i] = A[i][i];
         ret[i1] = A[i1][i1];
@@ -376,8 +378,8 @@ numeric.pointwise = function pointwise(params,body,setup) {
             'for(i=_n-1;i>=3;i-=4) { \n'+
             '    _i1 = i-1; _i2 = i-2; _i3 = i-3;\n'+
             '    '+body('i')+'\n'+
-            '    '+body('_i1')+'\n'+            
-            '    '+body('_i2')+'\n'+            
+            '    '+body('_i1')+'\n'+
+            '    '+body('_i2')+'\n'+
             '    '+body('_i3')+'\n'+
             '}\n'+
             'while(i>=0) {\n'+
@@ -398,7 +400,7 @@ numeric._biforeach = (function _biforeach(x,y,s,k,f) {
 numeric.any = numeric.mapreduce('if(xi) return true;','false');
 numeric.all = numeric.mapreduce('if(!xi) return false;','true');
 
-numeric.ops2 = { 
+numeric.ops2 = {
         add: '+',
         sub: '-',
         mul: '*',
@@ -793,7 +795,7 @@ numeric.Tunop = function Tunop(r,c,s) {
             'if(x.y) {'+
             '  '+c+';\n'+
             '}\n'+
-            r+';\n'    
+            r+';\n'
     );
 }
 
@@ -1041,16 +1043,14 @@ numeric.T.prototype.getDiag = function getDiag() {
 
 // 4. Eigenvalues of real matrices
 
-function house(x) {
+numeric.house = function house(x) {
     var v = numeric.clone(x);
     var s = x[0] >= 0 ? 1 : -1;
     var alpha = s*numeric.norm2(x);
     v[0] += alpha;
     var foo = numeric.norm2(v);
-    if(foo === 0) { v = numeric.random([v.length]); foo = numeric.norm2(v); }
-    var i,n=v.length;
-    for(i=0;i<n;i++) v[i] /= foo;
-    return v;
+    if(foo === 0) { /* this should not happen */ throw new Error('eig: internal error'); }
+    return numeric.div(v,foo);
 }
 
 numeric.toUpperHessenberg = function toUpperHessenberg(me) {
@@ -1060,7 +1060,7 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     for(j=0;j<m-2;j++) {
         x = new Array(m-j-1);
         for(i=j+1;i<m;i++) { x[i-j-1] = A[i][j]; }
-        v = house(x);
+        v = numeric.house(x);
         B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
         C = numeric.tensor(v,numeric.dot(v,B));
         for(i=j+1;i<m;i++) { Ai = A[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Ai[k] -= 2*Ci[k-j]; }
@@ -1075,15 +1075,16 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     return {H:A, Q:Q};
 }
 
+numeric.epsilon = 2.220446049250313e-16;
+
 numeric.QRFrancis = function(H,maxiter) {
     if(typeof maxiter === "undefined") { maxiter = 10000; }
     H = numeric.clone(H);
     var H0 = numeric.clone(H);
     var s = numeric.dim(H),m=s[0],x,v,a,b,c,d,det,tr, Hloc, Q = numeric.identity(m), Qi, Hi, B, C, Ci,i,j,k,iter;
     if(m<3) { return {Q:Q, B:[ [0,m-1] ]}; }
-    var epsilon = 3e-16;
+    var epsilon = numeric.epsilon;
     for(iter=0;iter<maxiter;iter++) {
-        if(numeric.any(numeric.isNaN(H))) { console.log(H); console.log(H0);throw new Error('WHOA');}
         for(j=0;j<m-1;j++) {
             if(Math.abs(H[j+1][j]) < epsilon*(Math.abs(H[j][j])+Math.abs(H[j+1][j+1]))) {
                 var QH1 = numeric.QRFrancis(numeric.getBlock(H,[0,0],[j,j]),maxiter);
@@ -1108,17 +1109,16 @@ numeric.QRFrancis = function(H,maxiter) {
             var s1,s2;
             s1 = 0.5*(tr+Math.sqrt(tr*tr-4*det));
             s2 = 0.5*(tr-Math.sqrt(tr*tr-4*det));
-            if(Math.abs(s1-d) < Math.abs(s2-d)) { s2 = s1; }
-            Hloc[0][0] -= s2;
-            Hloc[1][1] -= s2;
-            Hloc[2][2] -= s2;
+            Hloc = numeric.add(numeric.sub(numeric.dot(Hloc,Hloc),
+                                           numeric.mul(Hloc,s1+s2)),
+                               numeric.diag(numeric.rep([3],s1*s2)));
         } else {
             Hloc = numeric.add(numeric.sub(numeric.dot(Hloc,Hloc),
                                            numeric.mul(Hloc,tr)),
-                               numeric.diag(numeric.rep([3],det))); //numeric.mul(numeric.identity(3),det));
+                               numeric.diag(numeric.rep([3],det)));
         }
         x = [Hloc[0][0],Hloc[1][0],Hloc[2][0]];
-        v = house(x);
+        v = numeric.house(x);
         B = [H[0],H[1],H[2]];
         C = numeric.tensor(v,numeric.dot(v,B));
         for(i=0;i<3;i++) { Hi = H[i]; Ci = C[i]; for(k=0;k<m;k++) Hi[k] -= 2*Ci[k]; }
@@ -1130,10 +1130,25 @@ numeric.QRFrancis = function(H,maxiter) {
         for(i=0;i<3;i++) { Qi = Q[i]; Ci = C[i]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
         var J;
         for(j=0;j<m-2;j++) {
+            for(k=j;k<=j+1;k++) {
+                if(Math.abs(H[k+1][k]) < epsilon*(Math.abs(H[k][k])+Math.abs(H[k+1][k+1]))) {
+                    var QH1 = numeric.QRFrancis(numeric.getBlock(H,[0,0],[k,k]),maxiter);
+                    var QH2 = numeric.QRFrancis(numeric.getBlock(H,[k+1,k+1],[m-1,m-1]),maxiter);
+                    B = new Array(k+1);
+                    for(i=0;i<=k;i++) { B[i] = Q[i]; }
+                    C = numeric.dot(QH1.Q,B);
+                    for(i=0;i<=k;i++) { Q[i] = C[i]; }
+                    B = new Array(m-k-1);
+                    for(i=k+1;i<m;i++) { B[i-k-1] = Q[i]; }
+                    C = numeric.dot(QH2.Q,B);
+                    for(i=k+1;i<m;i++) { Q[i] = C[i-k-1]; }
+                    return {Q:Q,B:QH1.B.concat(numeric.add(QH2.B,k+1))};
+                }
+            }
             J = Math.min(m-1,j+3);
             x = new Array(J-j);
             for(i=j+1;i<=J;i++) { x[i-j-1] = H[i][j]; }
-            v = house(x);
+            v = numeric.house(x);
             B = numeric.getBlock(H, [j+1,j],[J,m-1]);
             C = numeric.tensor(v,numeric.dot(v,B));
             for(i=j+1;i<=J;i++) { Hi = H[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Hi[k] -= 2*Ci[k-j]; }
@@ -1230,3 +1245,374 @@ numeric.eig = function eig(A,maxiter) {
     return { lambda:R.getDiag(), E:E };
 };
 
+// 5. Real sparse linear algebra
+
+var sparse = {};
+
+sparse.dim = function dim(A,ret,k) {
+    if(typeof ret === "undefined") { ret = []; }
+    if(typeof A !== "object") return ret;
+    if(typeof k === "undefined") { k=0; }
+    if(!(k in ret)) { ret[k] = 0; }
+    if(A.length > ret[k]) ret[k] = A.length;
+    var i;
+    for(i in A) {
+        dim(A[i],ret,k+1);
+    }
+    return ret;
+};
+
+sparse.clone = function clone(A,k,n) {
+    if(typeof k === "undefined") { k=0; }
+    if(typeof n === "undefined") { n = sparse.dim(A).length; }
+    var i,ret = new Array(A.length);
+    if(k === n-1) {
+        for(i in A) { ret[i] = A[i]; }
+        return ret;
+    }
+    for(i in A) {
+        ret[i] = clone(A[i],k+1,n);
+    }
+    return ret;
+}
+
+sparse.diag = function diag(d) {
+    var n = d.length,i,ret = new Array(n),i1,i2,i3;
+    for(i=n-1;i>=3;i-=4) {
+        i1 = i-1;
+        i2 = i-2;
+        i3 = i-3;
+        ret[i] = []; ret[i][i] = d[i];
+        ret[i1] = []; ret[i1][i1] = d[i1];
+        ret[i2] = []; ret[i1][i2] = d[i2];
+        ret[i3] = []; ret[i1][i3] = d[i3];
+    }
+    while(i>=0) { ret[i] = []; ret[i][i] = d[i]; i--; }
+    return ret;
+}
+
+sparse.identity = function identity(n) { return sparse.diag(numeric.rep([n],1)); }
+
+sparse.transpose = function transpose(A) {
+    var ret = [], n = A.length, i,j,Ai;
+    for(i in A) {
+        Ai = A[i];
+        for(j in Ai) {
+            if(typeof ret[j] !== "object") { ret[j] = []; }
+            ret[j][i] = Ai[j];
+        }
+    }
+    return ret;
+}
+
+sparse.LUP = function LUP(A,tol) {
+    if(typeof tol === "undefined") { tol = 1; }
+    var n = A.length, i,j,k;
+    var L = sparse.identity(n), U = sparse.clone(A), UT = sparse.transpose(U);
+    var P = numeric.linspace(0,n-1),Q = numeric.linspace(0,n-1);
+    var Ui, Uj, UTi, temp,alpha;
+    var abs = Math.abs;
+    for(i=0;i<n-1;i++) {
+        UTi = UT[i];
+        j = i;
+        for(k in UTi) {
+            k = Q[k];
+            if(k<=i) continue;
+            if(abs(U[k][i]) > abs(U[j][i])) { j = k; }
+        }
+        if(abs(U[i]) >= tol*abs(U[j])) { j = i; }
+        if(j!==i) {
+            temp = U[i]; U[i] = U[j]; U[j] = temp;
+            temp = L[i]; L[i] = L[j]; L[j] = temp;
+            temp = P[i]; P[i] = P[j]; P[j] = temp;
+            Q = new Array(n);
+            for(j=0;j<n;j++) { Q[P[j]] = j; }
+        }
+        Ui = U[i];
+        for(j in UTi) {
+            j = Q[j];
+            if(j<=i) continue;
+            Uj = U[j];
+            alpha = Uj[i]/Ui[i];
+            L[j][i] = alpha;
+            for(k in Ui) {
+                if(k > i) {
+                    if(!(k in Uj)) { Uj[k] = 0; UT[k][j] = 0; }
+                    Uj[k] -= alpha*Ui[k];
+                } else {
+                    delete Uj[k];
+                }
+            }
+        }
+    }
+    return {L:L, U:U, P:P, Pinv:Q};
+};
+
+sparse.dotMM = function dotMM(A,B) {
+    var p = A.length, q = B.length, BT = sparse.transpose(B), r = BT.length, Ai, BTk;
+    var i,j,k,accum;
+    var ret = new Array(p),reti;
+    for(i=p-1;i>=0;i--) {
+        reti = [];
+        Ai = A[i];
+        for(k=r-1;k>=0;k--) {
+            accum = 0;
+            BTk = BT[k];
+            for(j in Ai) {
+                if(j in BTk) { accum += Ai[j]*BTk[j]; }
+            }
+            if(accum) reti[k] = accum;
+        }
+        ret[i] = reti;
+    }
+    return ret;
+}
+
+sparse.dotMV = function dotMV(A,x) {
+    var p = A.length, Ai, i,j;
+    var ret = new Array(p), accum;
+    for(i=p-1;i>=0;i--) {
+        Ai = A[i];
+        accum = 0;
+        for(j in Ai) {
+            if(j in x) accum += Ai[j]*x[j];
+        }
+        if(accum) ret[i] = accum;
+    }
+    return ret;
+}
+
+sparse.dotVM = function dotMV(x,A) {
+    var i,j,Ai,alpha;
+    var ret = [], accum;
+    for(i in x) {
+        Ai = A[i];
+        alpha = x[i];
+        for(j in Ai) {
+            if(!(j in ret)) { ret[j] = 0; }
+            ret[j] += alpha*Ai[j];
+        }
+    }
+    return ret;
+}
+
+sparse.dotVV = function dotVV(x,y) {
+    var i,ret=0;
+    for(i in x) { if(i in y) ret+= x[i]*y[i]; }
+    return ret;
+}
+
+sparse.dot = function dot(A,B) {
+    var m = sparse.dim(A).length, n = sparse.dim(B).length;
+    var k = m*1000+n;
+    switch(k) {
+    case 0: return A*B;
+    case 1001: return sparse.dotVV(A,B);
+    case 2001: return sparse.dotMV(A,B);
+    case 1002: return sparse.dotVM(A,B);
+    case 2002: return sparse.dotMM(A,B);
+    default: throw new Error('sparse.dot not implemented for tensors of order '+m+' and '+n);
+    }
+}
+
+sparse.LUPsolve = function LUPsolve(lup,b) {
+    var L = lup.L, U = lup.U, P = lup.P;
+    var n = L.length, i,j, ret = new Array(n), accum, Ai;
+    for(i = 0;i<n;i++) {
+        if(P[i] in b) accum = b[P[i]];
+        else accum = 0;
+        Ai = L[i];
+        for(j in Ai) {
+            if(j<i) { accum -= Ai[j]*ret[j]; }
+        }
+        ret[i] = accum;
+    }
+    for(i = n-1;i>=0;i--) {
+        accum = ret[i];
+        Ai = U[i];
+        for(j in Ai) {
+            if(j>i) { accum -= Ai[j]*ret[j]; }
+        }
+        ret[i] = accum/Ai[i];
+    }
+    return ret;
+}
+
+sparse.scatter = function scatter(V) {
+    var i = V[0], j = V[1], x = V[2];
+    var k,ret = [],ik,jk, reti;
+    for(k=0;k<i.length;k++) {
+        ik = i[k];
+        jk = j[k];
+        if(!(ik in ret)) { reti = []; ret[ik] = reti; }
+        else { reti = ret[ik]; }
+        if(!(jk in reti)) { reti[jk] = 0; }
+        reti[jk] += x[k];
+    }
+    return ret;
+}
+
+sparse.gather = function gather(A) {
+    var i = [], j = [], x = [];
+    var p,q,Ap;
+    for(p in A) {
+        Ap = A[p];
+        for(q in Ap) {
+            i.push(parseInt(p));
+            j.push(parseInt(q));
+            x.push(Ap[q]);
+        }
+    }
+    return [i,j,x];
+}
+
+// 6. Coordinate matrices
+var coord = {};
+
+coord.LU = function LU(A) {
+    var I = A[0], J = A[1], V = A[2];
+    var p = I.length, m=0, i,j,k,a,b,c;
+    for(i=0;i<p;i++) if(I[i]>m) m=I[i];
+    m++;
+    var L = new Array(m), U = new Array(m), left = numeric.rep([m],Infinity), right = numeric.rep([m],-Infinity);
+    var Ui, Uj,alpha;
+    for(k=0;k<p;k++) {
+        i = I[k];
+        j = J[k];
+        if(j<left[i]) left[i] = j;
+        if(j>right[i]) right[i] = j;
+    }
+    for(i=0;i<m-1;i++) { if(right[i] > right[i+1]) right[i+1] = right[i]; }
+    for(i=m-1;i>=1;i--) { if(left[i]<left[i-1]) left[i-1] = left[i]; }
+    var countL = 0, countU = 0;
+    for(i=0;i<m;i++) {
+        U[i] = numeric.rep([right[i]-left[i]+1],0);
+        L[i] = numeric.rep([i-left[i]],0);
+        countL += i-left[i]+1;
+        countU += right[i]-i+1;
+    }
+    for(k=0;k<p;k++) { i = I[k]; U[i][J[k]-left[i]] = V[k]; }
+    for(i=0;i<m-1;i++) {
+        a = i-left[i];
+        Ui = U[i];
+        for(j=i+1;left[j]<=i && j<m;j++) {
+            b = i-left[j];
+            c = right[i]-i;
+            Uj = U[j];
+            alpha = Uj[b]/Ui[a];
+            if(alpha) {
+                for(k=1;k<=c;k++) { Uj[k+b] -= alpha*Ui[k+a]; }
+                L[j][i-left[j]] = alpha;
+            }
+        }
+    }
+    var Ui = [], Uj = [], Uv = [], Li = [], Lj = [], Lv = [];
+    var p,q,foo;
+    p=0; q=0;
+    for(i=0;i<m;i++) {
+        a = left[i];
+        b = right[i];
+        foo = U[i];
+        for(j=i;j<=b;j++) {
+            if(foo[j-a]) {
+                Ui[p] = i;
+                Uj[p] = j;
+                Uv[p] = foo[j-a];
+                p++;
+            }
+        }
+        foo = L[i];
+        for(j=a;j<i;j++) {
+            if(foo[j-a]) {
+                Li[q] = i;
+                Lj[q] = j;
+                Lv[q] = foo[j-a];
+                q++;
+            }
+        }
+        Li[q] = i;
+        Lj[q] = i;
+        Lv[q] = 1;
+        q++;
+    }
+    return {U:[Ui,Uj,Uv], L:[Li,Lj,Lv]};
+};
+
+coord.LUsolve = function LUsolve(lu,b) {
+    var L = lu.L, U = lu.U, ret = numeric.clone(b);
+    var Li = L[0], Lj = L[1], Lv = L[2];
+    var Ui = U[0], Uj = U[1], Uv = U[2];
+    var p = Ui.length, q = Li.length;
+    var m = ret.length,i,j,k;
+    k = 0;
+    for(i=0;i<m;i++) {
+        while(Lj[k] < i) {
+            ret[i] -= Lv[k]*ret[Lj[k]];
+            k++;
+        }
+        k++;
+    }
+    k = p-1;
+    for(i=m-1;i>=0;i--) {
+        while(Uj[k] > i) {
+            ret[i] -= Uv[k]*ret[Uj[k]];
+            k--;
+        }
+        ret[i] /= Uv[k];
+        k--;
+    }
+    return ret;
+};
+
+coord.grid = function grid(n,shape) {
+    var ret = numeric.rep([n,n],-1);
+    var i,j,count;
+    if(typeof shape !== "function") {
+        switch(shape) {
+        case 'L':
+            shape = function(i,j) { return i!=0 && i!=(n-1) && j!=0 && j!=(n-1) && (i<n/2 || j<n/2); }
+            break;
+        default:
+            shape = function(i,j) { return i!=0 && i!=(n-1) && j!=0 && j!=(n-1); };
+            break;
+        }
+    }
+    count=0;
+    for(i=0;i<n;i++) for(j=0;j<n;j++) 
+        if(shape(i,j)) {
+            ret[i][j] = count;
+            count++;
+        }
+    return ret;
+}
+
+coord.delsq = function delsq(g) {
+    var dir = [[-1,0],[0,-1],[0,1],[1,0]];
+    var s = numeric.dim(g), m = s[0], n = s[1], i,j,k,p,q;
+    var Li = [], Lj = [], Lv = [];
+    for(i=1;i<m-1;i++) for(j=1;j<n-1;j++) {
+        if(g[i][j]<0) continue;
+        for(k=0;k<4;k++) {
+            p = i+dir[k][0];
+            q = j+dir[k][1];
+            if(g[p][q]<0) continue;
+            Li.push(g[i][j]);
+            Lj.push(g[p][q]);
+            Lv.push(-1);
+        }
+        Li.push(g[i][j]);
+        Lj.push(g[i][j]);
+        Lv.push(4);
+    }
+    return [Li,Lj,Lv];
+}
+
+coord.dotMV = function dotMV(A,x) {
+    var ret, Ai = A[0], Aj = A[1], Av = A[2],k,p=Ai.length,N;
+    N=0;
+    for(k=0;k<p;k++) { if(Ai[k]>N) N = Ai[k]; }
+    N++;
+    ret = numeric.rep([N],0);
+    for(k=0;k<p;k++) { ret[Ai[k]]+=Av[k]*x[Aj[k]]; }
+    return ret;
+}

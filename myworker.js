@@ -27,9 +27,9 @@ _onmessage = function(event) {
     try {
         workshop.current = {k:_x.k, n:_x.n};
         _ans = _myeval(_x.e);
-        workshop.current = undefined;
         if(typeof(_ans) !== "undefined") { _foo = numeric.prettyPrint(_ans,true); }
         else { _foo = ""; }
+        workshop.current = undefined;
     } catch(e) {
         _ans = undefined;
         _foo = e.name+': '+e.message;

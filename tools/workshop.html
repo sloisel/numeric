@@ -213,8 +213,8 @@ function rmdiv(i) {
 	divorder.splice(foo,1);
 	$('#input_'+i.toString()).remove();
 	$('#output_'+i.toString()).remove();
-	savedata.inputs.splice(i,1);
-	savedata.outputs.splice(i,1);
+	savedata.inputs.splice(foo,1);
+	savedata.outputs.splice(foo,1);
 }
 
 function go(k) {
@@ -251,11 +251,13 @@ function restore2(foo) {
 		$("#divupdate").css({display: 'block'});
 	}
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
-	var input,output,i,j;
+	var input,output,i,j,f0;
 	for(i=1;i<foo.inputs.length;i++) {
 		mkdiv(i-1);
 		input = $('#text_'+i.toString())[0];
 		input.value = foo.inputs[i];
+		f0 = (function(in0) { return function() { resize(in0); }; }(input));
+		setTimeout(f0,0);
 		output = $('#out_'+i.toString())[0];
 		if(typeof foo.outputs[i] === "undefined") { continue; }
 		for(j=0;j<foo.outputs[i].length;j++) {
@@ -334,6 +336,7 @@ return {
 	    savedata:savedata,
 	    restore:restore,
 	    reset:reset,
+	    resize:resize,
 	    submit:submit,
 	    update:update
 	    }

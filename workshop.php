@@ -238,8 +238,8 @@ function rmdiv(i) {
 	divorder.splice(foo,1);
 	$('#input_'+i.toString()).remove();
 	$('#output_'+i.toString()).remove();
-	savedata.inputs.splice(i,1);
-	savedata.outputs.splice(i,1);
+	savedata.inputs.splice(foo,1);
+	savedata.outputs.splice(foo,1);
 }
 
 function go(k) {
@@ -276,11 +276,13 @@ function restore2(foo) {
 		$("#divupdate").css({display: 'block'});
 	}
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
-	var input,output,i,j;
+	var input,output,i,j,f0;
 	for(i=1;i<foo.inputs.length;i++) {
 		mkdiv(i-1);
 		input = $('#text_'+i.toString())[0];
 		input.value = foo.inputs[i];
+		f0 = (function(in0) { return function() { resize(in0); }; }(input));
+		setTimeout(f0,0);
 		output = $('#out_'+i.toString())[0];
 		if(typeof foo.outputs[i] === "undefined") { continue; }
 		for(j=0;j<foo.outputs[i].length;j++) {
@@ -359,6 +361,7 @@ return {
 	    savedata:savedata,
 	    restore:restore,
 	    reset:reset,
+	    resize:resize,
 	    submit:submit,
 	    update:update
 	    }
@@ -384,7 +387,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166');
+		$incs = array(1 => '/scripts/numeric.js?key=eeed50efcaf2a23fcc84c544fd14c18df8d0f8eebcb1d148cb93ffbef02e3944');
 	}
 	echo <<<EOT
 workshop.startup = (function () {
@@ -398,7 +401,7 @@ workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166"] });
+	                 scripts: ["/scripts/numeric.js?key=eeed50efcaf2a23fcc84c544fd14c18df8d0f8eebcb1d148cb93ffbef02e3944"] });
 	workshop.restore(_restore);
 });
 EOT;
@@ -406,7 +409,7 @@ EOT;
 ?>
 
 workshop.version = "noversion";
-workshop.updateVersion = "/scripts/numeric.js?key=06946c4571a51031f16780ec02c75c2292f0c0e2b8309781e05a0dd0ffdfa166";
+workshop.updateVersion = "/scripts/numeric.js?key=eeed50efcaf2a23fcc84c544fd14c18df8d0f8eebcb1d148cb93ffbef02e3944";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);
