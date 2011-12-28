@@ -98,53 +98,68 @@ Using Chrome
 86 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
 87 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
 88 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
-89 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
-90 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
-91 PASS: z.add(5) ==> {x:8,y:4}
-92 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
-93 PASS: z.add(w) ==> {x:5,y:12}
-94 PASS: z.mul(w) ==> {x:-26,y:32}
-95 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
-96 PASS: z.sub(w) ==> {x:1,y:-4}
-97 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
-98 PASS: z.abs() ==> {x:[2,2.828],y:}
-99 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
-100 PASS: z.norm2() ==> 5.477
-101 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
-102 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
-103 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
-104 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
-105 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
-106 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
-107 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
-108 PASS: A.get([1,1]) ==> {x:4,y:-1}
-109 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
-110 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
-111 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
-112 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
-113 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
-114 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-1.943e-15],[7,-3,5]],y:}
-115 PASS: C.sub(A).norm2()<1e-13 ==> true
-116 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
-117 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-118 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-119 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-120 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-121 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-122 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-123 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-124 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-125 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-126 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-127 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-128 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-129 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-130 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-131 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-132 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-133 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-134 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-Chrome testing complete. PASS: 135 FAIL: 0 Total: 135
+89 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.235,23,4"
+90 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
+91 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
+92 PASS: z.add(5) ==> {x:8,y:4}
+93 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
+94 PASS: z.add(w) ==> {x:5,y:12}
+95 PASS: z.mul(w) ==> {x:-26,y:32}
+96 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
+97 PASS: z.sub(w) ==> {x:1,y:-4}
+98 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
+99 PASS: z.abs() ==> {x:[2,2.828],y:}
+100 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
+101 PASS: z.norm2() ==> 5.477
+102 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
+103 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
+104 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
+105 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
+106 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
+107 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
+108 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
+109 PASS: A.get([1,1]) ==> {x:4,y:-1}
+110 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
+111 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
+112 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
+113 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
+114 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
+115 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-1.943e-15],[7,-3,5]],y:}
+116 PASS: C.sub(A).norm2()<1e-13 ==> true
+117 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
+118 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+119 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+120 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+121 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+122 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+123 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+124 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+125 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
+126 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+127 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+128 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+129 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
+130 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
+131 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
+132 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+133 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+134 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+135 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+136 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+137 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
+138 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+139 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+140 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+141 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+142 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+143 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+144 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+145 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+146 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+147 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+148 PASS: numeric.seedrandom.random() ==> 0.6139
+149 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Chrome testing complete. PASS: 150 FAIL: 0 Total: 150
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -237,50 +252,65 @@ Using Firefox
 86 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
 87 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
 88 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
-89 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
-90 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
-91 PASS: z.add(5) ==> {x:8,y:4}
-92 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
-93 PASS: z.add(w) ==> {x:5,y:12}
-94 PASS: z.mul(w) ==> {x:-26,y:32}
-95 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
-96 PASS: z.sub(w) ==> {x:1,y:-4}
-97 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
-98 PASS: z.abs() ==> {x:[2,2.828],y:}
-99 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
-100 PASS: z.norm2() ==> 5.477
-101 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
-102 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
-103 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
-104 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
-105 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
-106 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
-107 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
-108 PASS: A.get([1,1]) ==> {x:4,y:-1}
-109 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
-110 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
-111 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
-112 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
-113 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
-114 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-1.943e-15],[7,-3,5]],y:}
-115 PASS: C.sub(A).norm2()<1e-13 ==> true
-116 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
-117 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-118 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-119 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-120 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-121 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-122 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-123 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-124 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-125 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-126 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-127 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-128 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-129 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-130 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-131 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-132 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-133 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-134 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-Firefox testing complete. PASS: 135 FAIL: 0 Total: 135
+89 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.235,23,4"
+90 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
+91 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
+92 PASS: z.add(5) ==> {x:8,y:4}
+93 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
+94 PASS: z.add(w) ==> {x:5,y:12}
+95 PASS: z.mul(w) ==> {x:-26,y:32}
+96 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
+97 PASS: z.sub(w) ==> {x:1,y:-4}
+98 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
+99 PASS: z.abs() ==> {x:[2,2.828],y:}
+100 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
+101 PASS: z.norm2() ==> 5.477
+102 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
+103 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
+104 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
+105 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
+106 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
+107 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
+108 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
+109 PASS: A.get([1,1]) ==> {x:4,y:-1}
+110 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
+111 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
+112 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
+113 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
+114 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
+115 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-1.943e-15],[7,-3,5]],y:}
+116 PASS: C.sub(A).norm2()<1e-13 ==> true
+117 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
+118 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+119 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+120 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+121 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+122 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+123 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+124 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+125 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
+126 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+127 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+128 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+129 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
+130 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
+131 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
+132 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+133 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+134 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+135 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+136 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+137 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
+138 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+139 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+140 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+141 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+142 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+143 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+144 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+145 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+146 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+147 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+148 PASS: numeric.seedrandom.random() ==> 0.6139
+149 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Firefox testing complete. PASS: 150 FAIL: 0 Total: 150
