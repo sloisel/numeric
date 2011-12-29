@@ -142,10 +142,22 @@ var benchmarks = [
 	function(n) { var A = mkA(n); return bench(function() { numeric.inv(A); }); },
 	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getInverse(); }); },
 	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
-	]
+	],
+    [
+    'Sparse Laplacian LU', [3,5,10,15,20],
+    function(n) { var A = sparse.scatter(coord.delsq(coord.grid(n))); return bench(function() { sparse.LUP(A); }); },
+    function(n) { return 0; },
+    function(n) { return 0; }
+    ],
+    [
+    'Banded Laplacian LU', [3,5,10,20,30],
+    function(n) { var A = coord.delsq(coord.grid(n)); return bench(function() { coord.LU(A); }); },
+    function(n) { return 0; },
+    function(n) { return 0; }
+    ]
 ];
 
-var pwr = [1,2,2,2,2,2,3,2,3];
+var pwr = [1,2,2,2,2,2,3,2,3,4,4];
 
 var k=0,b=0;
 var libs = ['Numeric','Closure 5 Dec 2011','Sylvester 5 Dec 2011'];
@@ -183,17 +195,19 @@ function invbench(b,k,lib,rep) {
 	if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
 	else { foo = benchmarks[b][lib+2]; c0[lib][rep] = foo(sz); }
 	rep++;
-	if(rep === 3) { rep = 0; lib++; }
+	if(rep === 1) { rep = 0; lib++; }
 	if(lib+2 === benchmarks[b].length) {
 		k++;
 		lib=0;
 		var cps = [];
 		var mi = 1e6/Math.pow(benchmarks[b][1][k-1],pwr[b]);
-		for(i=0;i<3;i++) {
-			cps[i] = (c0[i][0]+c0[i][1]+c0[i][2])/(3*mi);
+		for(i=0;i<c0.length;i++) {
+		    cps[i] = 0;
+		    for(j=0;j<c0[i].length;j++) cps[i] += c0[i][j];
+			cps[i] /= (c0[i].length*mi);
 		}
 		for(i=0;i<cps.length;i++) {
-			datasets[i].data.push([count,cps[i]]);
+			if(cps[i]) datasets[i].data.push([count,cps[i]]);
 		}
 		var foo = '<td>n='+ks+'</td>';
 		var color = '', uncolor='';
