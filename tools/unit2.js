@@ -31,19 +31,20 @@ for(k=0;k<bar.length;k++) {
 
 load('./lib/numeric.js');
 if(typeof numeric === "undefined") { throw new Error("Could not load numeric.js"); }
-//var unit1 = numeric.test();
-//var unit_pass = unit1.unit_pass, unit_fail = unit1.unit_fail;
 var unit_pass = 0, unit_fail = 0;
 var a,b,msg;
 var k1 = 0;
+var workshop = {};
 for(k=0;k<k0;k++) {
     k1++;
+    bar = '';
     try {
-        foo = numeric.prettyPrint(eval(baz[k][0]));
-        if(typeof(foo) == "undefined") foo="undefined";
+        workshop.html = function(x) { bar += x; }
+        foo = numeric.prettyPrint(eval(baz[k][0].replace(/&lt;/g,'<').replace(/&gt;/g,'>')));
+        foo = bar+foo;
     } catch(e) { foo = e.toString(); }
     a = foo.replace(/\s/g,'');
-    b = baz[k][1].replace(/\s/g,'');//.replace(/NaN/g,'null').replace(/-Infinity/g,'null').replace(/Infinity/g,'null');
+    b = baz[k][1].replace(/\s/g,'');
     if(a===b) {
         msg = k1+" PASS "+baz[k][0]+"==>"+a+"==="+b;
         unit_pass++;

@@ -2,7 +2,12 @@ var _send = (typeof workerPostMessage !== 'undefined')?workerPostMessage:postMes
 var _myeval = eval;
 var _flag = 0;
 var workshop = (typeof workshop === "undefined")?{}:workshop;
-workshop.plot = function(p,o,s) { _send(JSON.stringify({k:workshop.current.k,n:workshop.current.n,p:p,o:o,s:s})); }
+workshop.plot = function(p,o,s) {
+    _send(JSON.stringify({k:workshop.current.k,n:workshop.current.n,p:p,o:o,s:s}));
+}
+workshop.html = function(o) {
+    _send(JSON.stringify({k:workshop.current.k,n:workshop.current.n,o:o}));
+}
 
 var console;
 if(!console) console = {};
@@ -35,7 +40,7 @@ _onmessage = function(event) {
         _foo = e.name+': '+e.message;
         if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
         { _foo += "\n\n"+e.stack.toString(); }
-//        _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
     }
     _send(JSON.stringify({k:_x.k,n:_x.n,o:_foo}));
 }

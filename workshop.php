@@ -156,6 +156,7 @@ function plotit(plotid,x) {
 	var k;
     try {
 		if(typeof x.s === "object") $('#'+plotid).css(x.s);
+		console.log(numeric.prettyPrint(x));
 		$.plot($("#"+plotid), x.p, x.o);
     } catch(e) {
 		var _foo = numeric.prettyPrint(e);
@@ -193,7 +194,7 @@ w.onmessage = function(ev) {
 		var plotid = "plot_"+plotcount.toString();
 		plotcount++;
 		y.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
-		(function (clear) { 
+		(function () { 
 			setTimeout(function () { 
 				plotit(plotid,x); 
 				setTimeout(function () { 
@@ -203,13 +204,12 @@ w.onmessage = function(ev) {
 		}());
 		clear[x.k] = false;
 		return;
-	}
+	} 
 	else { 
-		x.o = x.o.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 		y.innerHTML += x.o;
-		(function () { 
+		(function () {
 			setTimeout(function() { 
-				outputChanged(x.k,x.o,clear); },0) 
+				outputChanged(x.k,x.o); },0) 
 			}());
 		clear[x.k] = false;
 	}
@@ -387,7 +387,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044');
+		$incs = array(1 => '/scripts/numeric.js?key=0a10f8906ea07b4c00042d06330a4fff0e683f9272af1be2c38c13e41cad2e09');
 	}
 	echo <<<EOT
 workshop.startup = (function () {
@@ -401,15 +401,15 @@ workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044"] });
+	                 scripts: ["/scripts/numeric.js?key=0a10f8906ea07b4c00042d06330a4fff0e683f9272af1be2c38c13e41cad2e09"] });
 	workshop.restore(_restore);
 });
 EOT;
 }
 ?>
 
-workshop.version = "2011-12-28_17-40-55";
-workshop.updateVersion = "/scripts/numeric.js?key=79ca26eda13dbefc798966663d4efb91ea248fee913693ce9054e42a6ec49044";
+workshop.version = "2012-01-01_13-25-15";
+workshop.updateVersion = "/scripts/numeric.js?key=0a10f8906ea07b4c00042d06330a4fff0e683f9272af1be2c38c13e41cad2e09";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

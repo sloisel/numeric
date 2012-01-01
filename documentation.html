@@ -527,6 +527,40 @@ true
 Note that eigenvalues and eigenvectors are returned as complex numbers (type <tt>numeric.T</tt>). This is because
 eigenvalues are often complex even when the matrix is real.<br><br>
 
+<h1>Singular value decomposition (Shati Rao)</h1>
+
+Shanti Rao kindly emailed me an implementation of the Golub and Reisch algorithm:
+
+<pre>
+> A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
+[[ 22, 10,  2,  3,  7],
+ [ 14,  7, 10,  0,  8],
+ [ -1, 13, -1,-11,  3],
+ [ -3, -2, 13, -2,  4],
+ [  9,  8,  1, -2,  4],
+ [  9,  1, -7,  5, -1],
+ [  2, -6,  6,  5,  1],
+ [  4,  5,  0, -2,  2]]
+> numeric.svd(A)
+{U: 
+[[    -0.7071,    -0.1581,     0.1768,     0.2494,     0.4625],
+ [    -0.5303,    -0.1581,    -0.3536,     0.1556,    -0.4984],
+ [    -0.1768,     0.7906,    -0.1768,    -0.1546,     0.3967],
+ [ -1.506e-17,    -0.1581,    -0.7071,    -0.3277,        0.1],
+ [    -0.3536,     0.1581,  1.954e-15,   -0.07265,    -0.2084],
+ [    -0.1768,    -0.1581,     0.5303,    -0.5726,   -0.05555],
+ [ -7.109e-18,    -0.4743,    -0.1768,    -0.3142,     0.4959],
+ [    -0.1768,     0.1581,  1.915e-15,     -0.592,    -0.2791]],
+S: 
+[      35.33,         20,       19.6,          0,          0],
+V: 
+[[    -0.8006,    -0.3162,     0.2887,    -0.4191,          0],
+ [    -0.4804,     0.6325,  7.768e-15,     0.4405,     0.4185],
+ [    -0.1601,    -0.3162,     -0.866,     -0.052,     0.3488],
+ [  4.684e-17,    -0.6325,     0.2887,     0.6761,     0.2442],
+ [    -0.3203,  3.594e-15,    -0.2887,      0.413,    -0.8022]]}
+</pre>
+
 <!--
   Some further tests.
 <pre>
@@ -654,6 +688,14 @@ numerical Laplacian for a domain.
 [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
 > coord.dotMV(coordL,x)
 [1,1,1,1,1,1,1,1,1]
+> G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G
+[[ 0     , 0     , 0     , 0     , 0     ],
+ [ 0     , 0.6875, 0.875 , 0.6875, 0     ],
+ [ 0     , 0.875 , 1.125 , 0.875 , 0     ],
+ [ 0     , 0.6875, 0.875 , 0.6875, 0     ],
+ [ 0     , 0     , 0     , 0     , 0     ]]
+> workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100&gt;');
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg==" width=100>
 </pre>
 
 You can also work on an L-shaped or arbitrary-shape domain:
@@ -686,7 +728,7 @@ R routines.
   unconstrained_solution:[     0,    5,    0],
   iterations:            [     3,    0],
   iact:                  [     3,    2,    0],
-  message:"" }
+  message:               "" }
 </pre>
 
 <!--
@@ -698,6 +740,8 @@ R routines.
   iterations:            [3,0],
   iact:                  [1,2,0,0,0,0,0,0,0,0],
   message:               ""}
+> numeric.imageURL(numeric.rep([3],[[1,2],[3,4]]));
+"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
 </pre>
 -->
 
@@ -720,3 +764,4 @@ the seedrandom version, just do <tt>Math.random = numeric.seedrandom.random</tt>
 decrease the performance of all <tt>Math</tt> operations.
 
 <br><br><br>
+

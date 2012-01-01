@@ -207,7 +207,7 @@ function invbench(b,k,lib,rep) {
 			cps[i] /= (c0[i].length*mi);
 		}
 		for(i=0;i<cps.length;i++) {
-			if(cps[i]) datasets[i].data.push([count,cps[i]]);
+			if(MSIE || cps[i]) datasets[i].data.push([count,cps[i]]);
 		}
 		var foo = '<td>n='+ks+'</td>';
 		var color = '', uncolor='';

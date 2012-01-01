@@ -10,7 +10,7 @@ if [ -f nodepid.log ]; then
 	kill -9 $nodepid || true
 	rm -f nodepid.log
 fi
-cat ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js > ../lib/numeric.js
+cat ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js > ../lib/numeric.js
 cp ../src/documentation.html ..
 php mkdb.php noversion
 cd ..

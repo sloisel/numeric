@@ -131,6 +131,7 @@ function plotit(plotid,x) {
 	var k;
     try {
 		if(typeof x.s === "object") $('#'+plotid).css(x.s);
+		console.log(numeric.prettyPrint(x));
 		$.plot($("#"+plotid), x.p, x.o);
     } catch(e) {
 		var _foo = numeric.prettyPrint(e);
@@ -168,7 +169,7 @@ w.onmessage = function(ev) {
 		var plotid = "plot_"+plotcount.toString();
 		plotcount++;
 		y.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
-		(function (clear) { 
+		(function () { 
 			setTimeout(function () { 
 				plotit(plotid,x); 
 				setTimeout(function () { 
@@ -178,13 +179,12 @@ w.onmessage = function(ev) {
 		}());
 		clear[x.k] = false;
 		return;
-	}
+	} 
 	else { 
-		x.o = x.o.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 		y.innerHTML += x.o;
-		(function () { 
+		(function () {
 			setTimeout(function() { 
-				outputChanged(x.k,x.o,clear); },0) 
+				outputChanged(x.k,x.o); },0) 
 			}());
 		clear[x.k] = false;
 	}
