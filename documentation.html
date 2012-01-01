@@ -527,7 +527,7 @@ true
 Note that eigenvalues and eigenvectors are returned as complex numbers (type <tt>numeric.T</tt>). This is because
 eigenvalues are often complex even when the matrix is real.<br><br>
 
-<h1>Singular value decomposition (Shati Rao)</h1>
+<h1>Singular value decomposition (Shanti Rao)</h1>
 
 Shanti Rao kindly emailed me an implementation of the Golub and Reisch algorithm:
 
@@ -579,6 +579,14 @@ true
 > n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
 true
 > n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+true
+> m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
+true
+> m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
+true
+> m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
+true
+> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
 true
 </pre>
 -->

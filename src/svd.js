@@ -4,7 +4,7 @@ slightly to work on Arrays instead of using a Matrix object.
 It is apparently translated from http://stitchpanorama.sourceforge.net/Python/svd.py
 */
 
-numeric.svd= function(A)
+numeric.svd= function svd(A)
 {
     var temp;
 //Compute the thin SVD from G. H. Golub and C. Reinsch, Numer. Math. 14, 403-420 (1970)

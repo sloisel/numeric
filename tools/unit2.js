@@ -1,4 +1,3 @@
-// For use with jsdb
 var console = { 
     log: function() { 
         var k; 
