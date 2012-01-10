@@ -153,9 +153,6 @@ The function <tt>numeric.dim()</tt> allows you to compute the dimensions of an A
 [2]
 > numeric.dim([[1,2,3],[4,5,6]])
 [2,3]
-> x = [[1,2,3],[4,5,6]]
-[[1,2,3],
- [4,5,6]]
 </pre>
 
 You can perform a deep comparison of Arrays using <tt>numeric.same()</tt>:
@@ -317,7 +314,7 @@ true
 
 <h1>Linear algebra</h1>
 
-Matrix products are implemented in the function the functions
+Matrix products are implemented in the functions
 <tt>numeric.dotVV()</tt>
 <tt>numeric.dotVM()</tt>
 <tt>numeric.dotMV()</tt>
@@ -415,12 +412,10 @@ Parse CSV files:
  [       1,     2.3,     0.3],
  [ 4.000e6, -5.3e-8,   62800]]
 > numeric.toCSV([[1.23456789123,2],[3,4]])
-"1.235,2
-     3,4
+"1.23456789123,2
+3,4
 "
 </pre>
-Note that <tt>numeric.toCSV()</tt> uses <tt>numeric.prettyPrint()</tt> to print numbers. To obtain more
-digits, set <tt>numeric.precision</tt> to the desired number of digits of accuracy.
 
 You can also fetch a URL (a thin wrapper around XMLHttpRequest):
 <pre>
@@ -518,7 +513,7 @@ Eigenvalues:
     y:}}
 > C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv());
 {x:[[    1,     2,      5   ],
-    [    3,     5,-1.943e-15],
+    [    3,     5,-3.109e-15],
     [    7,    -3,      5   ]],
 y:}
 > C.sub(A).norm2()<1e-13

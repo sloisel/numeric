@@ -1,6 +1,6 @@
 "use strict";
 
-var numeric = {};
+var numeric = numeric || function numeric() {};
 
 /*
  * 1. Utility functions
@@ -56,17 +56,26 @@ numeric.prettyPrint = function(x) {
             return false;
         }
         if(x === null) { ret.push("null"); return false; }
-        if(typeof x === "function") { ret.push(x.toString()); return true; }
-        if('length' in x) {
+        if(typeof x === "function") { 
+            ret.push(x.toString());
+            var flag = false;
+            for(k in x) { if(x.hasOwnProperty(k)) { 
+                if(flag) ret.push(',\n');
+                else ret.push('\n{');
+                flag = true; 
+                ret.push(k); 
+                ret.push(': \n'); 
+                foo(x[k]); 
+            } }
+            if(flag) ret.push('}\n');
+            return true;
+        }
+        if(x instanceof Array) {
             if(x.length > numeric.largeArray) { ret.push('...Large Array...'); return true; }
             var flag = false;
             ret.push('[');
             for(k=0;k<x.length;k++) { if(k>0) { ret.push(','); if(flag) ret.push('\n '); } flag = foo(x[k]); }
             ret.push(']');
-            return true;
-        }
-        if(typeof x.toHTML === "function") {
-            ret.push(x.toHTML());
             return true;
         }
         ret.push('{');
@@ -132,7 +141,7 @@ numeric.toCSV = function toCSV(A) {
     ret = [];
     for(i=0;i<m;i++) {
         row = [];
-        for(j=0;j<m;j++) { row[j] = numeric.prettyPrint(A[i][j]); }
+        for(j=0;j<m;j++) { row[j] = A[i][j].toString(); }
         ret[i] = row.join(', ');
     }
     return ret.join('\n')+'\n';
@@ -276,10 +285,10 @@ numeric.crc32Array = numeric.imageURL = function imageURL(img) {
     stream.push(0);
     stream.push(0);
     a = stream.length;
-    stream.push(73); // I
-    stream.push(69); // E
-    stream.push(78); // N
-    stream.push(68); // D
+    stream.push(73);  // I
+    stream.push(69);  // E
+    stream.push(78);  // N
+    stream.push(68);  // D
     stream.push(174); // CRC1
     stream.push(66);  // CRC2
     stream.push(96);  // CRC3
@@ -325,20 +334,15 @@ numeric.mapreduce = function mapreduce(body,init) {
             '    }'+
             '    return accum;\n'+
             '}\n'+
-            'for(i=_n-1;i>=3;i-=4) { \n'+
+            'for(i=_n-1;i>=1;i-=2) { \n'+
             '    xi = x[i];\n'+
             '    '+body+';\n'+
             '    xi = x[i-1];\n'+
             '    '+body+';\n'+
-            '    xi = x[i-2];\n'+
-            '    '+body+';\n'+
-            '    xi = x[i-3];\n'+
-            '    '+body+';\n'+
             '}\n'+
-            'while(i>=0) {\n'+
+            'if(i === 0) {\n'+
             '    xi = x[i];\n'+
             '    '+body+'\n'+
-            '    i--;\n'+
             '}\n'+
             'return accum;'
             );
@@ -359,18 +363,16 @@ numeric.same = function same(x,y) {
 }
 
 
-numeric.rep = function rep(s,v) {
-    function foo(k) {
-        var n = s[k], ret = new Array(n), i;
-        if(k === s.length-1) {
-            for(i=n-1;i>=3;i-=4) { ret[i] = v; ret[i-1] = v; ret[i-2] = v; ret[i-3] = v; }
-            while(i>=0) { ret[i] = v; i--; }
-            return ret;
-        }
-        for(i=n-1;i>=0;i--) { ret[i] = foo(k+1); }
+numeric.rep = function rep(s,v,k) {
+    if(typeof k === "undefined") { k=0; }
+    var n = s[k], ret = new Array(n), i;
+    if(k === s.length-1) {
+        for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
+        if(i===-1) { ret[0] = v; }
         return ret;
     }
-    return foo(0);
+    for(i=n-1;i>=0;i--) { ret[i] = rep(s,v,k+1); }
+    return ret;
 }
 
 numeric.dotMMbig = function dotMMbig(x,y) {
@@ -405,11 +407,11 @@ numeric.dotMMsmall = function dotMMsmall(x,y) {
         bar = x[i];
         for(k=r-1;k>=0;k--) {
             woo = bar[q-1]*y[q-1][k];
-            for(j=q-2;j>=3;j-=4) {
-                i0 = j-1; p0 = j-2; k0 = j-3;
-                woo += bar[j]*y[j][k] + bar[i0]*y[i0][k] + bar[p0]*y[p0][k] + bar[k0]*y[k0][k];
+            for(j=q-2;j>=1;j-=2) {
+                i0 = j-1;
+                woo += bar[j]*y[j][k] + bar[i0]*y[i0][k];
             }
-            while(j>=0) { woo += bar[j]*y[j][k]; j--; }
+            if(j===0) { woo += bar[0]*y[0][k]; }
             foo[k] = woo;
         }
         ret[i] = foo;
@@ -429,24 +431,23 @@ numeric.dotVM = function dotVM(x,y) {
     ret = new Array(q);
     for(k=q-1;k>=0;k--) {
         woo = x[p-1]*y[p-1][k];
-        for(j=p-2;j>=3;j-=4) {
-            i0 = j-1; p0 = j-2; k0 = j-3;
-            woo += x[j]*y[j][k] + x[i0]*y[i0][k] + x[p0]*y[p0][k] + x[k0]*y[k0][k];
+        for(j=p-2;j>=1;j-=2) {
+            i0 = j-1;
+            woo += x[j]*y[j][k] + x[i0]*y[i0][k];
         }
-        while(j>=0) { woo += x[j]*y[j][k]; j--; }
+        if(j===0) { woo += x[0]*y[0][k]; }
         ret[k] = woo;
     }
     return ret;
 }
 
 numeric.dotVV = function dotVV(x,y) {
-    var i,n=x.length,i1,i2,i3,ret = x[n-1]*y[n-1];
-    for(i=n-2;i>=3;i-=4) {
-        i1 = i-1; i2 = i-2; i3 = i-3;
-        ret += x[i]*y[i] + x[i1]*y[i1] + x[i2]*y[i2] + x[i3]*y[i3];
+    var i,n=x.length,i1,ret = x[n-1]*y[n-1];
+    for(i=n-2;i>=1;i-=2) {
+        i1 = i-1;
+        ret += x[i]*y[i] + x[i1]*y[i1];
     }
-    i++;
-    while(i--) { ret += x[i]*y[i]; }
+    if(i===0) { ret += x[0]*y[0]; }
     return ret;
 }
 
@@ -467,43 +468,34 @@ numeric.dot = function dot(x,y) {
 }
 
 numeric.diag = function diag(d) {
-    var i,i1,j,j1,j2,j3,n = d.length, A = new Array(n), Ai;
+    var i,i1,j,n = d.length, A = new Array(n), Ai;
     for(i=n-1;i>=0;i--) {
         Ai = new Array(n);
-        i1 = i+4;
-        for(j=n-1;j>i1;j-=4) {
-            j1 = j-1; j2 = j-2; j3 = j-3;
+        i1 = i+2;
+        for(j=n-1;j>=i1;j-=2) {
             Ai[j] = 0;
-            Ai[j1] = 0;
-            Ai[j2] = 0;
-            Ai[j3] = 0;
+            Ai[j-1] = 0;
         }
-        while(j>i) { Ai[j] = 0; j--; }
+        if(j>i) { Ai[j] = 0; }
         Ai[i] = d[i];
-        for(j=i-1;j>=3;j-=4) {
-            j1 = j-1; j2 = j-2; j3 = j-3;
+        for(j=i-1;j>=1;j-=2) {
             Ai[j] = 0;
-            Ai[j1] = 0;
-            Ai[j2] = 0;
-            Ai[j3] = 0;
+            Ai[j-1] = 0;
         }
-        while(j>=0) { Ai[j] = 0; j--; }
+        if(j===0) { Ai[0] = 0; }
         A[i] = Ai;
     }
     return A;
 }
 numeric.getDiag = function(A) {
     var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = new Array(n);
-    for(i=n-1;i>=3;i-=4) {
-        i1 = i-1; i2 = i-2; i3 = i-3;
+    for(i=n-1;i>=1;--i) {
         ret[i] = A[i][i];
-        ret[i1] = A[i1][i1];
-        ret[i2] = A[i2][i2];
-        ret[i3] = A[i3][i3];
+        --i;
+        ret[i] = A[i][i];
     }
-    while(i>=0) {
-        ret[i] = A[i][i];
-        i--;
+    if(i===0) {
+        ret[0] = A[0][0];
     }
     return ret;
 }
@@ -523,7 +515,6 @@ numeric.pointwise = function pointwise(params,body,setup) {
     }
     fun[params.length] = '_s';
     fun[params.length+1] = '_k';
-    if(typeof body === "string") { var bin = body; body = function(i1) { return bin.replace(/\[i\]/g,'['+i1+']'); } }
     fun[params.length+2] = (
             'if(typeof _s === "undefined") _s = numeric.dim('+thevec+');\n'+
             'if(typeof _k === "undefined") _k = 0;\n'+
@@ -534,16 +525,18 @@ numeric.pointwise = function pointwise(params,body,setup) {
             '    return ret;\n'+
             '}\n'+
             setup+'\n'+
-            'for(i=_n-1;i>=3;i-=4) { \n'+
-            '    _i1 = i-1; _i2 = i-2; _i3 = i-3;\n'+
-            '    '+body('i')+'\n'+
-            '    '+body('_i1')+'\n'+
-            '    '+body('_i2')+'\n'+
-            '    '+body('_i3')+'\n'+
+            'for(i=_n-1;i>=3;--i) { \n'+
+            '    '+body+'\n'+
+            '    --i;\n'+
+            '    '+body+'\n'+
+            '    --i;\n'+
+            '    '+body+'\n'+
+            '    --i;\n'+
+            '    '+body+'\n'+
             '}\n'+
             'while(i>=0) {\n'+
-            '    '+body('i')+'\n'+
-            '    i--;\n'+
+            '    '+body+'\n'+
+            '    --i;\n'+
             '}\n'+
             'return ret;'
             );
@@ -685,23 +678,20 @@ numeric.inv = function inv(x) {
             Ai = A[i];
             Ii = ret[i];
             alpha = Ai[j]/Aj[j];
-            for(k=j+1;k<n-3;k+=4) {
-                k1 = k+1; k2 = k+2; k3 = k+3;
+            if(alpha === 0) continue;
+            for(k=j+1;k<n-1;k+=2) {
+                k1 = k+1;
                 Ai[k] -= Aj[k]*alpha;
                 Ai[k1] -= Aj[k1]*alpha;
-                Ai[k2] -= Aj[k2]*alpha;
-                Ai[k3] -= Aj[k3]*alpha;
             }
-            while(k<n) { Ai[k] -= Aj[k]*alpha; k++; }
-            for(k=j;k>=3;k-=4) {
-                k0 = P[k-3];
-                k1 = P[k-2]; k2 = P[k-1]; k3 = P[k];
-                Ii[k0] -= Ij[k0]*alpha;
-                Ii[k1] -= Ij[k1]*alpha;
+            if(k<n) { Ai[k] -= Aj[k]*alpha; }
+            for(k=j;k>=1;k-=2) {
+                k2 = P[k-1]; 
+                k3 = P[k];
                 Ii[k2] -= Ij[k2]*alpha;
                 Ii[k3] -= Ij[k3]*alpha;
             }
-            while(k>=0) { Ii[P[k]] -= Ij[P[k]]*alpha; k--; }
+            if(k>=0) { Ii[P[k]] -= Ij[P[k]]*alpha; }
         }
     }
     for(j=n-1;j>0;j--) {
@@ -710,18 +700,18 @@ numeric.inv = function inv(x) {
         for(i=0;i<j;i++) {
             Ii = ret[i];
             alpha = A[i][j]/Aj[j];
-            for(k=0;k<n-3;k+=4) {
-                k1 = k+1; k2 = k+2; k3 = k+3;
+            if(alpha === 0) continue;
+            for(k=0;k<n-1;k+=2) {
+                k1 = k+1;
                 Ii[k] -= Ij[k]*alpha;
                 Ii[k1] -= Ij[k1]*alpha;
-                Ii[k2] -= Ij[k2]*alpha;
-                Ii[k3] -= Ij[k3]*alpha;
             }
-            while(k<n) { Ii[k] -= Ij[k]*alpha; k++; }
+            if(k!==n) { Ii[k] -= Ij[k]*alpha; }
         }
     }
     for(i=0;i<n;i++) {
         alpha = A[i][i];
+        if(alpha === 1) continue;
         Ii = ret[i];
         for(j=0;j<n;j++) { Ii[j] /= alpha; }
     }
@@ -743,14 +733,12 @@ numeric.det = function det(x) {
         for(i=j+1;i<n;i++) {
             Ai = A[i];
             alpha = Ai[j]/Aj[j];
-            for(k=j+1;k<n-3;k+=4) {
-                k1 = k+1; k2 = k+2; k3 = k+3;
+            for(k=j+1;k<n-1;k+=2) {
+                k1 = k+1;
                 Ai[k] -= Aj[k]*alpha;
                 Ai[k1] -= Aj[k1]*alpha;
-                Ai[k2] -= Aj[k2]*alpha;
-                Ai[k3] -= Aj[k3]*alpha;
             }
-            while(k<n) { Ai[k] -= Aj[k]*alpha; k++; }
+            if(k!==n) { Ai[k] -= Aj[k]*alpha; }
         }
         if(Aj[j] === 0) { return 0; }
         ret *= Aj[j];
@@ -759,52 +747,70 @@ numeric.det = function det(x) {
 }
 
 numeric.transpose = function transpose(x) {
-    var i,j,j1,j2,j3,m = x.length,n = x[0].length, ret=new Array(n),Ai;
+    var i,j,m = x.length,n = x[0].length, ret=new Array(n),A0,A1,Bj;
     for(j=0;j<n;j++) ret[j] = new Array(m);
-    for(i=0;i<m;i++) {
-        Ai = x[i];
-        for(j=n-1;j>=3;j-=4) {
-            j1 = j-1; j2 = j-2; j3 = j-3;
-            ret[j][i] = Ai[j];
-            ret[j1][i] = Ai[j1];
-            ret[j2][i] = Ai[j2];
-            ret[j3][i] = Ai[j3];
+    for(i=m-1;i>=1;i-=2) {
+        A1 = x[i];
+        A0 = x[i-1];
+        for(j=n-1;j>=1;--j) {
+            Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
+            --j;
+            Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
         }
-        while(j>=0) { ret[j][i] = Ai[j]; j--; }
+        if(j===0) {
+            Bj = ret[0]; Bj[i] = A1[0]; Bj[i-1] = A0[0];
+        }
+    }
+    if(i===0) {
+        A0 = x[0];
+        for(j=n-1;j>=1;--j) {
+            ret[j][0] = A0[j];
+            --j;
+            ret[j][0] = A0[j];
+        }
+        if(j===0) { ret[0][0] = A0[0]; }
     }
     return ret;
 }
 numeric.negtranspose = function negtranspose(x) {
-    var i,j,j1,j2,j3,m = x.length,n = x[0].length, ret=new Array(n),Ai;
+    var i,j,m = x.length,n = x[0].length, ret=new Array(n),A0,A1,Bj;
     for(j=0;j<n;j++) ret[j] = new Array(m);
-    for(i=0;i<m;i++) {
-        Ai = x[i];
-        for(j=n-1;j>=3;j-=4) {
-            j1 = j-1; j2 = j-2; j3 = j-3;
-            ret[j][i] = -Ai[j];
-            ret[j1][i] = -Ai[j1];
-            ret[j2][i] = -Ai[j2];
-            ret[j3][i] = -Ai[j3];
+    for(i=m-1;i>=1;i-=2) {
+        A1 = x[i];
+        A0 = x[i-1];
+        for(j=n-1;j>=1;--j) {
+            Bj = ret[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
+            --j;
+            Bj = ret[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
         }
-        while(j>=0) { ret[j][i] = -Ai[j]; j--; }
+        if(j===0) {
+            Bj = ret[0]; Bj[i] = -A1[0]; Bj[i-1] = -A0[0];
+        }
+    }
+    if(i===0) {
+        A0 = x[0];
+        for(j=n-1;j>=1;--j) {
+            ret[j][0] = -A0[j];
+            --j;
+            ret[j][0] = -A0[j];
+        }
+        if(j===0) { ret[0][0] = -A0[0]; }
     }
     return ret;
 }
 
 numeric._random = function _random(s,k) {
-    var i,n=s[k],ret=new Array(n), rnd, me = numeric._random;
+    var i,n=s[k],ret=new Array(n), rnd;
     if(k === s.length-1) {
         rnd = Math.random;
-        for(i=n-1;i>=3;i-=4) {
+        for(i=n-1;i>=1;i-=2) {
             ret[i] = rnd();
             ret[i-1] = rnd();
-            ret[i-2] = rnd();
-            ret[i-3] = rnd();
         }
-        while(i>=0) { ret[i--] = rnd(); }
+        if(i===0) { ret[0] = rnd(); }
         return ret;
     }
-    for(i=n-1;i>=0;i--) ret[i] = me(s,k+1);
+    for(i=n-1;i>=0;i--) ret[i] = _random(s,k+1);
     return ret;
 }
 numeric.random = function random(s) { return numeric._random(s,0); }
@@ -852,18 +858,20 @@ numeric.tensor = function tensor(x,y) {
     if(s1.length !== 1 || s2.length !== 1) {
         throw new Error('numeric: tensor product is only defined for vectors');
     }
-    var m = s1[0], n = s2[0], A = new Array(m), Ai, i,j,xi,j1,j2,j3;
+    var m = s1[0], n = s2[0], A = new Array(m), Ai, i,j,xi;
     for(i=m-1;i>=0;i--) {
         Ai = new Array(n);
         xi = x[i];
-        for(j=n-1;j>=3;j-=4) {
-            j1 = j-1; j2 = j-2; j3 = j-3;
+        for(j=n-1;j>=3;--j) {
             Ai[j] = xi * y[j];
-            Ai[j1] = xi * y[j1];
-            Ai[j2] = xi * y[j2];
-            Ai[j3] = xi * y[j3];
+            --j;
+            Ai[j] = xi * y[j];
+            --j;
+            Ai[j] = xi * y[j];
+            --j;
+            Ai[j] = xi * y[j];
         }
-        while(j>=0) { Ai[j] = xi * y[j]; j--; }
+        while(j>=0) { Ai[j] = xi * y[j]; --j; }
         A[i] = Ai;
     }
     return A;
@@ -1406,7 +1414,7 @@ numeric.eig = function eig(A,maxiter) {
 
 // 5. Real sparse linear algebra
 
-var sparse = {};
+var sparse = sparse || function sparse() {};
 
 sparse.dim = function dim(A,ret,k) {
     if(typeof ret === "undefined") { ret = []; }
@@ -1416,7 +1424,7 @@ sparse.dim = function dim(A,ret,k) {
     if(A.length > ret[k]) ret[k] = A.length;
     var i;
     for(i in A) {
-        dim(A[i],ret,k+1);
+        if(A.hasOwnProperty(i)) dim(A[i],ret,k+1);
     }
     return ret;
 };
@@ -1426,27 +1434,23 @@ sparse.clone = function clone(A,k,n) {
     if(typeof n === "undefined") { n = sparse.dim(A).length; }
     var i,ret = new Array(A.length);
     if(k === n-1) {
-        for(i in A) { ret[i] = A[i]; }
+        for(i in A) { if(A.hasOwnProperty(i)) ret[i] = A[i]; }
         return ret;
     }
     for(i in A) {
-        ret[i] = clone(A[i],k+1,n);
+        if(A.hasOwnProperty(i)) ret[i] = clone(A[i],k+1,n);
     }
     return ret;
 }
 
 sparse.diag = function diag(d) {
     var n = d.length,i,ret = new Array(n),i1,i2,i3;
-    for(i=n-1;i>=3;i-=4) {
+    for(i=n-1;i>=1;i-=2) {
         i1 = i-1;
-        i2 = i-2;
-        i3 = i-3;
         ret[i] = []; ret[i][i] = d[i];
         ret[i1] = []; ret[i1][i1] = d[i1];
-        ret[i2] = []; ret[i1][i2] = d[i2];
-        ret[i3] = []; ret[i1][i3] = d[i3];
     }
-    while(i>=0) { ret[i] = []; ret[i][i] = d[i]; i--; }
+    if(i===0) { ret[0] = []; ret[0][0] = d[i]; }
     return ret;
 }
 
@@ -1455,8 +1459,10 @@ sparse.identity = function identity(n) { return sparse.diag(numeric.rep([n],1));
 sparse.transpose = function transpose(A) {
     var ret = [], n = A.length, i,j,Ai;
     for(i in A) {
+        if(!(A.hasOwnProperty(i))) continue;
         Ai = A[i];
         for(j in Ai) {
+            if(!(Ai.hasOwnProperty(j))) continue;
             if(typeof ret[j] !== "object") { ret[j] = []; }
             ret[j][i] = Ai[j];
         }
@@ -1475,6 +1481,7 @@ sparse.LUP = function LUP(A,tol) {
         UTi = UT[i];
         j = i;
         for(k in UTi) {
+            if(!(Q.hasOwnProperty(k))) continue;
             k = Q[k];
             if(k<=i) continue;
             if(abs(U[k][i]) > abs(U[j][i])) { j = k; }
@@ -1489,12 +1496,14 @@ sparse.LUP = function LUP(A,tol) {
         }
         Ui = U[i];
         for(j in UTi) {
+            if(!(Q.hasOwnProperty(j))) continue;
             j = Q[j];
             if(j<=i) continue;
             Uj = U[j];
             alpha = Uj[i]/Ui[i];
             L[j][i] = alpha;
             for(k in Ui) {
+                if(!Ui.hasOwnProperty(k)) continue;
                 if(k > i) {
                     if(!(k in Uj)) { Uj[k] = 0; UT[k][j] = 0; }
                     Uj[k] -= alpha*Ui[k];
@@ -1518,6 +1527,7 @@ sparse.dotMM = function dotMM(A,B) {
             accum = 0;
             BTk = BT[k];
             for(j in Ai) {
+                if(!(Ai.hasOwnProperty(j))) continue;
                 if(j in BTk) { accum += Ai[j]*BTk[j]; }
             }
             if(accum) reti[k] = accum;
@@ -1534,7 +1544,8 @@ sparse.dotMV = function dotMV(A,x) {
         Ai = A[i];
         accum = 0;
         for(j in Ai) {
-            if(j in x) accum += Ai[j]*x[j];
+            if(!(Ai.hasOwnProperty(j))) continue;
+            if(x[j]) accum += Ai[j]*x[j];
         }
         if(accum) ret[i] = accum;
     }
@@ -1545,10 +1556,12 @@ sparse.dotVM = function dotMV(x,A) {
     var i,j,Ai,alpha;
     var ret = [], accum;
     for(i in x) {
+        if(!x.hasOwnProperty(i)) continue;
         Ai = A[i];
         alpha = x[i];
         for(j in Ai) {
-            if(!(j in ret)) { ret[j] = 0; }
+            if(!Ai.hasOwnProperty(j)) continue;
+            if(!ret[j]) { ret[j] = 0; }
             ret[j] += alpha*Ai[j];
         }
     }
@@ -1557,7 +1570,7 @@ sparse.dotVM = function dotMV(x,A) {
 
 sparse.dotVV = function dotVV(x,y) {
     var i,ret=0;
-    for(i in x) { if(i in y) ret+= x[i]*y[i]; }
+    for(i in x) { if(x[i] && y[i]) ret+= x[i]*y[i]; }
     return ret;
 }
 
@@ -1576,12 +1589,13 @@ sparse.dot = function dot(A,B) {
 
 sparse.LUPsolve = function LUPsolve(lup,b) {
     var L = lup.L, U = lup.U, P = lup.P;
-    var n = L.length, i,j, ret = new Array(n), accum, Ai;
+    var n = L.length, i,j, ret = new Array(n), accum, Ai,foo;
     for(i = 0;i<n;i++) {
-        if(P[i] in b) accum = b[P[i]];
+        if(b.hasOwnProperty(P[i])) accum = b[P[i]];
         else accum = 0;
         Ai = L[i];
         for(j in Ai) {
+            if(!Ai.hasOwnProperty(j)) continue;
             if(j<i) { accum -= Ai[j]*ret[j]; }
         }
         ret[i] = accum;
@@ -1590,6 +1604,7 @@ sparse.LUPsolve = function LUPsolve(lup,b) {
         accum = ret[i];
         Ai = U[i];
         for(j in Ai) {
+            if(!Ai.hasOwnProperty(j)) continue;
             if(j>i) { accum -= Ai[j]*ret[j]; }
         }
         ret[i] = accum/Ai[i];
@@ -1615,8 +1630,10 @@ sparse.gather = function gather(A) {
     var i = [], j = [], x = [];
     var p,q,Ap;
     for(p in A) {
+        if(!A.hasOwnProperty(p)) continue;
         Ap = A[p];
         for(q in Ap) {
+            if(!Ap.hasOwnProperty(q)) continue;
             i.push(parseInt(p));
             j.push(parseInt(q));
             x.push(Ap[q]);
@@ -1626,7 +1643,7 @@ sparse.gather = function gather(A) {
 }
 
 // 6. Coordinate matrices
-var coord = {};
+var coord = coord || function coord() {};
 
 coord.LU = function LU(A) {
     var I = A[0], J = A[1], V = A[2];
@@ -1776,3 +1793,11 @@ coord.dotMV = function dotMV(A,x) {
     for(k=0;k<p;k++) { ret[Ai[k]]+=Av[k]*x[Aj[k]]; }
     return ret;
 }
+
+//This is for node support:
+if (typeof exports !== "undefined") {
+    exports.numeric = numeric;
+    exports.sparse = sparse;
+    exports.coord = coord;
+}
+

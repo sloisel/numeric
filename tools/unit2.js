@@ -18,7 +18,7 @@ function XMLHttpRequest() {
     this.send = function() {}
 }
 var foo;
-if(typeof system !== "undefined") { foo = new Stream('./lib/numeric.js').readFile(); }
+if(typeof system !== "undefined") { foo = new Stream('./documentation.html').readFile(); }
 else { foo = read('./documentation.html'); }
 var bar = foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\n> ')
 var baz = [];

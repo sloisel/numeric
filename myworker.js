@@ -40,8 +40,8 @@ _onmessage = function(event) {
         _foo = e.name+': '+e.message;
         if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined")
         { _foo += "\n\n"+e.stack.toString(); }
-        _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
     }
+    _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
     _send(JSON.stringify({k:_x.k,n:_x.n,o:_foo}));
 }
 if(typeof _retarded === "undefined") { onmessage = _onmessage; }
