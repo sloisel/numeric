@@ -371,7 +371,7 @@ numeric.rep = function rep(s,v,k) {
         if(i===-1) { ret[0] = v; }
         return ret;
     }
-    for(i=n-1;i>=0;i--) { ret[i] = rep(s,v,k+1); }
+    for(i=n-1;i>=0;i--) { ret[i] = numeric.rep(s,v,k+1); }
     return ret;
 }
 

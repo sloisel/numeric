@@ -64,7 +64,11 @@ try:
     print "Using",client
     driver.implicitly_wait(2)
     driver.get(url+'workshop.php')
-    test(client,driver)
+    try:
+        WebDriverWait(driver, 30).until(lambda driver : driver.find_element_by_id("text_1"))
+        test(client,driver)
+    except Exception as ex:
+        print "FAIL: text_1 not found. ",ex
 except:
     print "Could not use browser",client
 if(driver):
