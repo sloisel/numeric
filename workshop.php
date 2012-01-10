@@ -33,11 +33,12 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript: Workshop</title>
 <!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
-<script src="tools/jquery-1.7.1.min.js"></script>
+<!--<script src="tools/jquery-1.7.1.min.js"></script>
 <script src="tools/jquery.flot.min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
 <script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
-<script src="tools/json2.js"></script>
+<script src="tools/json2.js"></script>-->
+<script src="tools/megalib.js"></script>
 <body onload="workshop.startup()">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
 <table class="nav"><tr class="nav">
@@ -387,7 +388,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=89ac53bf45ae75697572e0a3d94d8e8a646a7463d7c78b6c03c5928f3ec8bf26');
+		$incs = array(1 => '/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae');
 	}
 	echo <<<EOT
 workshop.startup = (function () {
@@ -401,15 +402,15 @@ workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=89ac53bf45ae75697572e0a3d94d8e8a646a7463d7c78b6c03c5928f3ec8bf26"] });
+	                 scripts: ["/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae"] });
 	workshop.restore(_restore);
 });
 EOT;
 }
 ?>
 
-workshop.version = "2012-01-10_19-42-27";
-workshop.updateVersion = "/scripts/numeric.js?key=89ac53bf45ae75697572e0a3d94d8e8a646a7463d7c78b6c03c5928f3ec8bf26";
+workshop.version = "noversion";
+workshop.updateVersion = "/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae";
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23862738-2']);

@@ -362,7 +362,6 @@ numeric.same = function same(x,y) {
     return true;
 }
 
-
 numeric.rep = function rep(s,v,k) {
     if(typeof k === "undefined") { k=0; }
     var n = s[k], ret = new Array(n), i;
