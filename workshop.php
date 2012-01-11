@@ -409,7 +409,7 @@ EOT;
 }
 ?>
 
-workshop.version = "noversion";
+workshop.version = "2012-01-10_23-55-49";
 workshop.updateVersion = "/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae";
 
   var _gaq = _gaq || [];
