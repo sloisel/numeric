@@ -10,8 +10,9 @@ if [ -f nodepid.log ]; then
 	kill -9 $nodepid || true
 	rm -f nodepid.log
 fi
-cat jquery-1.7.1.min.js jquery.flot.min.js 'Crypto-JS v2.4.0/crypto/crypto-min.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
 cat ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js > ../lib/numeric.js
+cat jquery-1.7.1.min.js jquery.flot.min.js 'Crypto-JS v2.4.0/crypto/crypto-min.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
+echo "" | cat closurelib.js sylvester.js - ../lib/numeric-min.js jquery-1.7.1.min.js jquery.flot.min.js  > benchlib.js
 cp ../src/documentation.html ..
 php mkdb.php noversion
 cd ..

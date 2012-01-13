@@ -19,8 +19,6 @@ if(isset($_POST['savedata'])) {
 	header('Location: workshop.php?link=' . $_GET['link']);
 	exit;
 }
-
-header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 ?>
 
 <html>
@@ -32,14 +30,11 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript: Workshop</title>
-<!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
-<!--<script src="tools/jquery-1.7.1.min.js"></script>
-<script src="tools/jquery.flot.min.js"></script>
-<script src="tools/Crypto-JS v2.4.0/crypto/crypto-min.js"></script>
-<script src="tools/Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js"></script>
-<script src="tools/json2.js"></script>-->
+<!--[if lte IE 9]>
+<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
+<![endif]-->
 <script src="tools/megalib.js"></script>
-<body onload="workshop.startup()">
+<body onload="workshop.restore2();">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
 <table class="nav"><tr class="nav">
 <td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
@@ -97,20 +92,32 @@ var _retarded = false;
 if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ _retarded = true; }
 
 if(_retarded) {
-	_onmessage = function(ev) {}
+    _queue = [];
+	_onmessage = function(ev) { _queue.push(ev); }
 	_loaded = 0;
 	window.Worker = function(f) {
 		var worker = this;
+		worker.queue = [];
 		worker.onmessage = function(ev) {};
 		worker.postMessage = function(ev) { _onmessage({data: ev}); };
 		var scr = document.createElement('script');
 		scr.src = f;
 		scr.type = 'text/javascript';
-		scr.onload = function() { _loaded = 1; }
-		document.body.appendChild(scr);
+        scr.onreadystatechange = function () {
+            var k;
+            if (scr.readyState == 'loaded' || script.readyState == 'complete') {
+                for(k=0;k<_queue.length;k++) { _onmessage(_queue[k]); }
+            }
+        }
+		document.getElementsByTagName('head')[0].appendChild(scr);
 		workerPostMessage = function(ev) { worker.onmessage({data: ev}); }
 	}
-	importScripts = function(z) {};
+	importScripts = function(z) {
+	    var scr = document.createElement('script');
+        scr.src = z;
+        scr.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scr);
+	};
 }
 var workshop = (function () {
 
@@ -157,10 +164,9 @@ function plotit(plotid,x) {
 	var k;
     try {
 		if(typeof x.s === "object") $('#'+plotid).css(x.s);
-		console.log(numeric.prettyPrint(x));
 		$.plot($("#"+plotid), x.p, x.o);
     } catch(e) {
-		var _foo = numeric.prettyPrint(e);
+		var _foo = e.toString();
        	if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined") {
        		_foo += "\n\n"+e.stack.toString();
        	}
@@ -271,7 +277,13 @@ function inputChanged(k){
 	saveit();
 }
 
+var _foo;
+var rc = 0;
 function restore2(foo) {
+    if(foo) _foo = foo;
+    rc++;
+    if(rc<2) return;
+    foo = _foo;
 	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
 	if(_indexOf(foo.scripts,workshop.updateVersion)<0) {
 		$("#divupdate").css({display: 'block'});
@@ -309,13 +321,9 @@ function restore(savedata) {
 	var count=0;
 	var k;
 	for(k=0;k<savedata.scripts.length;k++) {
-		$.getScript(savedata.scripts[k],function() {
-			count++;
-			if(count === savedata.scripts.length) { restore2(savedata); }
-		})
-	w.postMessage(JSON.stringify({imports:savedata.scripts}));
-	}
-
+    	w.postMessage(JSON.stringify({imports:savedata.scripts}));
+    }
+	restore2(savedata);
 }
 
 function mykeydown(e,i) {
@@ -361,14 +369,13 @@ return {
 	    w:w,
 	    savedata:savedata,
 	    restore:restore,
+	    restore2:restore2,
 	    reset:reset,
 	    resize:resize,
 	    submit:submit,
 	    update:update
 	    }
 }());
-//workshop.reset();
-//workshop.restore();
 </script>
 
 <br><br><br>
@@ -388,7 +395,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae');
+		$incs = array(1 => '/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676');
 	}
 	echo <<<EOT
 workshop.startup = (function () {
@@ -402,25 +409,16 @@ workshop.startup = (function () {
 	var _restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae"] });
+	                 scripts: ["/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676"] });
 	workshop.restore(_restore);
 });
 EOT;
 }
 ?>
 
-workshop.version = "2012-01-10_23-55-49";
-workshop.updateVersion = "/scripts/numeric.js?key=9ff7295da562ac8d3d0b027c0fa13e33d1dd167e9ded24817cae0e7ca0e2faae";
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-23862738-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+workshop.version = "2012-01-13_01-46-51";
+workshop.updateVersion = "/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676";
+workshop.startup();
 
 </script>
 

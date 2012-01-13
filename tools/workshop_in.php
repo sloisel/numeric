@@ -19,8 +19,6 @@ if(isset($_POST['savedata'])) {
 	header('Location: workshop.php?link=' . $_GET['link']);
 	exit;
 }
-
-header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 ?>
 
 WORKSHOPHTML
@@ -62,16 +60,7 @@ EOT;
 
 workshop.version = "VERSIONSTRING";
 workshop.updateVersion = "/scripts/numeric.js?key=NUMERICJSHASH";
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-23862738-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+workshop.startup();
 
 </script>
 

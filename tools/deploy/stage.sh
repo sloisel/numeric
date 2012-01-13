@@ -15,7 +15,7 @@ rm -f numeric.tar.gz
 echo "stage.sh: preparing tarball"
 tar cvfz numeric.tar.gz numeric
 echo "stage.sh: uploading tarball"
-scp -P 2222 numeric.tar.gz $user@$server:./
+scp numeric.tar.gz $user@$server:./
 echo "stage.sh: linking staging to v$version on $server"
-ssh $server -p 2222 -l $user "( tar xvfz numeric.tar.gz && mv numeric $webroot/v$version && cd $webroot && rm -f staging && ln -s v$version staging && cd staging/tools && php mkdb.php $version && deploy/clean.sh && echo Staging successful. ) || echo FAIL: Staging."
+ssh $server -l $user "( tar xvfz numeric.tar.gz && mv numeric $webroot/v$version && cd $webroot && rm -f staging && ln -s v$version staging && cd staging/tools && php mkdb.php $version && deploy/clean.sh && echo Staging successful. ) || echo FAIL: Staging."
 echo "stage.sh: done"

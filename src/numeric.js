@@ -154,7 +154,7 @@ numeric.getURL = function getURL(url) {
     return client;
 }
 
-numeric.crc32Array = numeric.imageURL = function imageURL(img) {
+numeric.imageURL = function imageURL(img) {
     function base64(A) {
         var n = A.length, i,x,y,z,p,q,r,s;
         var key = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";

@@ -11,7 +11,7 @@ else
     exit 1
 fi
 echo Deploying...
-ssh $server -l $user -p 2222 "( cd $webroot && [ -L staging ] && foo=\`readlink staging\` && rm -f numeric && ln -s \$foo numeric && rm -f staging && numeric/tools/deploy/clean.sh && echo Deployment successful. ) || echo FAIL: Deployment unsuccessful."
+ssh $server -l $user "( cd $webroot && [ -L staging ] && foo=\`readlink staging\` && rm -f numeric && ln -s \$foo numeric && rm -f staging && numeric/tools/deploy/clean.sh && echo Deployment successful. ) || echo FAIL: Deployment unsuccessful."
 echo Comparing staging copy with live copy...
 curl http://$server/ > live-copy.html
 if diff staging-copy.html live-copy.html >/dev/null; then

@@ -26,4 +26,4 @@ kill -9 $tailpid
 echo "test.sh: making report"
 cd deploy
 python make_report.py $version > report.html
-scp -P 2222 report.html $user@$server:$webroot/staging
+scp report.html $user@$server:$webroot/staging

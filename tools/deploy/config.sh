@@ -1,3 +1,3 @@
-user=sloisel
+user=ec2-user
 server=numericjs.com
-webroot='~/public_html'
+webroot='/var/www/html'
