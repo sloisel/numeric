@@ -416,7 +416,7 @@ EOT;
 }
 ?>
 
-workshop.version = "2012-01-13_01-46-51";
+workshop.version = "noversion";
 workshop.updateVersion = "/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676";
 workshop.startup();
 
