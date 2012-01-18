@@ -4,12 +4,8 @@ Using Firefox
 1 PASS: linkworkshop ==> IN in page
 2 PASS: linkdoc ==> vectors and matrices in page
 3 PASS: linklib ==> use strict in page
-4 FAIL: linklibmin ==> var numeric={};numeric not in page
-Traceback (most recent call last):
-  File "selenium_links.py", line 24, in test
-    assert(x[1] in foo)
-AssertionError
-Link testing complete. PASS: 4 FAIL: 1 Total: 5
+4 PASS: linklibmin ==> var numeric= in page
+Link testing complete. PASS: 5 FAIL: 0 Total: 5
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Chrome
@@ -38,143 +34,144 @@ Using Chrome
 22 PASS: numeric.ceil([-2.2,3.3]) ==> [-2,4]
 23 PASS: numeric.floor([-2.2,3.3]) ==> [-3,3]
 24 PASS: numeric.log([1,2]) ==> [0,0.6931]
-25 PASS: numeric.round([-2.2,3.3]) ==> [-2,3]
-26 PASS: numeric.sin([1,2]) ==> [0.8415,0.9093]
-27 PASS: numeric.sqrt([1,2]) ==> [1,1.414]
-28 PASS: numeric.tan([1,2]) ==> [1.557,-2.185]
-29 PASS: numeric.dim([1,2]) ==> [2]
-30 PASS: numeric.dim([[1,2,3],[4,5,6]]) ==> [2,3]
-31 PASS: numeric.same([1,2],[1,2]) ==> true
-32 PASS: numeric.same([1,2],[1,2,3]) ==> false
-33 PASS: numeric.same([1,2],[[1],[2]]) ==> false
-34 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,4]]) ==> true
-35 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,5]]) ==> false
-36 PASS: numeric.same([[1,2],[2,4]],[[1,2],[3,4]]) ==> false
-37 PASS: numeric.rep([3],5) ==> [5,5,5]
-38 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
-39 PASS: sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3]) ==> 6
-40 PASS: sum([[1,2,3],[4,5,6]]) ==> 21
-41 PASS: numeric.any([false,true]) ==> true
-42 PASS: numeric.any([[0,0,3.14],[0,false,0]]) ==> true
-43 PASS: numeric.any([0,0,false]) ==> false
-44 PASS: numeric.all([false,true]) ==> false
-45 PASS: numeric.all([[1,4,3.14],["no",true,-1]]) ==> true
-46 PASS: numeric.all([0,0,false]) ==> false
-47 PASS: add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4]) ==> [4,6]
-48 PASS: numeric.diag([1,2,3]) ==> [[1,0,0],[0,2,0],[0,0,3]]
-49 PASS: numeric.identity(3) ==> [[1,0,0],[0,1,0],[0,0,1]]
-50 PASS: numeric.linspace(1,5); ==> [1,2,3,4,5]
-51 PASS: numeric.linspace(1,3,5); ==> [1,1.5,2,2.5,3]
-52 PASS: numeric.addVV([1,2],[3,4]) ==> [4,6]
-53 PASS: numeric.addVS([1,2],3) ==> [4,5]
-54 PASS: numeric.add(1,[2,3]) ==> [3,4]
-55 PASS: numeric.add([1,2,3],[4,5,6]) ==> [5,7,9]
-56 PASS: numeric.sub([1,2],[3,4]) ==> [-2,-2]
-57 PASS: numeric.mul([1,2],[3,4]) ==> [3,8]
-58 PASS: numeric.div([1,2],[3,4]) ==> [0.3333,0.5]
-59 PASS: v = [1,2,3,4]; numeric.addeq(v,3); v ==> [4,5,6,7]
-60 PASS: numeric.subeq([1,2,3],[5,3,1]) ==> [-4,-1,2]
-61 PASS: numeric.neg([1,-2,3]) ==> [-1,2,-3]
-62 PASS: numeric.isFinite([10,NaN,Infinity]) ==> [true,false,false]
-63 PASS: numeric.isNaN([10,NaN,Infinity]) ==> [false,true,false]
-64 PASS: n = 41; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-65 PASS: n = 42; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-66 PASS: n = 43; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-67 PASS: n = 44; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-68 PASS: n = 45; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-69 PASS: n = 46; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-70 PASS: numeric.dotVV([1,2],[3,4]) ==> 11
-71 PASS: numeric.dotVM([1,2],[[3,4],[5,6]]) ==> [13,16]
-72 PASS: numeric.dotMV([[1,2],[3,4]],[5,6]) ==> [17,39]
-73 PASS: numeric.dotMMbig([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
-74 PASS: numeric.dotMMsmall([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
-75 PASS: numeric.dot([1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]) ==> 285
-76 PASS: numeric.dot([1,2,3],[4,5,6]) ==> 32
-77 PASS: numeric.dot([[1,2,3],[4,5,6]],[7,8,9]) ==> [50,122]
-78 PASS: numeric.det([[1,2],[3,4]]); ==> -2
-79 PASS: numeric.det([[6,8,4,2,8,5],[3,5,2,4,9,2],[7,6,8,3,4,5],[5,5,2,8,1,6],[3,2,2,4,2,2],[8,3,2,2,4,1]]); ==> -1404
-80 PASS: numeric.inv([[1,2],[3,4]]) ==> [[-2,1],[1.5,-0.5]]
-81 PASS: numeric.transpose([[1,2,3],[4,5,6]]) ==> [[1,4],[2,5],[3,6]]
-82 PASS: numeric.transpose([[1,2,3,4,5,6,7,8,9,10,11,12]]) ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
-83 PASS: numeric.norm2([1,2]) ==> 2.236
-84 PASS: numeric.tensor([1,2],[3,4,5]) ==> [[3,4,5],[6,8,10]]
-85 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
-86 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
-87 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
-88 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.23456789123,23,4"
-89 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
-90 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
-91 PASS: z.add(5) ==> {x:8,y:4}
-92 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
-93 PASS: z.add(w) ==> {x:5,y:12}
-94 PASS: z.mul(w) ==> {x:-26,y:32}
-95 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
-96 PASS: z.sub(w) ==> {x:1,y:-4}
-97 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
-98 PASS: z.abs() ==> {x:[2,2.828],y:}
-99 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
-100 PASS: z.norm2() ==> 5.477
-101 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
-102 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
-103 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
-104 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
-105 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
-106 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
-107 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
-108 PASS: A.get([1,1]) ==> {x:4,y:-1}
-109 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
-110 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
-111 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
-112 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
-113 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
-114 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-3.109e-15],[7,-3,5]],y:}
-115 PASS: C.sub(A).norm2()<1e-13 ==> true
-116 PASS: A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]] ==> [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
-117 PASS: numeric.svd(A) ==> {U:[[-0.7071,-0.1581,0.1768,0.2494,0.4625],[-0.5303,-0.1581,-0.3536,0.1556,-0.4984],[-0.1768,0.7906,-0.1768,-0.1546,0.3967],[-1.506e-17,-0.1581,-0.7071,-0.3277,0.1],[-0.3536,0.1581,1.954e-15,-0.07265,-0.2084],[-0.1768,-0.1581,0.5303,-0.5726,-0.05555],[-7.109e-18,-0.4743,-0.1768,-0.3142,0.4959],[-0.1768,0.1581,1.915e-15,-0.592,-0.2791]],S:[35.33,20,19.6,0,0],V:[[-0.8006,-0.3162,0.2887,-0.4191,0],[-0.4804,0.6325,7.768e-15,0.4405,0.4185],[-0.1601,-0.3162,-0.866,-0.052,0.3488],[4.684e-17,-0.6325,0.2887,0.6761,0.2442],[-0.3203,3.594e-15,-0.2887,0.413,-0.8022]]}
-118 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
-119 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-120 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-121 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-122 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-123 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-124 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-125 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-126 PASS: m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-127 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-128 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-129 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-130 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-131 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-132 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-133 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-134 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-135 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-136 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-137 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-138 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-139 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-140 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-141 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-142 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
-143 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-144 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-145 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-146 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-147 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
-148 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
-149 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100>
-150 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-151 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
-152 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
-153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
-154 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-155 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-156 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-157 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-158 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-159 PASS: numeric.seedrandom.random() ==> 0.6139
-160 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Chrome testing complete. PASS: 161 FAIL: 0 Total: 161
+25 PASS: numeric.pow([2,3],[0.25,7.1]) ==> [1.189,2441]
+26 PASS: numeric.round([-2.2,3.3]) ==> [-2,3]
+27 PASS: numeric.sin([1,2]) ==> [0.8415,0.9093]
+28 PASS: numeric.sqrt([1,2]) ==> [1,1.414]
+29 PASS: numeric.tan([1,2]) ==> [1.557,-2.185]
+30 PASS: numeric.dim([1,2]) ==> [2]
+31 PASS: numeric.dim([[1,2,3],[4,5,6]]) ==> [2,3]
+32 PASS: numeric.same([1,2],[1,2]) ==> true
+33 PASS: numeric.same([1,2],[1,2,3]) ==> false
+34 PASS: numeric.same([1,2],[[1],[2]]) ==> false
+35 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,4]]) ==> true
+36 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,5]]) ==> false
+37 PASS: numeric.same([[1,2],[2,4]],[[1,2],[3,4]]) ==> false
+38 PASS: numeric.rep([3],5) ==> [5,5,5]
+39 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
+40 PASS: sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3]) ==> 6
+41 PASS: sum([[1,2,3],[4,5,6]]) ==> 21
+42 PASS: numeric.any([false,true]) ==> true
+43 PASS: numeric.any([[0,0,3.14],[0,false,0]]) ==> true
+44 PASS: numeric.any([0,0,false]) ==> false
+45 PASS: numeric.all([false,true]) ==> false
+46 PASS: numeric.all([[1,4,3.14],["no",true,-1]]) ==> true
+47 PASS: numeric.all([0,0,false]) ==> false
+48 PASS: add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4]) ==> [4,6]
+49 PASS: numeric.diag([1,2,3]) ==> [[1,0,0],[0,2,0],[0,0,3]]
+50 PASS: numeric.identity(3) ==> [[1,0,0],[0,1,0],[0,0,1]]
+51 PASS: numeric.linspace(1,5); ==> [1,2,3,4,5]
+52 PASS: numeric.linspace(1,3,5); ==> [1,1.5,2,2.5,3]
+53 PASS: numeric.addVV([1,2],[3,4]) ==> [4,6]
+54 PASS: numeric.addVS([1,2],3) ==> [4,5]
+55 PASS: numeric.add(1,[2,3]) ==> [3,4]
+56 PASS: numeric.add([1,2,3],[4,5,6]) ==> [5,7,9]
+57 PASS: numeric.sub([1,2],[3,4]) ==> [-2,-2]
+58 PASS: numeric.mul([1,2],[3,4]) ==> [3,8]
+59 PASS: numeric.div([1,2],[3,4]) ==> [0.3333,0.5]
+60 PASS: v = [1,2,3,4]; numeric.addeq(v,3); v ==> [4,5,6,7]
+61 PASS: numeric.subeq([1,2,3],[5,3,1]) ==> [-4,-1,2]
+62 PASS: numeric.neg([1,-2,3]) ==> [-1,2,-3]
+63 PASS: numeric.isFinite([10,NaN,Infinity]) ==> [true,false,false]
+64 PASS: numeric.isNaN([10,NaN,Infinity]) ==> [false,true,false]
+65 PASS: n = 41; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+66 PASS: n = 42; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+67 PASS: n = 43; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+68 PASS: n = 44; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+69 PASS: n = 45; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+70 PASS: n = 46; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+71 PASS: numeric.dotVV([1,2],[3,4]) ==> 11
+72 PASS: numeric.dotVM([1,2],[[3,4],[5,6]]) ==> [13,16]
+73 PASS: numeric.dotMV([[1,2],[3,4]],[5,6]) ==> [17,39]
+74 PASS: numeric.dotMMbig([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
+75 PASS: numeric.dotMMsmall([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
+76 PASS: numeric.dot([1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]) ==> 285
+77 PASS: numeric.dot([1,2,3],[4,5,6]) ==> 32
+78 PASS: numeric.dot([[1,2,3],[4,5,6]],[7,8,9]) ==> [50,122]
+79 PASS: numeric.det([[1,2],[3,4]]); ==> -2
+80 PASS: numeric.det([[6,8,4,2,8,5],[3,5,2,4,9,2],[7,6,8,3,4,5],[5,5,2,8,1,6],[3,2,2,4,2,2],[8,3,2,2,4,1]]); ==> -1404
+81 PASS: numeric.inv([[1,2],[3,4]]) ==> [[-2,1],[1.5,-0.5]]
+82 PASS: numeric.transpose([[1,2,3],[4,5,6]]) ==> [[1,4],[2,5],[3,6]]
+83 PASS: numeric.transpose([[1,2,3,4,5,6,7,8,9,10,11,12]]) ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
+84 PASS: numeric.norm2([1,2]) ==> 2.236
+85 PASS: numeric.tensor([1,2],[3,4,5]) ==> [[3,4,5],[6,8,10]]
+86 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
+87 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
+88 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
+89 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.23456789123,23,4"
+90 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
+91 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
+92 PASS: z.add(5) ==> {x:8,y:4}
+93 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
+94 PASS: z.add(w) ==> {x:5,y:12}
+95 PASS: z.mul(w) ==> {x:-26,y:32}
+96 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
+97 PASS: z.sub(w) ==> {x:1,y:-4}
+98 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
+99 PASS: z.abs() ==> {x:[2,2.828],y:}
+100 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
+101 PASS: z.norm2() ==> 5.477
+102 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
+103 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
+104 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
+105 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
+106 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
+107 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
+108 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
+109 PASS: A.get([1,1]) ==> {x:4,y:-1}
+110 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
+111 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
+112 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
+113 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
+114 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
+115 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-3.109e-15],[7,-3,5]],y:}
+116 PASS: C.sub(A).norm2()<1e-13 ==> true
+117 PASS: A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]] ==> [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
+118 PASS: numeric.svd(A) ==> {U:[[-0.7071,-0.1581,0.1768,0.2494,0.4625],[-0.5303,-0.1581,-0.3536,0.1556,-0.4984],[-0.1768,0.7906,-0.1768,-0.1546,0.3967],[-1.506e-17,-0.1581,-0.7071,-0.3277,0.1],[-0.3536,0.1581,1.954e-15,-0.07265,-0.2084],[-0.1768,-0.1581,0.5303,-0.5726,-0.05555],[-7.109e-18,-0.4743,-0.1768,-0.3142,0.4959],[-0.1768,0.1581,1.915e-15,-0.592,-0.2791]],S:[35.33,20,19.6,0,0],V:[[-0.8006,-0.3162,0.2887,-0.4191,0],[-0.4804,0.6325,7.768e-15,0.4405,0.4185],[-0.1601,-0.3162,-0.866,-0.052,0.3488],[4.684e-17,-0.6325,0.2887,0.6761,0.2442],[-0.3203,3.594e-15,-0.2887,0.413,-0.8022]]}
+119 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
+120 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+121 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+122 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+123 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+124 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+125 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+126 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+127 PASS: m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+128 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+129 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+130 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+131 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
+132 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+133 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+134 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+135 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
+136 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
+137 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
+138 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+139 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+140 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+141 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+142 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+143 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
+144 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+145 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+146 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+147 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+148 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+149 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
+150 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100>
+151 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+152 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
+154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
+155 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
+156 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+157 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+158 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+159 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+160 PASS: numeric.seedrandom.random() ==> 0.6139
+161 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Chrome testing complete. PASS: 162 FAIL: 0 Total: 162
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -203,140 +200,141 @@ Using Firefox
 22 PASS: numeric.ceil([-2.2,3.3]) ==> [-2,4]
 23 PASS: numeric.floor([-2.2,3.3]) ==> [-3,3]
 24 PASS: numeric.log([1,2]) ==> [0,0.6931]
-25 PASS: numeric.round([-2.2,3.3]) ==> [-2,3]
-26 PASS: numeric.sin([1,2]) ==> [0.8415,0.9093]
-27 PASS: numeric.sqrt([1,2]) ==> [1,1.414]
-28 PASS: numeric.tan([1,2]) ==> [1.557,-2.185]
-29 PASS: numeric.dim([1,2]) ==> [2]
-30 PASS: numeric.dim([[1,2,3],[4,5,6]]) ==> [2,3]
-31 PASS: numeric.same([1,2],[1,2]) ==> true
-32 PASS: numeric.same([1,2],[1,2,3]) ==> false
-33 PASS: numeric.same([1,2],[[1],[2]]) ==> false
-34 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,4]]) ==> true
-35 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,5]]) ==> false
-36 PASS: numeric.same([[1,2],[2,4]],[[1,2],[3,4]]) ==> false
-37 PASS: numeric.rep([3],5) ==> [5,5,5]
-38 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
-39 PASS: sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3]) ==> 6
-40 PASS: sum([[1,2,3],[4,5,6]]) ==> 21
-41 PASS: numeric.any([false,true]) ==> true
-42 PASS: numeric.any([[0,0,3.14],[0,false,0]]) ==> true
-43 PASS: numeric.any([0,0,false]) ==> false
-44 PASS: numeric.all([false,true]) ==> false
-45 PASS: numeric.all([[1,4,3.14],["no",true,-1]]) ==> true
-46 PASS: numeric.all([0,0,false]) ==> false
-47 PASS: add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4]) ==> [4,6]
-48 PASS: numeric.diag([1,2,3]) ==> [[1,0,0],[0,2,0],[0,0,3]]
-49 PASS: numeric.identity(3) ==> [[1,0,0],[0,1,0],[0,0,1]]
-50 PASS: numeric.linspace(1,5); ==> [1,2,3,4,5]
-51 PASS: numeric.linspace(1,3,5); ==> [1,1.5,2,2.5,3]
-52 PASS: numeric.addVV([1,2],[3,4]) ==> [4,6]
-53 PASS: numeric.addVS([1,2],3) ==> [4,5]
-54 PASS: numeric.add(1,[2,3]) ==> [3,4]
-55 PASS: numeric.add([1,2,3],[4,5,6]) ==> [5,7,9]
-56 PASS: numeric.sub([1,2],[3,4]) ==> [-2,-2]
-57 PASS: numeric.mul([1,2],[3,4]) ==> [3,8]
-58 PASS: numeric.div([1,2],[3,4]) ==> [0.3333,0.5]
-59 PASS: v = [1,2,3,4]; numeric.addeq(v,3); v ==> [4,5,6,7]
-60 PASS: numeric.subeq([1,2,3],[5,3,1]) ==> [-4,-1,2]
-61 PASS: numeric.neg([1,-2,3]) ==> [-1,2,-3]
-62 PASS: numeric.isFinite([10,NaN,Infinity]) ==> [true,false,false]
-63 PASS: numeric.isNaN([10,NaN,Infinity]) ==> [false,true,false]
-64 PASS: n = 41; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-65 PASS: n = 42; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-66 PASS: n = 43; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-67 PASS: n = 44; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-68 PASS: n = 45; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-69 PASS: n = 46; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
-70 PASS: numeric.dotVV([1,2],[3,4]) ==> 11
-71 PASS: numeric.dotVM([1,2],[[3,4],[5,6]]) ==> [13,16]
-72 PASS: numeric.dotMV([[1,2],[3,4]],[5,6]) ==> [17,39]
-73 PASS: numeric.dotMMbig([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
-74 PASS: numeric.dotMMsmall([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
-75 PASS: numeric.dot([1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]) ==> 285
-76 PASS: numeric.dot([1,2,3],[4,5,6]) ==> 32
-77 PASS: numeric.dot([[1,2,3],[4,5,6]],[7,8,9]) ==> [50,122]
-78 PASS: numeric.det([[1,2],[3,4]]); ==> -2
-79 PASS: numeric.det([[6,8,4,2,8,5],[3,5,2,4,9,2],[7,6,8,3,4,5],[5,5,2,8,1,6],[3,2,2,4,2,2],[8,3,2,2,4,1]]); ==> -1404
-80 PASS: numeric.inv([[1,2],[3,4]]) ==> [[-2,1],[1.5,-0.5]]
-81 PASS: numeric.transpose([[1,2,3],[4,5,6]]) ==> [[1,4],[2,5],[3,6]]
-82 PASS: numeric.transpose([[1,2,3,4,5,6,7,8,9,10,11,12]]) ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
-83 PASS: numeric.norm2([1,2]) ==> 2.236
-84 PASS: numeric.tensor([1,2],[3,4,5]) ==> [[3,4,5],[6,8,10]]
-85 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
-86 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
-87 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
-88 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.23456789123,23,4"
-89 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
-90 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
-91 PASS: z.add(5) ==> {x:8,y:4}
-92 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
-93 PASS: z.add(w) ==> {x:5,y:12}
-94 PASS: z.mul(w) ==> {x:-26,y:32}
-95 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
-96 PASS: z.sub(w) ==> {x:1,y:-4}
-97 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
-98 PASS: z.abs() ==> {x:[2,2.828],y:}
-99 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
-100 PASS: z.norm2() ==> 5.477
-101 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
-102 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
-103 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
-104 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
-105 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
-106 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
-107 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
-108 PASS: A.get([1,1]) ==> {x:4,y:-1}
-109 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
-110 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
-111 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
-112 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
-113 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
-114 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-3.109e-15],[7,-3,5]],y:}
-115 PASS: C.sub(A).norm2()<1e-13 ==> true
-116 PASS: A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]] ==> [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
-117 PASS: numeric.svd(A) ==> {U:[[-0.7071,-0.1581,0.1768,0.2494,0.4625],[-0.5303,-0.1581,-0.3536,0.1556,-0.4984],[-0.1768,0.7906,-0.1768,-0.1546,0.3967],[-1.506e-17,-0.1581,-0.7071,-0.3277,0.1],[-0.3536,0.1581,1.954e-15,-0.07265,-0.2084],[-0.1768,-0.1581,0.5303,-0.5726,-0.05555],[-7.109e-18,-0.4743,-0.1768,-0.3142,0.4959],[-0.1768,0.1581,1.915e-15,-0.592,-0.2791]],S:[35.33,20,19.6,0,0],V:[[-0.8006,-0.3162,0.2887,-0.4191,0],[-0.4804,0.6325,7.768e-15,0.4405,0.4185],[-0.1601,-0.3162,-0.866,-0.052,0.3488],[4.684e-17,-0.6325,0.2887,0.6761,0.2442],[-0.3203,3.594e-15,-0.2887,0.413,-0.8022]]}
-118 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
-119 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-120 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-121 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-122 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-123 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-124 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-125 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
-126 PASS: m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-127 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-128 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-129 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-130 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-131 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-132 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-133 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-134 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-135 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-136 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-137 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-138 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-139 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-140 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-141 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-142 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
-143 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-144 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-145 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-146 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-147 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
-148 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
-149 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100>
-150 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-151 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
-152 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
-153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
-154 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-155 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-156 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-157 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-158 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-159 PASS: numeric.seedrandom.random() ==> 0.6139
-160 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Firefox testing complete. PASS: 161 FAIL: 0 Total: 161
+25 PASS: numeric.pow([2,3],[0.25,7.1]) ==> [1.189,2441]
+26 PASS: numeric.round([-2.2,3.3]) ==> [-2,3]
+27 PASS: numeric.sin([1,2]) ==> [0.8415,0.9093]
+28 PASS: numeric.sqrt([1,2]) ==> [1,1.414]
+29 PASS: numeric.tan([1,2]) ==> [1.557,-2.185]
+30 PASS: numeric.dim([1,2]) ==> [2]
+31 PASS: numeric.dim([[1,2,3],[4,5,6]]) ==> [2,3]
+32 PASS: numeric.same([1,2],[1,2]) ==> true
+33 PASS: numeric.same([1,2],[1,2,3]) ==> false
+34 PASS: numeric.same([1,2],[[1],[2]]) ==> false
+35 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,4]]) ==> true
+36 PASS: numeric.same([[1,2],[3,4]],[[1,2],[3,5]]) ==> false
+37 PASS: numeric.same([[1,2],[2,4]],[[1,2],[3,4]]) ==> false
+38 PASS: numeric.rep([3],5) ==> [5,5,5]
+39 PASS: numeric.rep([2,3],0) ==> [[0,0,0],[0,0,0]]
+40 PASS: sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3]) ==> 6
+41 PASS: sum([[1,2,3],[4,5,6]]) ==> 21
+42 PASS: numeric.any([false,true]) ==> true
+43 PASS: numeric.any([[0,0,3.14],[0,false,0]]) ==> true
+44 PASS: numeric.any([0,0,false]) ==> false
+45 PASS: numeric.all([false,true]) ==> false
+46 PASS: numeric.all([[1,4,3.14],["no",true,-1]]) ==> true
+47 PASS: numeric.all([0,0,false]) ==> false
+48 PASS: add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4]) ==> [4,6]
+49 PASS: numeric.diag([1,2,3]) ==> [[1,0,0],[0,2,0],[0,0,3]]
+50 PASS: numeric.identity(3) ==> [[1,0,0],[0,1,0],[0,0,1]]
+51 PASS: numeric.linspace(1,5); ==> [1,2,3,4,5]
+52 PASS: numeric.linspace(1,3,5); ==> [1,1.5,2,2.5,3]
+53 PASS: numeric.addVV([1,2],[3,4]) ==> [4,6]
+54 PASS: numeric.addVS([1,2],3) ==> [4,5]
+55 PASS: numeric.add(1,[2,3]) ==> [3,4]
+56 PASS: numeric.add([1,2,3],[4,5,6]) ==> [5,7,9]
+57 PASS: numeric.sub([1,2],[3,4]) ==> [-2,-2]
+58 PASS: numeric.mul([1,2],[3,4]) ==> [3,8]
+59 PASS: numeric.div([1,2],[3,4]) ==> [0.3333,0.5]
+60 PASS: v = [1,2,3,4]; numeric.addeq(v,3); v ==> [4,5,6,7]
+61 PASS: numeric.subeq([1,2,3],[5,3,1]) ==> [-4,-1,2]
+62 PASS: numeric.neg([1,-2,3]) ==> [-1,2,-3]
+63 PASS: numeric.isFinite([10,NaN,Infinity]) ==> [true,false,false]
+64 PASS: numeric.isNaN([10,NaN,Infinity]) ==> [false,true,false]
+65 PASS: n = 41; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+66 PASS: n = 42; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+67 PASS: n = 43; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMsmall(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+68 PASS: n = 44; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+69 PASS: n = 45; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+70 PASS: n = 46; A = numeric.random([n,n]); numeric.norm2(numeric.sub(numeric.dotMMbig(numeric.inv(A),A),numeric.identity(n)))<1e-12 ==> true
+71 PASS: numeric.dotVV([1,2],[3,4]) ==> 11
+72 PASS: numeric.dotVM([1,2],[[3,4],[5,6]]) ==> [13,16]
+73 PASS: numeric.dotMV([[1,2],[3,4]],[5,6]) ==> [17,39]
+74 PASS: numeric.dotMMbig([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
+75 PASS: numeric.dotMMsmall([[1,2],[3,4]],[[5,6],[7,8]]) ==> [[19,22],[43,50]]
+76 PASS: numeric.dot([1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]) ==> 285
+77 PASS: numeric.dot([1,2,3],[4,5,6]) ==> 32
+78 PASS: numeric.dot([[1,2,3],[4,5,6]],[7,8,9]) ==> [50,122]
+79 PASS: numeric.det([[1,2],[3,4]]); ==> -2
+80 PASS: numeric.det([[6,8,4,2,8,5],[3,5,2,4,9,2],[7,6,8,3,4,5],[5,5,2,8,1,6],[3,2,2,4,2,2],[8,3,2,2,4,1]]); ==> -1404
+81 PASS: numeric.inv([[1,2],[3,4]]) ==> [[-2,1],[1.5,-0.5]]
+82 PASS: numeric.transpose([[1,2,3],[4,5,6]]) ==> [[1,4],[2,5],[3,6]]
+83 PASS: numeric.transpose([[1,2,3,4,5,6,7,8,9,10,11,12]]) ==> [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
+84 PASS: numeric.norm2([1,2]) ==> 2.236
+85 PASS: numeric.tensor([1,2],[3,4,5]) ==> [[3,4,5],[6,8,10]]
+86 PASS: numeric.parseDate(['1/13/2013','2001-5-9, 9:31']); ==> [1.358e12,9.894e11]
+87 PASS: numeric.parseFloat(['12','0.1']) ==> [12,0.1]
+88 PASS: numeric.parseCSV('a,b,c\n1,2.3,.3\n4e6,-5.3e-8,6.28e+4') ==> [["a","b","c"],[1,2.3,0.3],[4.000e6,-5.3e-8,62800]]
+89 PASS: numeric.toCSV([[1.23456789123,2],[3,4]]) ==> "1.23456789123,23,4"
+90 PASS: numeric.getURL('tools/helloworld.txt').responseText ==> "Hello,world!"
+91 PASS: z = new numeric.T(3,4); ==> {x:3,y:4}
+92 PASS: z.add(5) ==> {x:8,y:4}
+93 PASS: w = new numeric.T(2,8); ==> {x:2,y:8}
+94 PASS: z.add(w) ==> {x:5,y:12}
+95 PASS: z.mul(w) ==> {x:-26,y:32}
+96 PASS: z.div(w) ==> {x:0.5588,y:-0.2353}
+97 PASS: z.sub(w) ==> {x:1,y:-4}
+98 PASS: z = new numeric.T([1,2],[3,4]); ==> {x:[1,2],y:[3,4]}
+99 PASS: z.abs() ==> {x:[2,2.828],y:}
+100 PASS: z.conj() ==> {x:[1,2],y:[-3,-4]}
+101 PASS: z.norm2() ==> 5.477
+102 PASS: z.exp() ==> {x:[-2.691,-4.83],y:[0.3836,-5.592]}
+103 PASS: z.cos() ==> {x:[-1.528,-2.459],y:[0.1658,-2.745]}
+104 PASS: z.sin() ==> {x:[0.2178,-2.847],y:[1.163,2.371]}
+105 PASS: z.log() ==> {x:[0.6931,1.04],y:[1.249,1.107]}
+106 PASS: A = new numeric.T([[1,2],[3,4]],[[0,1],[2,-1]]); ==> {x:[[1,2],[3,4]],y:[[0,1],[2,-1]]}
+107 PASS: A.inv(); ==> {x:[[0.125,0.125],[0.25,0]],y:[[0.5,-0.25],[-0.375,0.125]]}
+108 PASS: A.inv().dot(A) ==> {x:[[1,0],[0,1]],y:[[0,-2.776e-17],[0,0]]}
+109 PASS: A.get([1,1]) ==> {x:4,y:-1}
+110 PASS: A.transpose() ==> {x:[[1,3],[2,4]],y:[[0,2],[1,-1]]}
+111 PASS: A.transjugate() ==> {x:[[1,3],[2,4]],y:[[0,-2],[-1,1]]}
+112 PASS: numeric.T.rep([2,2],new numeric.T(2,3)); ==> {x:[[2,2],[2,2]],y:[[3,3],[3,3]]}
+113 PASS: A = [[1,2,5],[3,5,0],[7,-3,5]]; ==> [[1,2,5],[3,5,0],[7,-3,5]]
+114 PASS: B = numeric.eig(A); ==> {lambda:{x:[-4.068,8.742,6.326],y:},E:{x:[[0.7281,-0.5634,0.4034],[-0.2409,-0.4516,0.9127],[-0.6417,-0.6918,0.06462]],y:}}
+115 PASS: C = B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()); ==> {x:[[1,2,5],[3,5,-3.109e-15],[7,-3,5]],y:}
+116 PASS: C.sub(A).norm2()<1e-13 ==> true
+117 PASS: A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]] ==> [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
+118 PASS: numeric.svd(A) ==> {U:[[-0.7071,-0.1581,0.1768,0.2494,0.4625],[-0.5303,-0.1581,-0.3536,0.1556,-0.4984],[-0.1768,0.7906,-0.1768,-0.1546,0.3967],[-1.506e-17,-0.1581,-0.7071,-0.3277,0.1],[-0.3536,0.1581,1.954e-15,-0.07265,-0.2084],[-0.1768,-0.1581,0.5303,-0.5726,-0.05555],[-7.109e-18,-0.4743,-0.1768,-0.3142,0.4959],[-0.1768,0.1581,1.915e-15,-0.592,-0.2791]],S:[35.33,20,19.6,0,0],V:[[-0.8006,-0.3162,0.2887,-0.4191,0],[-0.4804,0.6325,7.768e-15,0.4405,0.4185],[-0.1601,-0.3162,-0.866,-0.052,0.3488],[4.684e-17,-0.6325,0.2887,0.6761,0.2442],[-0.3203,3.594e-15,-0.2887,0.413,-0.8022]]}
+119 PASS: n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12 ==> true
+120 PASS: n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+121 PASS: n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+122 PASS: n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+123 PASS: n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+124 PASS: n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+125 PASS: n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+126 PASS: n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12 ==> true
+127 PASS: m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+128 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+129 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+130 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
+131 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
+132 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+133 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+134 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+135 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
+136 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
+137 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
+138 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+139 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+140 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+141 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+142 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+143 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
+144 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+145 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+146 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+147 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+148 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+149 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
+150 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100>
+151 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+152 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
+154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
+155 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
+156 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+157 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+158 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+159 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+160 PASS: numeric.seedrandom.random() ==> 0.6139
+161 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Firefox testing complete. PASS: 162 FAIL: 0 Total: 162

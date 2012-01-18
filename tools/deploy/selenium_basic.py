@@ -7,7 +7,7 @@ import sys
 import urllib
 import re
 
-tests=[('numeric.add(1,[2,3]);','t([3,4])')]
+tests=[('numeric.add(1,[2,3]);','[3,4]')]
 def test(name,driver):
     p = 0
     f = 0

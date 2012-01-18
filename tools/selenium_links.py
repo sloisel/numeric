@@ -45,7 +45,7 @@ mainlinks = [("linkhome","library for numerical computations"),
              ("linkworkshop","IN"),
              ("linkdoc","vectors and matrices"),
              ("linklib","use strict"),
-             ("linklibmin","var numeric={};numeric"),]
+             ("linklibmin","var numeric="),]
 driver=0
 print "Link testing."
 try:

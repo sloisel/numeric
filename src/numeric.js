@@ -518,7 +518,7 @@ numeric.pointwise = function pointwise(params,body,setup) {
             'if(typeof _s === "undefined") _s = numeric.dim('+thevec+');\n'+
             'if(typeof _k === "undefined") _k = 0;\n'+
             'var _n = _s[_k];\n'+
-            'var i, ret = new Array(_n), _i1,_i2,_i3;\n'+
+            'var i, ret = new Array(_n);\n'+
             'if(_k < _s.length-1) {\n'+
             '    for(i=_n-1;i>=0;i--) ret[i] = arguments.callee('+params.join(',')+',_s,_k+1);\n'+
             '    return ret;\n'+
@@ -654,6 +654,18 @@ numeric.atan2 = function atan2(x,y) {
     }
     if (typeof y === "object") return numeric.atan2SV(x,y);
     return Math.atan2(x,y);
+}
+
+numeric.powVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = pow(x[i],y[i]);','var pow = Math.pow;');
+numeric.powVS = numeric.pointwise(['x[i]','y'],'ret[i] = pow(x[i],y);','var pow = Math.pow;');
+numeric.powSV = numeric.pointwise(['x','y[i]'],'ret[i] = pow(x,y[i]);','var pow = Math.pow;');
+numeric.pow = function pow(x,y) {
+    if(typeof x === "object") {
+        if(typeof y === "object") return numeric.powVV(x,y);
+        return numeric.powVS(x,y);
+    }
+    if (typeof y === "object") return numeric.powSV(x,y);
+    return Math.pow(x,y);
 }
 
 numeric.clone = numeric.pointwise(['x[i]'],'ret[i] = x[i];');
