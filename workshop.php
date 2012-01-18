@@ -350,7 +350,7 @@ function reset() {
 function update() {
 	savedata.scripts = [workshop.updateVersion];
 	localStorage.savedata = JSON.stringify(savedata);
-	window.location.reload();
+	window.location.replace('workshop.php');
 }
 
 function submit() {
@@ -415,7 +415,7 @@ EOT;
 }
 ?>
 
-workshop.version = "2012-01-18_02-48-41";
+workshop.version = "2012-01-18_03-01-25";
 workshop.updateVersion = "/scripts/numeric.js?key=157d543392d97d4dedfba9aeb82d18060119450c7a3906fff1e783a9325f9fd3";
 workshop.preload(workshop._restore);
 </script>

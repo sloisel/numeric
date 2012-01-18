@@ -327,7 +327,7 @@ function reset() {
 function update() {
 	savedata.scripts = [workshop.updateVersion];
 	localStorage.savedata = JSON.stringify(savedata);
-	window.location.reload();
+	window.location.replace('workshop.php');
 }
 
 function submit() {
