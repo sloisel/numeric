@@ -30,10 +30,6 @@ if(isset($_POST['savedata'])) {
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript: Workshop</title>
-<!--[if lte IE 9]>
-<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
-<![endif]-->
-<script src="tools/megalib.js"></script>
 <body onload="workshop.restore2();">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
 <table class="nav"><tr class="nav">
@@ -105,7 +101,7 @@ if(_retarded) {
 		scr.type = 'text/javascript';
         scr.onreadystatechange = function () {
             var k;
-            if (scr.readyState == 'loaded' || script.readyState == 'complete') {
+            if (scr.readyState == 'loaded' || scr.readyState == 'complete') {
                 for(k=0;k<_queue.length;k++) { _onmessage(_queue[k]); }
             }
         }
@@ -318,12 +314,19 @@ function restore2(foo) {
 }
 
 function restore(savedata) {
-	var count=0;
-	var k;
-	for(k=0;k<savedata.scripts.length;k++) {
-    	w.postMessage(JSON.stringify({imports:savedata.scripts}));
-    }
+    w.postMessage(JSON.stringify({imports:savedata.scripts}));
 	restore2(savedata);
+}
+
+function preload(savedata) {
+    var k;
+    var client;
+
+    for(k=0;k<savedata.scripts.length;k++) {
+        client = new XMLHttpRequest();
+        client.open("GET", savedata.scripts[k]);
+        client.send();
+    }
 }
 
 function mykeydown(e,i) {
@@ -373,12 +376,14 @@ return {
 	    reset:reset,
 	    resize:resize,
 	    submit:submit,
-	    update:update
+	    update:update,
+	    preload:preload
 	    }
 }());
 </script>
 
 <br><br><br>
+
 
 
 <script>
@@ -395,30 +400,32 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676');
+		$incs = array(1 => '/scripts/numeric.js?key=157d543392d97d4dedfba9aeb82d18060119450c7a3906fff1e783a9325f9fd3');
 	}
 	echo <<<EOT
-workshop.startup = (function () {
-	var _restore = $restore;
-	workshop.restore(_restore);
-});
+workshop._restore = $restore;
 EOT;
 } else {
 	echo <<<EOT
-workshop.startup = (function () {
-	var _restore = ((typeof localStorage.savedata === "string")?
+workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676"] });
-	workshop.restore(_restore);
-});
+	                 scripts: ["/scripts/numeric.js?key=157d543392d97d4dedfba9aeb82d18060119450c7a3906fff1e783a9325f9fd3"] });
 EOT;
 }
 ?>
 
-workshop.version = "noversion";
-workshop.updateVersion = "/scripts/numeric.js?key=ff4c4cac2d44e0185dcd70e274efb1e14b13667ac4f771bf7378eaa3ae169676";
-workshop.startup();
-
+workshop.version = "2012-01-18_02-48-41";
+workshop.updateVersion = "/scripts/numeric.js?key=157d543392d97d4dedfba9aeb82d18060119450c7a3906fff1e783a9325f9fd3";
+workshop.preload(workshop._restore);
 </script>
+
+<!--[if lte IE 9]>
+<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
+<![endif]-->
+<script src="tools/megalib.js"></script>
+<script>
+workshop.restore(workshop._restore);
+</script>
+
 

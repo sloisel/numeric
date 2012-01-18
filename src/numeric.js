@@ -1793,6 +1793,93 @@ coord.dotMV = function dotMV(A,x) {
     return ret;
 }
 
+// 7. Splines
+
+numeric.splineToHermite = function naturalSplineToHermite(x,y,k1,kn) {
+    var n = x.length, b = [], dx = [], dy = [];
+    var i;
+    for(i=n-2;i>=0;i--) { dx[i] = x[i+1]-x[i]; dy[i] = y[i+1]-y[i]; }
+    if(typeof k1 === "string" || typeof kn === "string") { 
+        k1 = kn = "periodic";
+    }
+    // Build sparse tridiagonal system
+    var T = [[],[],[]];
+    switch(typeof k1) {
+    case "undefined":
+        b[0] = 3*dy[0]/(dx[0]*dx[0]);
+        T[0].push(0,0);
+        T[1].push(0,1);
+        T[2].push(2/dx[0],1/dx[0]);
+        break;
+    case "string":
+        b[0] = 3*(dy[n-2]/(dx[n-2]*dx[n-2])+dy[0]/(dx[0]*dx[0]));
+        T[0].push(0,0,0);
+        T[1].push(n-2,0,1);
+        T[2].push(1/dx[n-2],2/dx[n-2]+2/dx[0],1/dx[0]);
+        break;
+    default:
+        b[0] = k1;
+        T[0].push(0);
+        T[1].push(0);
+        T[2].push(1);
+        break;
+    }
+    for(i=1;i<n-1;i++) {
+        b[i] = 3*(dy[i-1]/(dx[i-1]*dx[i-1])+dy[i]/(dx[i]*dx[i]));
+        T[0].push(i,i,i);
+        T[1].push(i-1,i,i+1);
+        T[2].push(1/dx[i-1],2/dx[i-1]+2/dx[i],1/dx[i]);
+    }
+    switch(typeof kn) {
+    case "undefined":
+        b[n-1] = 3*dy[n-2]/(dx[n-2]*dx[n-2]);
+        T[0].push(n-1,n-1);
+        T[1].push(n-2,n-1);
+        T[2].push(1/dx[n-2],2/dx[n-2]);
+        break;
+    case "string":
+        T[1][T[1].length-1] = 0;
+        break;
+    default:
+        b[n-1] = kn;
+        T[0].push(n-1);
+        T[1].push(n-1);
+        T[2].push(1);
+        break;
+    }
+    var ret;
+    if(typeof k1 === "string") {
+        ret = sparse.LUPsolve(sparse.LUP(sparse.scatter(T)),b);
+        ret[n-1] = ret[0];
+    } else {
+        ret = coord.LUsolve(coord.LU(T),b);        
+    }
+    return ret;
+}
+
+numeric.HermiteInterp = function HermiteInterp(x,y,k,x0) {
+    var n = x.length, m = x0.length, ret = new Array(m);
+    var i,p,q,mid,floor = Math.floor,x1,a,b,t;
+    for(i=0;i<m;i++) {
+        p = 0;
+        q = n-1;
+        x1 = x0[i];
+        while(q-p>1) {
+            mid = floor((p+q)/2);
+            if(x[mid] <= x1) p = mid;
+            else q = mid;
+        }
+        a = k[p]*(x[p+1]-x[p])-(y[p+1]-y[p]);
+        b = -k[p+1]*(x[p+1]-x[p])+(y[p+1]-y[p]);
+        t = (x1-x[p])/(x[p+1]-x[p]);
+        ret[i] = (1-t)*y[p]+t*y[p+1]+t*(1-t)*(a*(1-t)+b*t);
+    }
+    return ret;
+}
+numeric.spline = function spline(x,y,x0,k1,kn) {
+    return numeric.HermiteInterp(x,y,numeric.splineToHermite(x,y,k1,kn),x0);
+}
+
 //This is for node support:
 if (typeof exports !== "undefined") {
     exports.numeric = numeric;

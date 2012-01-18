@@ -718,6 +718,24 @@ You can also work on an L-shaped or arbitrary-shape domain:
  [-1,-1,-1,-1,-1]]
 </pre>
 
+<h1>Cubic splines</h1>
+
+You can do some (natural) cubic spline interpolation:
+<pre>
+> numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10))
+[          1,      1.731,      2.039,      1.604,      1.019,      1.294,      2.364,      3.085,       2.82,          2]
+</pre>
+For clamped splines:
+<pre>
+> numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0)
+[          1,      1.435,       1.98,      1.669,      1.034,      1.316,      2.442,      3.017,      2.482,          2]
+</pre>
+For periodic splines:
+<pre>
+> numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic')
+[     0.8415,     0.9024,     0.5788,    0.04718,    -0.5106,    -0.8919,    -0.8887,    -0.3918,     0.3131,     0.8415]
+</pre>
+
 <h1>Quadratic Programming (Alberto Santini)</h1>
 
 The Quadratic Programming function <tt>numeric.solveQP()</tt> is based on <a href="https://github.com/albertosantini/node-quadprog">Alberto Santini's

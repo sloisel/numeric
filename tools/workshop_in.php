@@ -40,27 +40,29 @@ if(isset($_GET['link'])) {
 		$incs = array(1 => '/scripts/numeric.js?key=NUMERICJSHASH');
 	}
 	echo <<<EOT
-workshop.startup = (function () {
-	var _restore = $restore;
-	workshop.restore(_restore);
-});
+workshop._restore = $restore;
 EOT;
 } else {
 	echo <<<EOT
-workshop.startup = (function () {
-	var _restore = ((typeof localStorage.savedata === "string")?
+workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
 	                 scripts: ["/scripts/numeric.js?key=NUMERICJSHASH"] });
-	workshop.restore(_restore);
-});
 EOT;
 }
 ?>
 
 workshop.version = "VERSIONSTRING";
 workshop.updateVersion = "/scripts/numeric.js?key=NUMERICJSHASH";
-workshop.startup();
-
+workshop.preload(workshop._restore);
 </script>
+
+<!--[if lte IE 9]>
+<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
+<![endif]-->
+<script src="tools/megalib.js"></script>
+<script>
+workshop.restore(workshop._restore);
+</script>
+
 
