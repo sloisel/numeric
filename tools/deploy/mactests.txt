@@ -165,13 +165,25 @@ Using Chrome
 153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
 154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
 155 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-156 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-157 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-158 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-159 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-160 PASS: numeric.seedrandom.random() ==> 0.6139
-161 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Chrome testing complete. PASS: 162 FAIL: 0 Total: 162
+156 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
+157 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
+158 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+159 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
+160 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
+161 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
+162 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.000e6,2.000e-6]
+163 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
+164 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [-16900,-43700]
+165 PASS: x0 = numeric.uncmin(f,[0.25,0.25]).solution ==> [0.2578,0.2578]
+166 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
+167 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
+168 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+169 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+170 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
+171 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+172 PASS: numeric.seedrandom.random() ==> 0.6139
+173 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Chrome testing complete. PASS: 174 FAIL: 0 Total: 174
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -331,10 +343,22 @@ Using Firefox
 153 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
 154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],numeric.linspace(1,5,10),0,0) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
 155 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],numeric.linspace(1,4,10),'periodic') ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-156 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-157 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-158 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-159 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-160 PASS: numeric.seedrandom.random() ==> 0.6139
-161 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Firefox testing complete. PASS: 162 FAIL: 0 Total: 162
+156 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
+157 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
+158 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+159 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
+160 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
+161 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
+162 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.000e6,2.000e-6]
+163 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
+164 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [-16900,-43700]
+165 PASS: x0 = numeric.uncmin(f,[0.25,0.25]).solution ==> [0.2578,0.2578]
+166 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
+167 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
+168 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+169 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+170 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
+171 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+172 PASS: numeric.seedrandom.random() ==> 0.6139
+173 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Firefox testing complete. PASS: 174 FAIL: 0 Total: 174

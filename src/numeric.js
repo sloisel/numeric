@@ -865,6 +865,7 @@ numeric.setBlock = function setBlock(x,from,to,B) {
 }
 
 numeric.tensor = function tensor(x,y) {
+    if(typeof x === "number" || typeof y === "number") return numeric.mul(x,y);
     var s1 = numeric.dim(x), s2 = numeric.dim(y);
     if(s1.length !== 1 || s2.length !== 1) {
         throw new Error('numeric: tensor product is only defined for vectors');
@@ -1624,33 +1625,42 @@ sparse.LUPsolve = function LUPsolve(lup,b) {
 }
 
 sparse.scatter = function scatter(V) {
-    var i = V[0], j = V[1], x = V[2];
-    var k,ret = [],ik,jk, reti;
-    for(k=0;k<i.length;k++) {
-        ik = i[k];
-        jk = j[k];
-        if(!(ik in ret)) { reti = []; ret[ik] = reti; }
-        else { reti = ret[ik]; }
-        if(!(jk in reti)) { reti[jk] = 0; }
-        reti[jk] += x[k];
+    var n = V[0].length, Vij, i, j, m = V.length, A = [], Aj;
+    for(i=n-1;i>=0;--i) {
+        if(!V[m-1][i]) continue;
+        Aj = A;
+        for(j=0;j<m-2;j++) {
+            Vij = V[j][i];
+            if(!Aj[Vij]) Aj[Vij] = [];
+            Aj = Aj[Vij];
+        }
+        Aj[V[j][i]] = V[j+1][i];
     }
-    return ret;
+    return A;
 }
 
-sparse.gather = function gather(A) {
-    var i = [], j = [], x = [];
-    var p,q,Ap;
-    for(p in A) {
-        if(!A.hasOwnProperty(p)) continue;
-        Ap = A[p];
-        for(q in Ap) {
-            if(!Ap.hasOwnProperty(q)) continue;
-            i.push(parseInt(p));
-            j.push(parseInt(q));
-            x.push(Ap[q]);
+sparse.gather = function gather(A,ret,k) {
+    if(typeof ret === "undefined") ret = [];
+    if(typeof k === "undefined") k = [];
+    var n,i,Ai;
+    n = k.length;
+    for(i in A) {
+        if(A.hasOwnProperty(i)) {
+            k[n] = parseInt(i);
+            Ai = A[i];
+            if(typeof Ai === "number") {
+                if(Ai) {
+                    if(ret.length === 0) {
+                        for(i=n+1;i>=0;--i) ret[i] = [];
+                    }
+                    for(i=n;i>=0;--i) ret[i].push(k[i]);
+                    ret[n+1].push(Ai);
+                }
+            } else gather(Ai,ret,k);
         }
     }
-    return [i,j,x];
+    if(k.length>n) k.pop();
+    return ret;
 }
 
 // 6. Coordinate matrices
@@ -1890,6 +1900,266 @@ numeric.HermiteInterp = function HermiteInterp(x,y,k,x0) {
 }
 numeric.spline = function spline(x,y,x0,k1,kn) {
     return numeric.HermiteInterp(x,y,numeric.splineToHermite(x,y,k1,kn),x0);
+}
+
+// 8. FFT
+numeric.fftpow2 = function fftpow2(x,y) {
+    var n = x.length;
+    if(n === 1) return;
+    var cos = Math.cos, sin = Math.sin, i,j;
+    var xe = new Array(n/2), ye = new Array(n/2), xo = new Array(n/2), yo = new Array(n/2);
+    j = n/2;
+    for(i=n-1;i!==-1;--i) {
+        --j;
+        xo[j] = x[i];
+        yo[j] = y[i];
+        --i;
+        xe[j] = x[i];
+        ye[j] = y[i];
+    }
+    fftpow2(xe,ye);
+    fftpow2(xo,yo);
+    j = n/2;
+    var t,k = (-6.2831853071795864769252867665590057683943387987502116419/n),ci,si;
+    for(i=n-1;i!==-1;--i) {
+        --j;
+        if(j === -1) j = n/2-1;
+        t = k*i;
+        ci = cos(t);
+        si = sin(t);
+        x[i] = xe[j] + ci*xo[j] - si*yo[j];
+        y[i] = ye[j] + ci*yo[j] + si*xo[j];
+    }
+}
+numeric._ifftpow2 = function _ifftpow2(x,y) {
+    var n = x.length;
+    if(n === 1) return;
+    var cos = Math.cos, sin = Math.sin, i,j;
+    var xe = new Array(n/2), ye = new Array(n/2), xo = new Array(n/2), yo = new Array(n/2);
+    j = n/2;
+    for(i=n-1;i!==-1;--i) {
+        --j;
+        xo[j] = x[i];
+        yo[j] = y[i];
+        --i;
+        xe[j] = x[i];
+        ye[j] = y[i];
+    }
+    _ifftpow2(xe,ye);
+    _ifftpow2(xo,yo);
+    j = n/2;
+    var t,k = (6.2831853071795864769252867665590057683943387987502116419/n),ci,si;
+    for(i=n-1;i!==-1;--i) {
+        --j;
+        if(j === -1) j = n/2-1;
+        t = k*i;
+        ci = cos(t);
+        si = sin(t);
+        x[i] = xe[j] + ci*xo[j] - si*yo[j];
+        y[i] = ye[j] + ci*yo[j] + si*xo[j];
+    }
+}
+numeric.ifftpow2 = function ifftpow2(x,y) {
+    numeric._ifftpow2(x,y);
+    numeric.diveq(x,x.length);
+    numeric.diveq(y,y.length);
+}
+numeric.convpow2 = function convpow2(ax,ay,bx,by) {
+    numeric.fftpow2(ax,ay);
+    numeric.fftpow2(bx,by);
+    var i,n = ax.length,axi,bxi,ayi,byi;
+    for(i=n-1;i!==-1;--i) {
+        axi = ax[i]; ayi = ay[i]; bxi = bx[i]; byi = by[i];
+        ax[i] = axi*bxi-ayi*byi;
+        ay[i] = axi*byi+ayi*bxi;
+    }
+    numeric.ifftpow2(ax,ay);
+}
+numeric.T.prototype.fft = function fft() {
+    var x = this.x, y = this.y;
+    var n = x.length, log = Math.log, log2 = log(2),
+        p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
+    var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
+    var k, c = (-3.141592653589793238462643383279502884197169399375105820/n),t;
+    var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
+    for(k=0;k<n;k++) a[k] = x[k];
+    if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
+    cx[0] = 1;
+    for(k=1;k<=m/2;k++) {
+        t = c*k*k;
+        cx[k] = cos(t);
+        cy[k] = sin(t);
+        cx[m-k] = cos(t);
+        cy[m-k] = sin(t)
+    }
+    var X = new numeric.T(a,b), Y = new numeric.T(cx,cy);
+    X = X.mul(Y);
+    numeric.convpow2(X.x,X.y,numeric.clone(Y.x),numeric.neg(Y.y));
+    X = X.mul(Y);
+    X.x.length = n;
+    X.y.length = n;
+    return X;
+}
+numeric.T.prototype.ifft = function ifft() {
+    var x = this.x, y = this.y;
+    var n = x.length, log = Math.log, log2 = log(2),
+        p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
+    var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
+    var k, c = (3.141592653589793238462643383279502884197169399375105820/n),t;
+    var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
+    for(k=0;k<n;k++) a[k] = x[k];
+    if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
+    cx[0] = 1;
+    for(k=1;k<=m/2;k++) {
+        t = c*k*k;
+        cx[k] = cos(t);
+        cy[k] = sin(t);
+        cx[m-k] = cos(t);
+        cy[m-k] = sin(t)
+    }
+    var X = new numeric.T(a,b), Y = new numeric.T(cx,cy);
+    X = X.mul(Y);
+    numeric.convpow2(X.x,X.y,numeric.clone(Y.x),numeric.neg(Y.y));
+    X = X.mul(Y);
+    X.x.length = n;
+    X.y.length = n;
+    return X.div(n);
+}
+
+//9. Unconstrained optimization
+numeric.gradient = function(f,x) {
+    var n = x.length;
+    var f0 = f(x);
+    var max = Math.max;
+    var h = 1e-6;
+    var i,x0 = numeric.clone(x),f1,f2, J = new Array(n);
+    var div = numeric.div, sub = numeric.sub,errest,roundoff,max = Math.max,eps = Math.pow(numeric.epsilon,0.333),abs = Math.abs;
+    var t0,t1,t2,it=0;
+    for(i=0;i<n;i++) {
+        while(1) {
+            ++it;
+            if(it>20) { throw new Error("Numerical gradient fails"); }
+            x0[i] = x[i]+h;
+            f1 = f(x0);
+            x0[i] = x[i]-h;
+            f2 = f(x0);
+            x0[i] = x[i];
+            J[i] = div(sub(f1,f2),2*h);
+            t0 = x[i]-h;
+            t1 = x[i];
+            t2 = x[i]+h;
+            errest = abs(-(t0 - 2 * t1 + t2) * (-f2 * t1 + t1 * f0 + t0 * f2 - t0 * f1 - f0 * t2 + f1 * t2) / (t0 - t2) / (t0 - t1) / (-t2 + t1) /J[i]);
+            if(errest>eps) { h/=10; }
+            else break;
+            }
+    }
+    return J;
+}
+
+numeric.linesearch = function linesearch(f,f0,df0,x0,dx) {
+    var add = numeric.add, sub = numeric.sub, mul = numeric.mul, div = numeric.div;
+    var t2 = 1;
+    var x2 = add(x0,mul(dx,t2));
+    var f2 = f(x2);
+    var it=0;
+    while(!isFinite(f2)) {
+        ++it;
+        if(it>100) return ('Too many iterations while searching for a finite f(x2)');
+        t2 *= 0.5;
+        x2 = add(x0,mul(dx,t2));
+        f2 = f(x2);
+    }
+    var t1 = 0.5*t2;
+    var x1 = add(x0,mul(dx,t1));
+    var f1 = f(x1);
+    var max = Math.max;
+    it = 0;
+    while(f1<f2) {
+        ++it;
+        if(it>100) return ('Too many iterations while searching for the best convex (x1,x2)');
+        x2 = x1; f2 = f1; t2 = t1;
+        t1 *= 0.5;
+        x1 = add(x0,mul(dx,t1));
+        f1 = f(x1);
+    }
+    var t0 = 0, tm,xm,fm;
+    it = 0;
+    while(1) {
+        if(f1 < f0 + 0.5*t1*df0 || f2 < f0 + 0.5*t2*df0) break;
+        ++it;
+        if(it>20) break;
+        tm = (((t1*t1-t2*t2)*f0+(t2*t2-t0*t0)*f1+(t0*t0-t1*t1)*f2)/(2*((t1-t2)*f0+(t2-t0)*f1+(t0-t1)*f2)));
+        if(!isFinite(tm)) { // we're in a flat region?
+            return x0;
+        }
+        if(tm<=t0 || tm>=t2 || tm === t1) break;
+        xm = add(x0,mul(dx,tm));
+        fm = f(xm);
+        if(tm>t1) {
+            if(fm>f1) { t2 = tm; f2 = fm; x2 = xm; }
+            else {
+                t0 = t1; x0 = x1; f0 = f1;
+                t1 = tm; x1 = xm; f1 = fm;
+            }
+        } else if(tm<t1) {
+            if(fm>f1) { t0 = tm; f0 = fm; x0 = xm; }
+            else {
+                t2 = t1; x2 = x1; f2 = f1;
+                t1 = tm; x1 = xm; f1 = fm;
+            }
+        } else {
+            return ("This error should never happen!");
+        }
+    }
+    if(f1<f2) return x1;
+    return x2;
+}
+numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit) {
+    var grad = numeric.gradient;
+    if(typeof tol === "undefined") { tol = 1e-8; }
+    if(typeof gradient === "undefined") gradient = function(x) { return grad(f,x); };
+    if(typeof maxit === "undefined") maxit = 1000;
+    x0 = numeric.clone(x0);
+    var n = x0.length;
+    var f0 = f(x0);
+    var max = Math.max, norm2 = numeric.norm2;
+    tol = max(tol,numeric.epsilon);
+    var step,g0,g1,H1 = numeric.identity(n);
+    var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div;
+    var any = numeric.any, isnan = numeric.isNaN, neg = numeric.neg;
+    var it=0,A,b,i,s,x1,y,Hs,ys,i0;
+    var msg = "";
+    A = (numeric.identity(n).concat(numeric.diag(numeric.rep([n],-1))));
+    g0 = gradient(x0);
+    while(it<maxit) {
+        step = neg(dot(inv(H1),g0));
+        if(any(isnan(step))) { msg = "Singular Hessian\n" + numeric.prettyPrint(H1); break; }
+        x1 = numeric.linesearch(f,f0,dot(g0,step),x0,step);
+        if(typeof x1 === "string") { msg = "Line search failure: "+x1; break; }
+        i0=0;
+        while(1) {
+            ++i0;
+            if(i0>20) {
+                msg = "Cannot find a valid BFGS point";
+                break;
+            }
+            g1 = gradient(x1);
+            s = sub(x1,x0);
+            y = sub(g1,g0);
+            ys = dot(y,s);
+            if(ys<=0) x1 = div(add(x0,x1),2);
+            else break;
+        }
+        if(i0>20) break;
+        Hs = dot(H1,s);
+        H1 = sub(add(H1,div(ten(y,y),ys)),div(ten(Hs,Hs),dot(s,Hs)));
+        x0 = x1;
+        f0 = f(x0);
+        g0 = g1;
+        ++it;
+        if(norm2(step) < tol) break;
+    }
+    return {solution: x0, iterations:it, message: msg};
 }
 
 //This is for node support:
