@@ -2031,11 +2031,11 @@ numeric.gradient = function(f,x) {
     var n = x.length;
     var f0 = f(x);
     var max = Math.max;
-    var h = 1e-6;
     var i,x0 = numeric.clone(x),f1,f2, J = new Array(n);
-    var div = numeric.div, sub = numeric.sub,errest,roundoff,max = Math.max,eps = Math.pow(numeric.epsilon,0.333),abs = Math.abs;
-    var t0,t1,t2,it=0;
+    var div = numeric.div, sub = numeric.sub,errest,roundoff,max = Math.max,eps = 1e-3,abs = Math.abs, min = Math.min;
+    var t0,t1,t2,it=0,d1,d2,N;
     for(i=0;i<n;i++) {
+        var h = max(1e-6*f0,1e-8);
         while(1) {
             ++it;
             if(it>20) { throw new Error("Numerical gradient fails"); }
@@ -2048,8 +2048,11 @@ numeric.gradient = function(f,x) {
             t0 = x[i]-h;
             t1 = x[i];
             t2 = x[i]+h;
-            errest = abs(-(t0 - 2 * t1 + t2) * (-f2 * t1 + t1 * f0 + t0 * f2 - t0 * f1 - f0 * t2 + f1 * t2) / (t0 - t2) / (t0 - t1) / (-t2 + t1) /J[i]);
-            if(errest>eps) { h/=10; }
+            d1 = (f1-f0)/h;
+            d2 = (f0-f2)/h;
+            N = max(abs(J[i]),abs(f0),abs(f1),abs(f2),abs(t0),abs(t1),abs(t2),1e-8);
+            errest = min(max(abs(d1-J[i]),abs(d2-J[i]),abs(d1-d2))/N,h/N);
+            if(errest>eps) { h/=16; }
             else break;
             }
     }
@@ -2125,14 +2128,14 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit) {
     var max = Math.max, norm2 = numeric.norm2;
     tol = max(tol,numeric.epsilon);
     var step,g0,g1,H1 = numeric.identity(n);
-    var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div;
+    var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
     var any = numeric.any, isnan = numeric.isNaN, neg = numeric.neg;
     var it=0,A,b,i,s,x1,y,Hs,ys,i0;
     var msg = "";
     A = (numeric.identity(n).concat(numeric.diag(numeric.rep([n],-1))));
     g0 = gradient(x0);
     while(it<maxit) {
-        step = neg(dot(inv(H1),g0));
+        step = neg(dot(H1,g0));
         if(any(isnan(step))) { msg = "Singular Hessian\n" + numeric.prettyPrint(H1); break; }
         x1 = numeric.linesearch(f,f0,dot(g0,step),x0,step);
         if(typeof x1 === "string") { msg = "Line search failure: "+x1; break; }
@@ -2151,8 +2154,12 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit) {
             else break;
         }
         if(i0>20) break;
-        Hs = dot(H1,s);
-        H1 = sub(add(H1,div(ten(y,y),ys)),div(ten(Hs,Hs),dot(s,Hs)));
+        Hs = dot(H1,y);
+        H1 = sub(add(H1,
+                mul(
+                        (ys+dot(y,Hs))/(ys*ys),
+                        ten(s,s)    )),
+                div(add(ten(Hs,s),ten(s,Hs)),ys));
         x0 = x1;
         f0 = f(x0);
         g0 = g1;

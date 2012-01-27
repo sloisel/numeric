@@ -770,7 +770,7 @@ R routines.
 
 <h1>Unconstrained optimization</h1>
 
-We also include a simple unconstrained optimization routine. Here are some demos from from Moré et al., 1981:
+We also include a simple unconstrained optimization routine. Here are some demos from from Mor&eacute; et al., 1981:
 
 <pre>
 > sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution
@@ -784,7 +784,7 @@ We also include a simple unconstrained optimization routine. Here are some demos
 > f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution
 [3,0.5]
 > f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution
-[-16900,-43700]
+[-16910,-43750]
 > x0 = numeric.uncmin(f,[0.25,0.25]).solution
 [0.2578,0.2578]
 > y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution
