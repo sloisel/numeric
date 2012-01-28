@@ -784,18 +784,32 @@ We also include a simple unconstrained optimization routine. Here are some demos
 > f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution
 [3,0.5]
 > f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution
-[-16910,-43750]
-> x0 = numeric.uncmin(f,[0.25,0.25]).solution
 [0.2578,0.2578]
 > y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution
 [0.08241,1.133,2.344]
 > y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000)
 [0.399,1,0]
 </pre>
-There are optional parameters to <tt>function uncmin(f,x0,tol,gradient,maxit)</tt>. The iteration stops when
+There are optional parameters to <tt>numeric.uncmin(f,x0,tol,gradient,maxit,callback)</tt>. The iteration stops when
 the gradient is less than the optional parameter <tt>tol</tt>. The <tt>gradient()</tt> parameter is a function that computes the
 gradient of <tt>f()</tt>. If it is not provided, a numerical gradient is used. The iteration stops when
-<tt>maxit</tt> iterations have been performed.
+<tt>maxit</tt> iterations have been performed. The optional <tt>callback()</tt> parameter, if provided, is called at each step:
+<pre>
+> z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb);
+{solution:    [1.571],
+ f:           -1,
+ gradient:    [2.242e-11],
+ invHessian:  [[0.25]],
+ iterations:  6,
+ message:     "Newton step smaller than tol"}
+> z
+[{i:0, x:[1    ], f:-0.4161, g: [-1.819   ]  , H:[[1     ]] },
+ {i:2, x:[1.909], f:-0.7795, g: [ 1.253   ]  , H:[[0.296 ]] },
+ {i:3, x:[1.538], f:-0.9979, g: [-0.1296  ]  , H:[[0.2683]] },
+ {i:4, x:[1.573], f:-1     , g: [ 9.392e-3]  , H:[[0.2502]] },
+ {i:5, x:[1.571], f:-1     , g: [-6.105e-6]  , H:[[0.25  ]] },
+ {i:6, x:[1.571], f:-1     , g: [ 2.242e-11] , H:[[0.25  ]] }]
+</pre>
 
 <!--
 <pre>
