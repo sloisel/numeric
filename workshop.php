@@ -28,7 +28,12 @@ if(isset($_POST['savedata'])) {
 <meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
 <meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
+<!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="resources/style-ie.css">
+<![endif]-->
+<!--[if !IE]><!-->
 <link rel="stylesheet" type="text/css" href="resources/style.css">
+<!--<![endif]-->
 <title>Numeric Javascript: Workshop</title>
 <body onload="workshop.restore2();">
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
@@ -225,12 +230,12 @@ function mkdiv(i) {
 	savedata.outputs.splice(foo+1,0,[]);
 	$('#output_'+i.toString()).after(
 	'<div class="inner" id = "input_'+divcount.toString()+'">'+
-		'<div class="caret">IN&#x276F;</div>'+
+		'<div class="caret">IN></div>'+
 		'<div class="input"><textarea rows=1 id = "text_'+divcount.toString()+'" class="input" onkeydown="workshop.mykeydown(event,'+divcount.toString()+');"></textarea></div>'+
 		'<div class="button"><a href="#" onclick="workshop.rmdiv('+divcount.toString()+')" class="button">&#x2716;</a></div>'+
 	'</div>'+
 	'<div class="inner" id = "output_'+divcount.toString()+'">'+
-		'<div class="out">OUT&#x276F;</div>'+
+		'<div class="out">OUT></div>'+
 		'<div id = "out_'+divcount.toString()+'" class="output"></div>'+
 		'<div class="button2"><a href="#" onclick="workshop.mkdiv('+divcount.toString()+');" class="button">&#x21A9;</a></div>'+
 	'</div>'
@@ -415,7 +420,7 @@ EOT;
 }
 ?>
 
-workshop.version = "2012-01-28_17-21-19";
+workshop.version = "2012-01-28_18-31-09";
 workshop.updateVersion = "/scripts/numeric.js?key=fa402878073cb2f2d716f6120f10499dda9349184103f87da4e154fa43a7311a";
 workshop.preload(workshop._restore);
 </script>
