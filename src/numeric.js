@@ -36,7 +36,7 @@ numeric.prettyPrint = function(x) {
             var normalized = x / Math.pow(10,scale);
             var basic = normalized.toPrecision(numeric.precision);
             if(parseFloat(basic) === 10) { scale++; normalized = 1; basic = normalized.toPrecision(numeric.precision); }
-            return basic+'e'+scale.toString();
+            return parseFloat(basic).toString()+'e'+scale.toString();
         }
         return 'Infinity';
     }
@@ -50,7 +50,7 @@ numeric.prettyPrint = function(x) {
             var a = fmtnum(x);
             var b = x.toPrecision(numeric.precision);
             var c = parseFloat(x.toString()).toString();
-            var d = [a,b,c,parseFloat(a).toString(),parseFloat(b).toString(),parseFloat(c).toString()];
+            var d = [a,b,c,parseFloat(b).toString(),parseFloat(c).toString()];
             for(k=1;k<d.length;k++) { if(d[k].length < a.length) a = d[k]; }
             ret.push(Array(numeric.precision+8-a.length).join(' ')+a);
             return false;
@@ -2072,7 +2072,7 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
     var step,g0,g1,H1 = numeric.identity(n);
     var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
     var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
-    var it=0,i,s,x1,y,Hy,ys,i0,t,nstep,t1,t2;
+    var it=0,i,s,x1,y,Hy,Hs,ys,i0,t,nstep,t1,t2;
     var msg = "";
     g0 = gradient(x0);
     while(it<maxit) {
@@ -2090,7 +2090,7 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
             s = mul(step,t);
             x1 = add(x0,s);
             f1 = f(x1);
-            if(f1 >= f0 + 0.1*t*df0) {
+            if(f1-f0 >= 0.1*t*df0) {
                 t *= 0.5;
                 ++it;
                 continue;
