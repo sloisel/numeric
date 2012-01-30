@@ -832,6 +832,7 @@ adaptive time-stepping:
   f:    [     1, 1.105,  1.164, 1.435,  1.785,  2.191,  2.668, 2.718],
   ymid: [ 1.051, 1.134,  1.293,   1.6,  1.977,  2.418,  2.693],
   iterations:8,
+  events:,
   message:""}
 </pre>
 The return value <tt>sol</tt> contains the x and y values of the solution.
@@ -844,7 +845,7 @@ produce approximations between these points:
 </pre>
 The integrator is also able to handle vector equations. This is a harmonic oscillator:
 <pre>
-> sol = numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI])
+> numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI])
 [[         3,         0],
  [ -9.534e-8,        -3],
  [        -3,  2.768e-7],
@@ -853,10 +854,37 @@ The integrator is also able to handle vector equations. This is a harmonic oscil
 </pre>
 Van der Pol:
 <pre>
-> sol = numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20])
+> numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20])
 [[ -1.208,   0.9916],
  [ 0.4258,    2.535],
  [  2.008, -0.04251]]
+</pre>
+You can also specify a tolerance, a maximum number of iterations and an event function. The integration stops if
+the event function goes from negative to positive.
+<pre>
+> sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; });
+{ x:          [     0, 0.0181, 0.09051, 0.1822,  0.2624],
+  y:          [     1,  1.018,   1.095,    1.2,     1.3],
+  f:          [     1,  1.018,   1.095,    1.2,     1.3],
+  ymid:       [ 1.009,  1.056,   1.146,  1.249],
+  iterations: 5,
+  events:     true,
+  message:    "" }
+</pre>
+Note that at <tt>x=0.1822</tt>, the event function value was <tt>-0.1001</tt> while at <tt>x=0.2673</tt>, the event
+value was <tt>6.433e-3</tt>. The integrator thus terminated at <tt>x=0.2673</tt> instead of continuing until the end
+of the integration interval.<br><br>
+
+Events can also be vector-valued:
+<pre>
+> sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; });
+{ x:          [    0,   0.2, 0.4055],
+  y:          [    1, 1.221,    1.5],
+  f:          [    1, 1.221,    1.5],
+  ymid:       [1.105, 1.354],
+  iterations: 2,
+  events:     [true,true],
+  message:    ""}
 </pre>
 
 <!--

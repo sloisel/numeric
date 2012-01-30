@@ -183,17 +183,19 @@ Using Chrome
 171 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
 172 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
 173 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
-174 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,message:""}
+174 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
 175 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
-176 PASS: sol = numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
-177 PASS: sol = numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
-178 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-179 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-180 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
-181 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-182 PASS: numeric.seedrandom.random() ==> 0.6139
+176 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
+177 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
+178 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
+179 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
+180 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+181 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+182 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
 183 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Chrome testing complete. PASS: 184 FAIL: 0 Total: 184
+184 PASS: numeric.seedrandom.random() ==> 0.6139
+185 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Chrome testing complete. PASS: 186 FAIL: 0 Total: 186
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -371,14 +373,16 @@ Using Firefox
 171 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
 172 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
 173 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
-174 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,message:""}
+174 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
 175 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
-176 PASS: sol = numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
-177 PASS: sol = numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
-178 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-179 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-180 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
-181 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-182 PASS: numeric.seedrandom.random() ==> 0.6139
+176 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
+177 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
+178 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
+179 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
+180 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+181 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+182 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
 183 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Firefox testing complete. PASS: 184 FAIL: 0 Total: 184
+184 PASS: numeric.seedrandom.random() ==> 0.6139
+185 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Firefox testing complete. PASS: 186 FAIL: 0 Total: 186
