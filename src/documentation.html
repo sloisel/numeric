@@ -797,8 +797,8 @@ We also include a simple unconstrained optimization routine. Here are some demos
 [     0.1928,     0.1913,     0.1231,     0.1361]
 > y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution
 [     0.3754,      1.936,     -1.465,    0.01287,    0.02212]
-> f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution
-[          4,         10,          3,          5,          1,          1]
+> f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20;
+true
 </pre>
 There are optional parameters to <tt>numeric.uncmin(f,x0,tol,gradient,maxit,callback)</tt>. The iteration stops when
 the gradient or step size is less than the optional parameter <tt>tol</tt>. The <tt>gradient()</tt> parameter is a function that computes the
@@ -819,6 +819,44 @@ gradient of <tt>f()</tt>. If it is not provided, a numerical gradient is used. T
  {i:4, x:[1.573], f:-1     , g: [ 9.392e-3]  , H:[[0.2502]] },
  {i:5, x:[1.571], f:-1     , g: [-6.105e-6]  , H:[[0.25  ]] },
  {i:6, x:[1.571], f:-1     , g: [ 2.242e-11] , H:[[0.25  ]] }]
+</pre>
+
+<h1>Solving ODEs</h1>
+
+The function <tt>numeric.dopri()</tt> is an implementation of the Dormand-Prince-Runge-Kutta integrator with
+adaptive time-stepping:
+<pre>
+> sol = numeric.dopri(0,1,1,function(t,y) { return y; })
+{ x:    [     0,   0.1, 0.1522, 0.361, 0.5792, 0.7843, 0.9813,     1],
+  y:    [     1, 1.105,  1.164, 1.435,  1.785,  2.191,  2.668, 2.718],
+  f:    [     1, 1.105,  1.164, 1.435,  1.785,  2.191,  2.668, 2.718],
+  ymid: [ 1.051, 1.134,  1.293,   1.6,  1.977,  2.418,  2.693],
+  iterations:8,
+  message:""}
+</pre>
+The return value <tt>sol</tt> contains the x and y values of the solution.
+If you need to know the value of the solution between the given x values, use the function
+<tt>sol.at()</tt>, which uses the extra information contained in <tt>sol.ymid</tt> and <tt>sol.f</tt> to
+produce approximations between these points:
+<pre>
+> sol.at([0.3,0.7])
+[1.35,2.014]
+</pre>
+The integrator is also able to handle vector equations. This is a harmonic oscillator:
+<pre>
+> sol = numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI])
+[[         3,         0],
+ [ -9.534e-8,        -3],
+ [        -3,  2.768e-7],
+ [   3.63e-7,         3],
+ [         3, -3.065e-7]]
+</pre>
+Van der Pol:
+<pre>
+> sol = numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20])
+[[ -1.208,   0.9916],
+ [ 0.4258,    2.535],
+ [  2.008, -0.04251]]
 </pre>
 
 <!--

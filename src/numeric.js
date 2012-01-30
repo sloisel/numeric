@@ -830,6 +830,8 @@ numeric.norm2Squared = function norm2Squared(x) {}
 numeric.norm2Squared = numeric.mapreduce('accum += xi*xi;','0');
 
 numeric.norm2 = function norm2(x) { return Math.sqrt(numeric.norm2Squared(x)); }
+numeric.norminf = numeric.mapreduce('accum = max(abs(xi),accum);','0; var max = Math.max, abs = Math.abs;');
+numeric.sum = numeric.mapreduce('accum += xi;','0');
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.round(b-a)+1;
@@ -2114,6 +2116,125 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
         ++it;
     }
     return {solution: x0, f: f0, gradient: g0, invHessian: H1, iterations:it, message: msg};
+}
+
+// 10. Ode solver (Dormand-Prince)
+numeric.Dopri = function Dopri(x,y,f,ymid,iterations,msg) {
+    this.x = x;
+    this.y = y;
+    this.f = f;
+    this.ymid = ymid;
+    this.iterations = iterations;
+    this.message = msg;
+}
+numeric.Dopri.prototype.at = function at(x) {
+    function sqr(x) { return x*x; }
+    var sol = this;
+    if(typeof x === "number") x = [x];
+    var i,j,k,l, m = x.length;
+    var xs = sol.x;
+    var ys = sol.y;
+    var k1 = sol.f;
+    var ymid = sol.ymid;
+    var n = xs.length;
+    var ret = new Array(m);
+    var x0,x1,xh,y0,y1,yh,xi;
+    var floor = Math.floor,h;
+    var c = 0.5;
+    var add = numeric.add, mul = numeric.mul,sub = numeric.sub, p,q,w;
+    for(i=m-1;i!==-1;--i) {
+        xi = x[i];
+        j = 0; k = n-1;
+        while(k-j>1) {
+            l = floor((j+k)*0.5);
+            if(xs[l] > xi) { k = l; }
+            else { j = l; }
+        }
+        x0 = xs[j];
+        x1 = xs[j+1];
+        y0 = ys[j];
+        y1 = ys[j+1];
+        h  = x1-x0;
+        xh = x0+c*h;
+        yh = ymid[j];
+        p = sub(k1[j  ],mul(y0,1/(x0-xh)+2/(x0-x1)));
+        q = sub(k1[j+1],mul(y1,1/(x1-xh)+2/(x1-x0)));
+        w = [sqr(xi - x1) * (xi - xh) / sqr(x0 - x1) / (x0 - xh),
+             sqr(xi - x0) * sqr(xi - x1) / sqr(x0 - xh) / sqr(x1 - xh),
+             sqr(xi - x0) * (xi - xh) / sqr(x1 - x0) / (x1 - xh),
+             (xi - x0) * sqr(xi - x1) * (xi - xh) / sqr(x0-x1) / (x0 - xh),
+             (xi - x1) * sqr(xi - x0) * (xi - xh) / sqr(x0-x1) / (x1 - xh)];
+        ret[i] = add(add(add(add(mul(y0,w[0]),
+                                 mul(yh,w[1])),
+                                 mul(y1,w[2])),
+                                 mul( p,w[3])),
+                                 mul( q,w[4]));
+    }
+    return ret;
+}
+
+numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit) {
+    if(typeof tol === "undefined") { tol = 1e-6; }
+    if(typeof maxit === "undefined") { maxit = 1000; }
+    var xs = [x0], ys = [y0], k1 = [f(x0,y0)],k2=[],k3=[],k4=[],k5=[],k6=[], ymid = [];
+    var A2 = 1/5;
+    var A3 = [3/40,9/40];
+    var A4 = [44/45,-56/15,32/9];
+    var A5 = [19372/6561,-25360/2187,64448/6561,-212/729];
+    var A6 = [9017/3168,-355/33,46732/5247,49/176,-5103/18656];
+    var b = [35/384,0,500/1113,125/192,-2187/6784,11/84];
+    var bm = [0.5*6025192743/30085553152,
+              0,
+              0.5*51252292925/65400821598,
+              0.5*-2691868925/45128329728,
+              0.5*187940372067/1594534317056,
+              0.5*-1776094331/19743644256,
+              0.5*11237099/235043384];
+    var c = [1/5,3/10,4/5,8/9,1,1];
+    var e = [-71/57600,0,71/16695,-71/1920,17253/339200,-22/525,1/40];
+    var i = 0,er,j;
+    var h = (x1-x0)/10;
+    var it = 0;
+    var add = numeric.add, mul = numeric.mul, k7, y1,erinf;
+    var max = Math.max, min = Math.min, abs = Math.abs, norminf = numeric.norminf,pow = Math.pow;
+    var msg = "";
+    while(x0<x1 && it<maxit) {
+        ++it;
+        if(x0+h>x1) h = x1-x0;
+        k2[i] = f(x0+c[0]*h,                add(y0,mul(   A2*h,k1[i])));
+        k3[i] = f(x0+c[1]*h,            add(add(y0,mul(A3[0]*h,k1[i])),mul(A3[1]*h,k2[i])));
+        k4[i] = f(x0+c[2]*h,        add(add(add(y0,mul(A4[0]*h,k1[i])),mul(A4[1]*h,k2[i])),mul(A4[2]*h,k3[i])));
+        k5[i] = f(x0+c[3]*h,    add(add(add(add(y0,mul(A5[0]*h,k1[i])),mul(A5[1]*h,k2[i])),mul(A5[2]*h,k3[i])),mul(A5[3]*h,k4[i])));
+        k6[i] = f(x0+c[4]*h,add(add(add(add(add(y0,mul(A6[0]*h,k1[i])),mul(A6[1]*h,k2[i])),mul(A6[2]*h,k3[i])),mul(A6[3]*h,k4[i])),mul(A6[4]*h,k5[i])));
+        y1 = add(add(add(add(add(y0,mul(k1[i],h*b[0])),mul(k3[i],h*b[2])),mul(k4[i],h*b[3])),mul(k5[i],h*b[4])),mul(k6[i],h*b[5]));
+        k7 = f(x0+h,y1);
+        er = add(add(add(add(add(mul(k1[i],h*e[0]),mul(k3[i],h*e[2])),mul(k4[i],h*e[3])),mul(k5[i],h*e[4])),mul(k6[i],h*e[5])),mul(k7,h*e[6]));
+        if(typeof er === "number") erinf = abs(er);
+        else erinf = norminf(er);
+        if(erinf > tol) { // reject
+            h = 0.2*h*pow(tol/erinf,0.25);
+            if(x0+h === x0) {
+                msg = "Step size became too small";
+                break;
+            }
+            continue;
+        }
+        ymid[i] = add(add(add(add(add(add(y0,
+                mul(k1[i]  ,h*bm[0])),
+                mul(k3[i]  ,h*bm[2])),
+                mul(k4[i]  ,h*bm[3])),
+                mul(k5[i]  ,h*bm[4])),
+                mul(k6[i]  ,h*bm[5])),
+                mul(k7     ,h*bm[6]));
+        ++i;
+        x0 += h;
+        y0 = y1;
+        xs[i] = x0;
+        ys[i] = y1;
+        k1[i] = k7;
+        h = min(0.8*h*pow(tol/erinf,0.25),4*h);
+    }
+    return new numeric.Dopri(xs,ys,k1,ymid,it,msg);
 }
 
 //This is for node support:
