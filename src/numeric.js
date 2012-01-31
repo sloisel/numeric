@@ -1821,10 +1821,155 @@ coord.dotMV = function dotMV(A,x) {
 
 // 7. Splines
 
-numeric.splineToHermite = function naturalSplineToHermite(x,y,k1,kn) {
+numeric.Spline = function Spline(x,yl,yr,kl,kr) { this.x = x; this.yl = yl; this.yr = yr; this.kl = kl; this.kr = kr; }
+numeric.Spline.prototype._at = function _at(x1,p) {
+    var x = this.x;
+    var yl = this.yl;
+    var yr = this.yr;
+    var kl = this.kl;
+    var kr = this.kr;
+    var x1,a,b,t;
+    var add = numeric.add, sub = numeric.sub, mul = numeric.mul;
+    a = sub(mul(kl[p],x[p+1]-x[p]),sub(yr[p],yl[p]));
+    b = add(mul(kr[p],x[p]-x[p+1]),sub(yr[p],yl[p]));
+    t = (x1-x[p])/(x[p+1]-x[p]);
+    var s = t*(1-t);
+    return add(add(add(mul(1-t,yl[p]),mul(t,yr[p])),mul(a,s*(1-t))),mul(b,s*t));
+}
+numeric.Spline.prototype.at = function at(x0) {
+    if(typeof x0 === "number") {
+        var x = this.x;
+        var n = x.length;
+        var p,q,mid,floor = Math.floor,a,b,t;
+        p = 0;
+        q = n-1;
+        while(q-p>1) {
+            mid = floor((p+q)/2);
+            if(x[mid] <= x0) p = mid;
+            else q = mid;
+        }
+        return this._at(x0,p);
+    }
+    var n = x0.length, i, ret = new Array(n);
+    for(i=n-1;i!==-1;--i) ret[i] = this.at(x0[i]);
+    return ret;
+}
+numeric.Spline.prototype.diff = function diff() {
+    var x = this.x;
+    var yl = this.yl;
+    var yr = this.yr;
+    var kl = this.kl;
+    var kr = this.kr;
+    var n = yl.length;
+    var i;
+    var zl = new Array(n), zr = new Array(n), pl = new Array(n), pr = new Array(n);
+    var add = numeric.add, sub = numeric.sub, mul = numeric.mul;
+    for(i=n-1;i!==-1;--i) {
+        zl[i] = kl[i];
+        zr[i] = kr[i];
+        pl[i] = sub(sub(sub(mul(6,yr[i]),mul(6,yl[i])),mul(4,kl[i])),mul(2,kr[i]));
+        pr[i] = add(sub(add(mul(6,yl[i]),mul(2,kl[i])),mul(6,yr[i])),mul(4,kr[i]));
+    }
+    return new numeric.Spline(x,zl,zr,pl,pr);
+}
+numeric.Spline.prototype.roots = function roots() {
+    function sqr(x) { return x*x; }
+    function heval(y0,y1,k0,k1,x) {
+        var A = k0*2-(y1-y0);
+        var B = -k1*2+(y1-y0);
+        var t = (x+1)*0.5;
+        var s = t*(1-t);
+        return (1-t)*y0+t*y1+A*s*(1-t)+B*s*t;
+    }
+    var ret = [];
+    var x = this.x, yl = this.yl, yr = this.yr, kl = this.kl, kr = this.kr;
+    if(typeof yl[0] === "number") {
+        yl = [yl];
+        yr = [yr];
+        kl = [kl];
+        kr = [kr];
+    }
+    var m = yl.length,n=yl[0].length,i,j,k,y,s,t;
+    var ai,bi,ci,di, ret = Array(m),ri,k0,k1,y0,y1,A,B,D,dx,cx,stops,z0,z1,zm,t0,t1,tm;
+    var sqrt = Math.sqrt;
+    for(i=0;i!==m;++i) {
+        ai = yl[i];
+        bi = yr[i];
+        ci = kl[i];
+        di = kr[i];
+        ri = [];
+        for(j=0;j!==n;j++) {
+            if(j>0 && bi[j-1]*ai[j]<0) ri.push(x[j]);
+            dx = (x[j+1]-x[j]);
+            cx = x[j];
+            y0 = ai[j];
+            y1 = bi[j];
+            k0 = ci[j]/dx;
+            k1 = di[j]/dx;
+            D = sqr(k0-k1+3*(y0-y1)) + 12*k1*y0;
+            A = k1+3*y0+2*k0-3*y1;
+            B = 3*(k1+k0+2*(y0-y1));
+            if(D<=0) {
+                z0 = A/B;
+                if(z0>x[j] && z0<x[j+1]) stops = [x[j],z0,x[j+1]];
+                else stops = [x[j],x[j+1]];
+            } else {
+                z0 = (A-sqrt(D))/B;
+                z1 = (A+sqrt(D))/B;
+                stops = [x[j]];
+                if(z0>x[j] && z0<x[j+1]) stops.push(z0);
+                if(z1>x[j] && z1<x[j+1]) stops.push(z1);
+                stops.push(x[j+1]);
+            }
+            t0 = stops[0];
+            z0 = this._at(t0,j);
+            for(k=0;k<stops.length-1;k++) {
+                t1 = stops[k+1];
+                z1 = this._at(t1,j);
+                if(z0 === 0) {
+                    ri.push(t0); 
+                    t0 = t1;
+                    z0 = z1;
+                    continue;
+                }
+                if(z1 === 0 || z0*z1>0) {
+                    t0 = t1;
+                    z0 = z1;
+                    continue;
+                }
+                var side = 0;
+                while(1) {
+                    tm = (z0*t1-z1*t0)/(z0-z1);
+                    if(tm <= t0 || tm >= t1) { tm = 0.5*(t0+t1); break; }
+                    zm = this._at(tm,j);
+                    if(zm*z1>0) {
+                        t1 = tm;
+                        z1 = zm;
+                        if(side === -1) z0*=0.5;
+                        side = -1;
+                    } else if(zm*z0>0) {
+                        t0 = tm;
+                        z0 = zm;
+                        if(side === 1) z1*=0.5;
+                        side = 1;
+                    } else break;
+                }
+                ri.push(tm);
+                t0 = stops[k+1];
+                z0 = this._at(t0, j);
+            }
+            if(z1 === 0) ri.push(t1);
+        }
+        ret[i] = ri;
+    }
+    if(typeof this.yl[0] === "number") return ret[0];
+    return ret;
+}
+numeric.spline = function spline(x,y,k1,kn) {
     var n = x.length, b = [], dx = [], dy = [];
     var i;
-    for(i=n-2;i>=0;i--) { dx[i] = x[i+1]-x[i]; dy[i] = y[i+1]-y[i]; }
+    var sub = numeric.sub,mul = numeric.mul,add = numeric.add;
+    for(i=n-2;i>=0;i--) { dx[i] = x[i+1]-x[i]; dy[i] = sub(y[i+1],y[i]); }
     if(typeof k1 === "string" || typeof kn === "string") { 
         k1 = kn = "periodic";
     }
@@ -1832,13 +1977,13 @@ numeric.splineToHermite = function naturalSplineToHermite(x,y,k1,kn) {
     var T = [[],[],[]];
     switch(typeof k1) {
     case "undefined":
-        b[0] = 3*dy[0]/(dx[0]*dx[0]);
+        b[0] = mul(3/(dx[0]*dx[0]),dy[0]);
         T[0].push(0,0);
         T[1].push(0,1);
         T[2].push(2/dx[0],1/dx[0]);
         break;
     case "string":
-        b[0] = 3*(dy[n-2]/(dx[n-2]*dx[n-2])+dy[0]/(dx[0]*dx[0]));
+        b[0] = add(mul(3/(dx[n-2]*dx[n-2]),dy[n-2]),mul(3/(dx[0]*dx[0]),dy[0]));
         T[0].push(0,0,0);
         T[1].push(n-2,0,1);
         T[2].push(1/dx[n-2],2/dx[n-2]+2/dx[0],1/dx[0]);
@@ -1851,14 +1996,14 @@ numeric.splineToHermite = function naturalSplineToHermite(x,y,k1,kn) {
         break;
     }
     for(i=1;i<n-1;i++) {
-        b[i] = 3*(dy[i-1]/(dx[i-1]*dx[i-1])+dy[i]/(dx[i]*dx[i]));
+        b[i] = add(mul(3/(dx[i-1]*dx[i-1]),dy[i-1]),mul(3/(dx[i]*dx[i]),dy[i]));
         T[0].push(i,i,i);
         T[1].push(i-1,i,i+1);
         T[2].push(1/dx[i-1],2/dx[i-1]+2/dx[i],1/dx[i]);
     }
     switch(typeof kn) {
     case "undefined":
-        b[n-1] = 3*dy[n-2]/(dx[n-2]*dx[n-2]);
+        b[n-1] = mul(3/(dx[n-2]*dx[n-2]),dy[n-2]);
         T[0].push(n-1,n-1);
         T[1].push(n-2,n-1);
         T[2].push(1/dx[n-2],2/dx[n-2]);
@@ -1873,37 +2018,67 @@ numeric.splineToHermite = function naturalSplineToHermite(x,y,k1,kn) {
         T[2].push(1);
         break;
     }
-    var ret;
+    if(typeof b[0] !== "number") b = numeric.transpose(b);
+    else b = [b];
+    var k = new Array(b.length);
     if(typeof k1 === "string") {
-        ret = sparse.LUPsolve(sparse.LUP(sparse.scatter(T)),b);
-        ret[n-1] = ret[0];
+        for(i=k.length-1;i!==-1;--i) {
+            k[i] = sparse.LUPsolve(sparse.LUP(sparse.scatter(T)),b[i]);
+            k[i][n-1] = k[i][0];
+        }
     } else {
-        ret = coord.LUsolve(coord.LU(T),b);        
+        for(i=k.length-1;i!==-1;--i) {
+            k[i] = coord.LUsolve(coord.LU(T),b[i]);
+        }
     }
-    return ret;
+    if(typeof y[0] === "number") k = k[0];
+    else k = numeric.transpose(k);
+    return new numeric.Spline(x,y.slice(0,y.length-1),y.slice(1),
+                                k.slice(0,y.length-1),k.slice(1));
 }
 
-numeric.HermiteInterp = function HermiteInterp(x,y,k,x0) {
-    var n = x.length, m = x0.length, ret = new Array(m);
-    var i,p,q,mid,floor = Math.floor,x1,a,b,t;
-    for(i=0;i<m;i++) {
-        p = 0;
-        q = n-1;
-        x1 = x0[i];
-        while(q-p>1) {
-            mid = floor((p+q)/2);
-            if(x[mid] <= x1) p = mid;
-            else q = mid;
+numeric.fit = function fit(f,a,b,tol,maxnodes) {
+    function vecf(ts) {
+        var n = ts.length, fs = Array(n), i;
+        for(i=n-1;i!==-1;--i) {
+            fs[i] = f(ts[i]);
         }
-        a = k[p]*(x[p+1]-x[p])-(y[p+1]-y[p]);
-        b = -k[p+1]*(x[p+1]-x[p])+(y[p+1]-y[p]);
-        t = (x1-x[p])/(x[p+1]-x[p]);
-        ret[i] = (1-t)*y[p]+t*y[p+1]+t*(1-t)*(a*(1-t)+b*t);
+        return fs;
     }
-    return ret;
-}
-numeric.spline = function spline(x,y,x0,k1,kn) {
-    return numeric.HermiteInterp(x,y,numeric.splineToHermite(x,y,k1,kn),x0);
+    var spline = numeric.spline;
+    var t0 = numeric.linspace(a,b,4), t1, tm, f0 = vecf(t0), s0 = spline(t0,f0), fm, f1, i,j;
+    var norminf = numeric.norminf;
+    var add = numeric.add, mul = numeric.mul,sub = numeric.sub, n, stop,N, abs = Math.abs;
+    if(typeof tol === "undefined") tol = Math.max(norminf(f0)*1e-4,1e-30);
+    if(typeof maxnodes === "undefined") maxnodes = 1000;
+    while(1) {
+        if(s0.length > maxnodes) return s0;
+        n = t0.length;
+        tm = mul(add(t0.slice(0,n-1),t0.slice(1)),0.5);
+        fm = vecf(tm);
+        i = 0;
+        --n;
+        t1 = [];
+        f1 = [];
+        stop = true;
+        for(j=0;j!==n;++j) {
+            while(tm[j]>t0[i]) { t1.push(t0[i]); f1.push(f0[i]); ++i; }
+            if(typeof fm[j] === "number") N = abs(fm[j]-s0.at(tm[j]));
+            else N = norminf(sub(fm[j],s0.at(tm[j])));
+            if(N > tol) {
+                stop = false;
+                t1.push(tm[j]);
+                f1.push(fm[j]);
+            }
+        }
+        if(stop) break;
+        ++n;
+        while(i !== n) { t1.push(t0[i]); f1.push(f0[i]); ++i; }
+        t0 = t1;
+        f0 = f1;
+        s0 = spline(t0,f0);
+    }
+    return s0;
 }
 
 // 8. FFT
@@ -2207,8 +2382,8 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
     var add = numeric.add, mul = numeric.mul, y1,erinf;
     var max = Math.max, min = Math.min, abs = Math.abs, norminf = numeric.norminf,pow = Math.pow;
     var any = numeric.any, lt = numeric.lt, and = numeric.and, sub = numeric.sub;
-    var msg = "";
     var e0, e1, ev;
+    var ret = new numeric.Dopri(xs,ys,k1,ymid,-1,"");
     if(typeof event === "function") e0 = event(x0,y0);
     while(x0<x1 && it<maxit) {
         ++it;
@@ -2226,7 +2401,7 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
         if(erinf > tol) { // reject
             h = 0.2*h*pow(tol/erinf,0.25);
             if(x0+h === x0) {
-                msg = "Step size became too small";
+                ret.msg = "Step size became too small";
                 break;
             }
             continue;
@@ -2243,13 +2418,13 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
         ys[i] = y1;
         k1[i] = k7;
         if(typeof event === "function") {
-            e1 = event(x0+h,y1);
-            var last = 0, xc, yc, c=0.5,en,ei;
-            var side=0, sl = 1.0, sr = 1.0;
+            var yi,xl = x0,xr = x0+0.5*h,xi;
+            e1 = event(xr,ymid[i-1]);
             ev = and(lt(e0,0),lt(0,e1));
+            if(!any(ev)) { xl = xr; xr = x0+h; e0 = e1; e1 = event(xr,y1); ev = and(lt(e0,0),lt(0,e1)); }
             if(any(ev)) {
-                var yi,xl = x0,xr = x0+h,xi;
-                var ret = new numeric.Dopri(xs,ys,k1,ymid,it,msg);
+                var xc, yc, en,ei;
+                var side=0, sl = 1.0, sr = 1.0;
                 while(1) {
                     if(typeof e0 === "number") xi = (sr*e1*xl-sl*e0*xr)/(sr*e1-sl*e0);
                     else {
@@ -2285,6 +2460,7 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
                 ret.y[i] = yi;
                 ret.ymid[i-1] = y1;
                 ret.events = ev;
+                ret.iterations = it;
                 return ret;
             }
         }
@@ -2293,7 +2469,8 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
         e0 = e1;
         h = min(0.8*h*pow(tol/erinf,0.25),4*h);
     }
-    return new numeric.Dopri(xs,ys,k1,ymid,it,msg);
+    ret.iterations = it;
+    return ret;
 }
 
 //This is for node support:
