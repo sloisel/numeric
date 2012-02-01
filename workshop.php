@@ -405,7 +405,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c');
+		$incs = array(1 => '/scripts/numeric.js?key=aa2506e25c3aa9c1af0e8cd8d38e9d9001532bb4d4801a4b5e189f76f42c5a52');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -415,13 +415,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c"] });
+	                 scripts: ["/scripts/numeric.js?key=aa2506e25c3aa9c1af0e8cd8d38e9d9001532bb4d4801a4b5e189f76f42c5a52"] });
 EOT;
 }
 ?>
 
 workshop.version = "noversion";
-workshop.updateVersion = "/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c";
+workshop.updateVersion = "/scripts/numeric.js?key=aa2506e25c3aa9c1af0e8cd8d38e9d9001532bb4d4801a4b5e189f76f42c5a52";
 workshop.preload(workshop._restore);
 </script>
 

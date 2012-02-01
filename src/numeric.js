@@ -364,7 +364,7 @@ numeric.same = function same(x,y) {
 
 numeric.rep = function rep(s,v,k) {
     if(typeof k === "undefined") { k=0; }
-    var n = s[k], ret = new Array(n), i;
+    var n = s[k], ret = Array(n), i;
     if(k === s.length-1) {
         for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
         if(i===-1) { ret[0] = v; }
@@ -378,11 +378,11 @@ numeric.dotMMbig = function dotMMbig(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0,s1,s2,s3,baz,accum;
     var dotVV = numeric.dotVV,min = Math.min;
     p = x.length; q = y.length; r = y[0].length;
-    ret = new Array(p);
+    ret = Array(p);
     woo = numeric.transpose(y);
     for(i0=0;i0<p;i0+=4) {
         p0 = min(i0+4,p);
-        for(i=i0;i<p0;i++) { ret[i] = new Array(r); }
+        for(i=i0;i<p0;i++) { ret[i] = Array(r); }
         for(k0=0;k0<r;k0+=4) {
             r0 = min(k0+4,r);
             for(i=i0;i<p0;i++) {
@@ -400,9 +400,9 @@ numeric.dotMMbig = function dotMMbig(x,y) {
 numeric.dotMMsmall = function dotMMsmall(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
     p = x.length; q = y.length; r = y[0].length;
-    ret = new Array(p);
+    ret = Array(p);
     for(i=p-1;i>=0;i--) {
-        foo = new Array(r);
+        foo = Array(r);
         bar = x[i];
         for(k=r-1;k>=0;k--) {
             woo = bar[q-1]*y[q-1][k];
@@ -419,7 +419,7 @@ numeric.dotMMsmall = function dotMMsmall(x,y) {
 }
 numeric.dotMV = function dotMV(x,y) {
     var p = x.length, q = y.length,i;
-    var ret = new Array(p), dotVV = numeric.dotVV;
+    var ret = Array(p), dotVV = numeric.dotVV;
     for(i=p-1;i>=0;i--) { ret[i] = dotVV(x[i],y); }
     return ret;
 }
@@ -427,7 +427,7 @@ numeric.dotMV = function dotMV(x,y) {
 numeric.dotVM = function dotVM(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0,s1,s2,s3,baz,accum;
     p = x.length; q = y[0].length;
-    ret = new Array(q);
+    ret = Array(q);
     for(k=q-1;k>=0;k--) {
         woo = x[p-1]*y[p-1][k];
         for(j=p-2;j>=1;j-=2) {
@@ -467,9 +467,9 @@ numeric.dot = function dot(x,y) {
 }
 
 numeric.diag = function diag(d) {
-    var i,i1,j,n = d.length, A = new Array(n), Ai;
+    var i,i1,j,n = d.length, A = Array(n), Ai;
     for(i=n-1;i>=0;i--) {
-        Ai = new Array(n);
+        Ai = Array(n);
         i1 = i+2;
         for(j=n-1;j>=i1;j-=2) {
             Ai[j] = 0;
@@ -487,7 +487,7 @@ numeric.diag = function diag(d) {
     return A;
 }
 numeric.getDiag = function(A) {
-    var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = new Array(n);
+    var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = Array(n);
     for(i=n-1;i>=1;--i) {
         ret[i] = A[i][i];
         --i;
@@ -518,7 +518,7 @@ numeric.pointwise = function pointwise(params,body,setup) {
             'if(typeof _s === "undefined") _s = numeric.dim('+thevec+');\n'+
             'if(typeof _k === "undefined") _k = 0;\n'+
             'var _n = _s[_k];\n'+
-            'var i, ret = new Array(_n);\n'+
+            'var i, ret = Array(_n);\n'+
             'if(_k < _s.length-1) {\n'+
             '    for(i=_n-1;i>=0;i--) ret[i] = arguments.callee('+params.join(',')+',_s,_k+1);\n'+
             '    return ret;\n'+
@@ -635,13 +635,13 @@ numeric.ops1 = {
     numeric.isFinite = function isNaN(x) { if(typeof x === "object") return numeric.isFiniteV(x); return isFinite(x); }
     for(i in numeric.opseq) {
         if(numeric.opseq.hasOwnProperty(i)) {
-            numeric[i+'S'] = new Function('x','y',
+            numeric[i+'S'] = Function('x','y',
                     'var n = x.length, i;\n'+
                     'for(i=n-1;i>=0;i--) x[i] '+numeric.opseq[i]+' y;');
-            numeric[i+'V'] = new Function('x','y',
+            numeric[i+'V'] = Function('x','y',
                     'var n = x.length, i;\n'+
                     'for(i=n-1;i>=0;i--) x[i] '+numeric.opseq[i]+' y[i];');
-            numeric[i] = new Function('x','y',
+            numeric[i] = Function('x','y',
                     'var s = numeric.dim(x);\n'+
                     'if(typeof y === "number") { numeric._biforeach(x,y,s,0,numeric.'+i+'S); return x; }\n'+
                     'numeric._biforeach(x,y,s,0,numeric.'+i+'V);\n'+
@@ -765,8 +765,8 @@ numeric.det = function det(x) {
 }
 
 numeric.transpose = function transpose(x) {
-    var i,j,m = x.length,n = x[0].length, ret=new Array(n),A0,A1,Bj;
-    for(j=0;j<n;j++) ret[j] = new Array(m);
+    var i,j,m = x.length,n = x[0].length, ret=Array(n),A0,A1,Bj;
+    for(j=0;j<n;j++) ret[j] = Array(m);
     for(i=m-1;i>=1;i-=2) {
         A1 = x[i];
         A0 = x[i-1];
@@ -791,8 +791,8 @@ numeric.transpose = function transpose(x) {
     return ret;
 }
 numeric.negtranspose = function negtranspose(x) {
-    var i,j,m = x.length,n = x[0].length, ret=new Array(n),A0,A1,Bj;
-    for(j=0;j<n;j++) ret[j] = new Array(m);
+    var i,j,m = x.length,n = x[0].length, ret=Array(n),A0,A1,Bj;
+    for(j=0;j<n;j++) ret[j] = Array(m);
     for(i=m-1;i>=1;i-=2) {
         A1 = x[i];
         A0 = x[i-1];
@@ -818,7 +818,7 @@ numeric.negtranspose = function negtranspose(x) {
 }
 
 numeric._random = function _random(s,k) {
-    var i,n=s[k],ret=new Array(n), rnd;
+    var i,n=s[k],ret=Array(n), rnd;
     if(k === s.length-1) {
         rnd = Math.random;
         for(i=n-1;i>=1;i-=2) {
@@ -842,7 +842,7 @@ numeric.sum = numeric.mapreduce('accum += xi;','0');
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.round(b-a)+1;
-    var i,ret = new Array(n);
+    var i,ret = Array(n);
     n--;
     for(i=n;i>=0;i--) { ret[i] = (i*b+(n-i)*a)/n; }
     return ret;
@@ -851,7 +851,7 @@ numeric.linspace = function linspace(a,b,n) {
 numeric.getBlock = function getBlock(x,from,to) {
     var s = numeric.dim(x);
     function foo(x,k) {
-        var i,a = from[k], n = to[k]-a, ret = new Array(n);
+        var i,a = from[k], n = to[k]-a, ret = Array(n);
         if(k === s.length-1) {
             for(i=n;i>=0;i--) { ret[i] = x[i+a]; }
             return ret;
@@ -879,9 +879,9 @@ numeric.tensor = function tensor(x,y) {
     if(s1.length !== 1 || s2.length !== 1) {
         throw new Error('numeric: tensor product is only defined for vectors');
     }
-    var m = s1[0], n = s2[0], A = new Array(m), Ai, i,j,xi;
+    var m = s1[0], n = s2[0], A = Array(m), Ai, i,j,xi;
     for(i=m-1;i>=0;i--) {
-        Ai = new Array(n);
+        Ai = Array(n);
         xi = x[i];
         for(j=n-1;j>=3;--j) {
             Ai[j] = xi * y[j];
@@ -1150,10 +1150,10 @@ numeric.T.prototype.set = function set(i,v) {
 }
 numeric.T.prototype.getRows = function getRows(i0,i1) {
     var n = i1-i0+1, j;
-    var rx = new Array(n), ry, x = this.x, y = this.y;
+    var rx = Array(n), ry, x = this.x, y = this.y;
     for(j=i0;j<=i1;j++) { rx[j-i0] = x[j]; }
     if(y) {
-        ry = new Array(n);
+        ry = Array(n);
         for(j=i0;j<=i1;j++) { ry[j-i0] = y[j]; }
         return new numeric.T(rx,ry);
     }
@@ -1247,7 +1247,7 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: toUpperHessenberg() only works on square matrices'); }
     var m = s[0], i,j,k,x,v,A = numeric.clone(me),B,C,Ai,Ci,Q = numeric.identity(m),Qi;
     for(j=0;j<m-2;j++) {
-        x = new Array(m-j-1);
+        x = Array(m-j-1);
         for(i=j+1;i<m;i++) { x[i-j-1] = A[i][j]; }
         v = numeric.house(x);
         B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
@@ -1256,7 +1256,7 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
         B = numeric.getBlock(A,[0,j+1],[m-1,m-1]);
         C = numeric.tensor(numeric.dot(B,v),v);
         for(i=0;i<m;i++) { Ai = A[i]; Ci = C[i]; for(k=j+1;k<m;k++) Ai[k] -= 2*Ci[k-j-1]; }
-        B = new Array(m-j-1);
+        B = Array(m-j-1);
         for(i=j+1;i<m;i++) B[i-j-1] = Q[i];
         C = numeric.tensor(v,numeric.dot(v,B));
         for(i=j+1;i<m;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
@@ -1278,11 +1278,11 @@ numeric.QRFrancis = function(H,maxiter) {
             if(Math.abs(H[j+1][j]) < epsilon*(Math.abs(H[j][j])+Math.abs(H[j+1][j+1]))) {
                 var QH1 = numeric.QRFrancis(numeric.getBlock(H,[0,0],[j,j]),maxiter);
                 var QH2 = numeric.QRFrancis(numeric.getBlock(H,[j+1,j+1],[m-1,m-1]),maxiter);
-                B = new Array(j+1);
+                B = Array(j+1);
                 for(i=0;i<=j;i++) { B[i] = Q[i]; }
                 C = numeric.dot(QH1.Q,B);
                 for(i=0;i<=j;i++) { Q[i] = C[i]; }
-                B = new Array(m-j-1);
+                B = Array(m-j-1);
                 for(i=j+1;i<m;i++) { B[i-j-1] = Q[i]; }
                 C = numeric.dot(QH2.Q,B);
                 for(i=j+1;i<m;i++) { Q[i] = C[i-j-1]; }
@@ -1323,11 +1323,11 @@ numeric.QRFrancis = function(H,maxiter) {
                 if(Math.abs(H[k+1][k]) < epsilon*(Math.abs(H[k][k])+Math.abs(H[k+1][k+1]))) {
                     var QH1 = numeric.QRFrancis(numeric.getBlock(H,[0,0],[k,k]),maxiter);
                     var QH2 = numeric.QRFrancis(numeric.getBlock(H,[k+1,k+1],[m-1,m-1]),maxiter);
-                    B = new Array(k+1);
+                    B = Array(k+1);
                     for(i=0;i<=k;i++) { B[i] = Q[i]; }
                     C = numeric.dot(QH1.Q,B);
                     for(i=0;i<=k;i++) { Q[i] = C[i]; }
-                    B = new Array(m-k-1);
+                    B = Array(m-k-1);
                     for(i=k+1;i<m;i++) { B[i-k-1] = Q[i]; }
                     C = numeric.dot(QH2.Q,B);
                     for(i=k+1;i<m;i++) { Q[i] = C[i-k-1]; }
@@ -1335,7 +1335,7 @@ numeric.QRFrancis = function(H,maxiter) {
                 }
             }
             J = Math.min(m-1,j+3);
-            x = new Array(J-j);
+            x = Array(J-j);
             for(i=j+1;i<=J;i++) { x[i-j-1] = H[i][j]; }
             v = numeric.house(x);
             B = numeric.getBlock(H, [j+1,j],[J,m-1]);
@@ -1344,7 +1344,7 @@ numeric.QRFrancis = function(H,maxiter) {
             B = numeric.getBlock(H, [0,j+1],[m-1,J]);
             C = numeric.tensor(numeric.dot(B,v),v);
             for(i=0;i<m;i++) { Hi = H[i]; Ci = C[i]; for(k=j+1;k<=J;k++) Hi[k] -= 2*Ci[k-j-1]; }
-            B = new Array(J-j);
+            B = Array(J-j);
             for(i=j+1;i<=J;i++) B[i-j-1] = Q[i];
             C = numeric.tensor(v,numeric.dot(v,B));
             for(i=j+1;i<=J;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
@@ -1453,7 +1453,7 @@ sparse.dim = function dim(A,ret,k) {
 sparse.clone = function clone(A,k,n) {
     if(typeof k === "undefined") { k=0; }
     if(typeof n === "undefined") { n = sparse.dim(A).length; }
-    var i,ret = new Array(A.length);
+    var i,ret = Array(A.length);
     if(k === n-1) {
         for(i in A) { if(A.hasOwnProperty(i)) ret[i] = A[i]; }
         return ret;
@@ -1465,7 +1465,7 @@ sparse.clone = function clone(A,k,n) {
 }
 
 sparse.diag = function diag(d) {
-    var n = d.length,i,ret = new Array(n),i1,i2,i3;
+    var n = d.length,i,ret = Array(n),i1,i2,i3;
     for(i=n-1;i>=1;i-=2) {
         i1 = i-1;
         ret[i] = []; ret[i][i] = d[i];
@@ -1512,7 +1512,7 @@ sparse.LUP = function LUP(A,tol) {
             temp = U[i]; U[i] = U[j]; U[j] = temp;
             temp = L[i]; L[i] = L[j]; L[j] = temp;
             temp = P[i]; P[i] = P[j]; P[j] = temp;
-            Q = new Array(n);
+            Q = Array(n);
             for(j=0;j<n;j++) { Q[P[j]] = j; }
         }
         Ui = U[i];
@@ -1540,7 +1540,7 @@ sparse.LUP = function LUP(A,tol) {
 sparse.dotMM = function dotMM(A,B) {
     var p = A.length, q = B.length, BT = sparse.transpose(B), r = BT.length, Ai, BTk;
     var i,j,k,accum;
-    var ret = new Array(p),reti;
+    var ret = Array(p),reti;
     for(i=p-1;i>=0;i--) {
         reti = [];
         Ai = A[i];
@@ -1560,7 +1560,7 @@ sparse.dotMM = function dotMM(A,B) {
 
 sparse.dotMV = function dotMV(A,x) {
     var p = A.length, Ai, i,j;
-    var ret = new Array(p), accum;
+    var ret = Array(p), accum;
     for(i=p-1;i>=0;i--) {
         Ai = A[i];
         accum = 0;
@@ -1610,7 +1610,7 @@ sparse.dot = function dot(A,B) {
 
 sparse.LUPsolve = function LUPsolve(lup,b) {
     var L = lup.L, U = lup.U, P = lup.P;
-    var n = L.length, i,j, ret = new Array(n), accum, Ai,foo;
+    var n = L.length, i,j, ret = Array(n), accum, Ai,foo;
     for(i = 0;i<n;i++) {
         if(b.hasOwnProperty(P[i])) accum = b[P[i]];
         else accum = 0;
@@ -1680,7 +1680,7 @@ coord.LU = function LU(A) {
     var p = I.length, m=0, i,j,k,a,b,c;
     for(i=0;i<p;i++) if(I[i]>m) m=I[i];
     m++;
-    var L = new Array(m), U = new Array(m), left = numeric.rep([m],Infinity), right = numeric.rep([m],-Infinity);
+    var L = Array(m), U = Array(m), left = numeric.rep([m],Infinity), right = numeric.rep([m],-Infinity);
     var Ui, Uj,alpha;
     for(k=0;k<p;k++) {
         i = I[k];
@@ -1855,7 +1855,7 @@ numeric.Spline.prototype.at = function at(x0) {
         }
         return this._at(x0,p);
     }
-    var n = x0.length, i, ret = new Array(n);
+    var n = x0.length, i, ret = Array(n);
     for(i=n-1;i!==-1;--i) ret[i] = this.at(x0[i]);
     return ret;
 }
@@ -1867,7 +1867,7 @@ numeric.Spline.prototype.diff = function diff() {
     var kr = this.kr;
     var n = yl.length;
     var i;
-    var zl = new Array(n), zr = new Array(n), pl = new Array(n), pr = new Array(n);
+    var zl = Array(n), zr = Array(n), pl = Array(n), pr = Array(n);
     var add = numeric.add, sub = numeric.sub, mul = numeric.mul;
     for(i=n-1;i!==-1;--i) {
         zl[i] = kl[i];
@@ -2025,7 +2025,7 @@ numeric.spline = function spline(x,y,k1,kn) {
     }
     if(typeof b[0] !== "number") b = numeric.transpose(b);
     else b = [b];
-    var k = new Array(b.length);
+    var k = Array(b.length);
     if(typeof k1 === "string") {
         for(i=k.length-1;i!==-1;--i) {
             k[i] = sparse.LUPsolve(sparse.LUP(sparse.scatter(T)),b[i]);
@@ -2091,7 +2091,7 @@ numeric.fftpow2 = function fftpow2(x,y) {
     var n = x.length;
     if(n === 1) return;
     var cos = Math.cos, sin = Math.sin, i,j;
-    var xe = new Array(n/2), ye = new Array(n/2), xo = new Array(n/2), yo = new Array(n/2);
+    var xe = Array(n/2), ye = Array(n/2), xo = Array(n/2), yo = Array(n/2);
     j = n/2;
     for(i=n-1;i!==-1;--i) {
         --j;
@@ -2119,7 +2119,7 @@ numeric._ifftpow2 = function _ifftpow2(x,y) {
     var n = x.length;
     if(n === 1) return;
     var cos = Math.cos, sin = Math.sin, i,j;
-    var xe = new Array(n/2), ye = new Array(n/2), xo = new Array(n/2), yo = new Array(n/2);
+    var xe = Array(n/2), ye = Array(n/2), xo = Array(n/2), yo = Array(n/2);
     j = n/2;
     for(i=n-1;i!==-1;--i) {
         --j;
@@ -2215,7 +2215,7 @@ numeric.gradient = function gradient(f,x) {
     var n = x.length;
     var f0 = f(x);
     var max = Math.max;
-    var i,x0 = numeric.clone(x),f1,f2, J = new Array(n);
+    var i,x0 = numeric.clone(x),f1,f2, J = Array(n);
     var div = numeric.div, sub = numeric.sub,errest,roundoff,max = Math.max,eps = 1e-3,abs = Math.abs, min = Math.min;
     var t0,t1,t2,it=0,d1,d2,N;
     for(i=0;i<n;i++) {
@@ -2346,7 +2346,7 @@ numeric.Dopri.prototype._at = function _at(xi,j) {
 numeric.Dopri.prototype.at = function at(x) {
     var i,j,k,floor = Math.floor;
     if(typeof x !== "number") {
-        var n = x.length, ret = new Array(n);
+        var n = x.length, ret = Array(n);
         for(i=n-1;i!==-1;--i) {
             ret[i] = this.at(x[i]);
         }
