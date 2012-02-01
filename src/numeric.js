@@ -603,12 +603,17 @@ numeric.ops1 = {
             numeric[i+'VV'] = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i] '+o+' y[i];');
             numeric[i+'SV'] = numeric.pointwise(['x','y[i]'],'ret[i] = x '+o+' y[i];');
             numeric[i+'VS'] = numeric.pointwise(['x[i]','y'],'ret[i] = x[i] '+o+' y;');
-            numeric[i] = Function('x','y',
-                    'if(typeof x === "object") {\n'+
-                    '    if(typeof y === "object") return numeric.'+i+'VV(x,y);\n'+
-                    '    return numeric.'+i+'VS(x,y);\n'+
-                    '} else if(typeof y === "object") return numeric.'+i+'SV(x,y);\n'+
-                    'return x '+o+' y;');
+            numeric[i] = Function(
+                    'var n = arguments.length, i, x = arguments[0], y;\n'+
+                    'var VV = numeric.'+i+'VV, VS = numeric.'+i+'VS, SV = numeric.'+i+'SV;\n'+
+                    'for(i=1;i!==n;++i) { \n'+
+                    '  y = arguments[i];'+
+                    '  if(typeof x === "object") {\n'+
+                    '      if(typeof y === "object") x = VV(x,y);\n'+
+                    '      else x = VS(x,y);\n'+
+                    '  } else if(typeof y === "object") x = SV(x,y);\n'+
+                    '  else x = x '+o+' y;\n'+
+                    '}\nreturn x;\n');
             numeric[o] = numeric[i];
         }
     }
