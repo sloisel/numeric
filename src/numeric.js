@@ -1940,7 +1940,7 @@ numeric.Spline.prototype.roots = function roots() {
                 var side = 0;
                 while(1) {
                     tm = (z0*t1-z1*t0)/(z0-z1);
-                    if(tm <= t0 || tm >= t1) { tm = 0.5*(t0+t1); break; }
+                    if(tm <= t0 || tm >= t1) { break; }
                     zm = this._at(tm,j);
                     if(zm*z1>0) {
                         t1 = tm;
