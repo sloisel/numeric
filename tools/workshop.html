@@ -161,7 +161,7 @@ function saveit() {
 		setTimeout(function () {
 			savereq = false;
 			localStorage.savedata = JSON.stringify(savedata);
-		});
+		},1000);
 	}
 }
 

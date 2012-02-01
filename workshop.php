@@ -184,7 +184,7 @@ function saveit() {
 		setTimeout(function () {
 			savereq = false;
 			localStorage.savedata = JSON.stringify(savedata);
-		});
+		},1000);
 	}
 }
 
@@ -405,7 +405,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=f8c07dcbf1ca285cb3b016bc8829be8ea6c408c49045802d4383645f875e8298');
+		$incs = array(1 => '/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -415,13 +415,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=f8c07dcbf1ca285cb3b016bc8829be8ea6c408c49045802d4383645f875e8298"] });
+	                 scripts: ["/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c"] });
 EOT;
 }
 ?>
 
-workshop.version = "2012-02-01_12-49-22";
-workshop.updateVersion = "/scripts/numeric.js?key=f8c07dcbf1ca285cb3b016bc8829be8ea6c408c49045802d4383645f875e8298";
+workshop.version = "noversion";
+workshop.updateVersion = "/scripts/numeric.js?key=41a4dfe00d7033aef7398d9f8dbdcada38d551554c791a535bc41446f8ca5e1c";
 workshop.preload(workshop._restore);
 </script>
 

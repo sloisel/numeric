@@ -1872,7 +1872,7 @@ numeric.Spline.prototype.diff = function diff() {
     for(i=n-1;i!==-1;--i) {
         zl[i] = kl[i];
         zr[i] = kr[i];
-        pl[i] = sub(sub(sub(mul(6,yr[i]),mul(6,yl[i])),mul(4,kl[i])),mul(2,kr[i]));
+        pl[i] = sub(mul(6,yr[i]),mul(6,yl[i]),mul(4,kl[i]),mul(2,kr[i]));
         pr[i] = add(sub(add(mul(6,yl[i]),mul(2,kl[i])),mul(6,yr[i])),mul(4,kr[i]));
     }
     return new numeric.Spline(x,zl,zr,pl,pr);
