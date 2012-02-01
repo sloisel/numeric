@@ -1866,14 +1866,16 @@ numeric.Spline.prototype.diff = function diff() {
     var kl = this.kl;
     var kr = this.kr;
     var n = yl.length;
-    var i;
+    var i,dx,dy;
     var zl = Array(n), zr = Array(n), pl = Array(n), pr = Array(n);
-    var add = numeric.add, sub = numeric.sub, mul = numeric.mul;
+    var add = numeric.add, mul = numeric.mul, div = numeric.div, sub = numeric.sub;
     for(i=n-1;i!==-1;--i) {
         zl[i] = kl[i];
         zr[i] = kr[i];
-        pl[i] = sub(mul(6,yr[i]),mul(6,yl[i]),mul(4,kl[i]),mul(2,kr[i]));
-        pr[i] = add(sub(add(mul(6,yl[i]),mul(2,kl[i])),mul(6,yr[i])),mul(4,kr[i]));
+        dx = x[i+1]-x[i];
+        dy = sub(yr[i],yl[i]);
+        pl[i] = div(add(mul(dy, 6),mul(kl[i],-4*dx),mul(kr[i],-2*dx)),dx*dx);
+        pr[i] = div(add(mul(dy,-6),mul(kl[i], 2*dx),mul(kr[i], 4*dx)),dx*dx);
     }
     return new numeric.Spline(x,zl,zr,pl,pr);
 }
