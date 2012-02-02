@@ -3,7 +3,7 @@ Using Firefox
 0 PASS: linkhome ==> library for numerical computations in page
 1 PASS: linkworkshop ==> IN in page
 2 PASS: linkdoc ==> vectors and matrices in page
-3 PASS: linklib ==> use strict in page
+3 PASS: linklib ==> var numeric in page
 4 PASS: linklibmin ==> var numeric= in page
 Link testing complete. PASS: 5 FAIL: 0 Total: 5
 Fetching http://numericjs.com/staging/documentation.html
@@ -141,28 +141,28 @@ Using Chrome
 129 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 130 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 131 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-132 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-133 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-135 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-136 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-137 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-138 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-139 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-140 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-141 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-142 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-143 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-144 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
-145 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-146 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-147 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-148 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-149 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+132 PASS: numeric.sidentity(3) ==> [[1],[,1],[,,1]]
+133 PASS: numeric.stranspose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = numeric.sLUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+135 PASS: numeric.sdot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+136 PASS: x = [3,1,7]; b = numeric.sdot(A,x); ==> [5,-8,13]
+137 PASS: numeric.sLUPsolve(lup,b) ==> [3,1,7]
+138 PASS: numeric.sdot([1,2,3],[,4,5]) ==> 23
+139 PASS: numeric.sdot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+140 PASS: numeric.sdot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+141 PASS: A = numeric.sscatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+142 PASS: numeric.sgather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+143 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+144 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
+145 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+146 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+147 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+148 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+149 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
 150 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
 151 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
-152 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-153 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+152 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+153 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
 154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
 155 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
 156 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
@@ -335,28 +335,28 @@ Using Firefox
 129 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 130 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 131 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-132 PASS: sparse.identity(3) ==> [[1],[,1],[,,1]]
-133 PASS: sparse.transpose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-135 PASS: sparse.dot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-136 PASS: x = [3,1,7]; b = sparse.dot(A,x); ==> [5,-8,13]
-137 PASS: sparse.LUPsolve(lup,b) ==> [3,1,7]
-138 PASS: sparse.dot([1,2,3],[,4,5]) ==> 23
-139 PASS: sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-140 PASS: sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-141 PASS: A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-142 PASS: sparse.gather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-143 PASS: lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-144 PASS: coord.LUsolve(lu,[5,-8,13]) ==> [3,1,7]
-145 PASS: g = coord.grid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-146 PASS: coordL = coord.delsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-147 PASS: L = sparse.scatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-148 PASS: lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-149 PASS: coord.dotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+132 PASS: numeric.sidentity(3) ==> [[1],[,1],[,,1]]
+133 PASS: numeric.stranspose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
+134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = numeric.sLUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
+135 PASS: numeric.sdot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
+136 PASS: x = [3,1,7]; b = numeric.sdot(A,x); ==> [5,-8,13]
+137 PASS: numeric.sLUPsolve(lup,b) ==> [3,1,7]
+138 PASS: numeric.sdot([1,2,3],[,4,5]) ==> 23
+139 PASS: numeric.sdot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
+140 PASS: numeric.sdot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
+141 PASS: A = numeric.sscatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
+142 PASS: numeric.sgather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
+143 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+144 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
+145 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+146 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+147 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+148 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+149 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
 150 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
 151 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
-152 PASS: coord.grid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-153 PASS: coord.grid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+152 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+153 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
 154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
 155 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
 156 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
