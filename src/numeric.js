@@ -1835,11 +1835,11 @@ numeric.Spline.prototype._at = function _at(x1,p) {
     var kr = this.kr;
     var x1,a,b,t;
     var add = numeric.add, sub = numeric.sub, mul = numeric.mul;
-    a = sub(mul(kl[p],x[p+1]-x[p]),sub(yr[p],yl[p]));
-    b = add(mul(kr[p],x[p]-x[p+1]),sub(yr[p],yl[p]));
+    a = sub(mul(kl[p],x[p+1]-x[p]),sub(yr[p+1],yl[p]));
+    b = add(mul(kr[p+1],x[p]-x[p+1]),sub(yr[p+1],yl[p]));
     t = (x1-x[p])/(x[p+1]-x[p]);
     var s = t*(1-t);
-    return add(add(add(mul(1-t,yl[p]),mul(t,yr[p])),mul(a,s*(1-t))),mul(b,s*t));
+    return add(add(add(mul(1-t,yl[p]),mul(t,yr[p+1])),mul(a,s*(1-t))),mul(b,s*t));
 }
 numeric.Spline.prototype.at = function at(x0) {
     if(typeof x0 === "number") {
@@ -1867,15 +1867,13 @@ numeric.Spline.prototype.diff = function diff() {
     var kr = this.kr;
     var n = yl.length;
     var i,dx,dy;
-    var zl = Array(n), zr = Array(n), pl = Array(n), pr = Array(n);
+    var zl = kl, zr = kr, pl = Array(n), pr = Array(n);
     var add = numeric.add, mul = numeric.mul, div = numeric.div, sub = numeric.sub;
     for(i=n-1;i!==-1;--i) {
-        zl[i] = kl[i];
-        zr[i] = kr[i];
         dx = x[i+1]-x[i];
-        dy = sub(yr[i],yl[i]);
-        pl[i] = div(add(mul(dy, 6),mul(kl[i],-4*dx),mul(kr[i],-2*dx)),dx*dx);
-        pr[i] = div(add(mul(dy,-6),mul(kl[i], 2*dx),mul(kr[i], 4*dx)),dx*dx);
+        dy = sub(yr[i+1],yl[i]);
+        pl[i] = div(add(mul(dy, 6),mul(kl[i],-4*dx),mul(kr[i+1],-2*dx)),dx*dx);
+        pr[i+1] = div(add(mul(dy,-6),mul(kl[i], 2*dx),mul(kr[i+1], 4*dx)),dx*dx);
     }
     return new numeric.Spline(x,zl,zr,pl,pr);
 }
@@ -1896,7 +1894,7 @@ numeric.Spline.prototype.roots = function roots() {
         kl = [kl];
         kr = [kr];
     }
-    var m = yl.length,n=yl[0].length,i,j,k,y,s,t;
+    var m = yl.length,n=x.length-1,i,j,k,y,s,t;
     var ai,bi,ci,di, ret = Array(m),ri,k0,k1,y0,y1,A,B,D,dx,cx,stops,z0,z1,zm,t0,t1,tm;
     var sqrt = Math.sqrt;
     for(i=0;i!==m;++i) {
@@ -1906,13 +1904,13 @@ numeric.Spline.prototype.roots = function roots() {
         di = kr[i];
         ri = [];
         for(j=0;j!==n;j++) {
-            if(j>0 && bi[j-1]*ai[j]<0) ri.push(x[j]);
+            if(j>0 && bi[j]*ai[j]<0) ri.push(x[j]);
             dx = (x[j+1]-x[j]);
             cx = x[j];
             y0 = ai[j];
-            y1 = bi[j];
+            y1 = bi[j+1];
             k0 = ci[j]/dx;
-            k1 = di[j]/dx;
+            k1 = di[j+1]/dx;
             D = sqr(k0-k1+3*(y0-y1)) + 12*k1*y0;
             A = k1+3*y0+2*k0-3*y1;
             B = 3*(k1+k0+2*(y0-y1));
@@ -2040,52 +2038,7 @@ numeric.spline = function spline(x,y,k1,kn) {
     }
     if(typeof y[0] === "number") k = k[0];
     else k = numeric.transpose(k);
-    return new numeric.Spline(x,y.slice(0,y.length-1),y.slice(1),
-                                k.slice(0,y.length-1),k.slice(1));
-}
-
-numeric.fit = function fit(f,a,b,tol,maxnodes) {
-    function vecf(ts) {
-        var n = ts.length, fs = Array(n), i;
-        for(i=n-1;i!==-1;--i) {
-            fs[i] = f(ts[i]);
-        }
-        return fs;
-    }
-    var spline = numeric.spline;
-    var t0 = numeric.linspace(a,b,4), t1, tm, f0 = vecf(t0), s0 = spline(t0,f0), fm, f1, i,j;
-    var norminf = numeric.norminf;
-    var add = numeric.add, mul = numeric.mul,sub = numeric.sub, n, stop,N, abs = Math.abs;
-    if(typeof tol === "undefined") tol = Math.max(norminf(f0)*1e-4,1e-30);
-    if(typeof maxnodes === "undefined") maxnodes = 1000;
-    while(1) {
-        if(s0.length > maxnodes) return s0;
-        n = t0.length;
-        tm = mul(add(t0.slice(0,n-1),t0.slice(1)),0.5);
-        fm = vecf(tm);
-        i = 0;
-        --n;
-        t1 = [];
-        f1 = [];
-        stop = true;
-        for(j=0;j!==n;++j) {
-            while(tm[j]>t0[i]) { t1.push(t0[i]); f1.push(f0[i]); ++i; }
-            if(typeof fm[j] === "number") N = abs(fm[j]-s0.at(tm[j]));
-            else N = norminf(sub(fm[j],s0.at(tm[j])));
-            if(N > tol) {
-                stop = false;
-                t1.push(tm[j]);
-                f1.push(fm[j]);
-            }
-        }
-        if(stop) break;
-        ++n;
-        while(i !== n) { t1.push(t0[i]); f1.push(f0[i]); ++i; }
-        t0 = t1;
-        f0 = f1;
-        s0 = spline(t0,f0);
-    }
-    return s0;
+    return new numeric.Spline(x,y,y,k,k);
 }
 
 // 8. FFT
