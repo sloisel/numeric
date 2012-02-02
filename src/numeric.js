@@ -1,10 +1,10 @@
 "use strict";
 
-var numeric = numeric || function numeric() {};
+var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 
-/*
- * 1. Utility functions
- */
+numeric.version = "0.9.0";
+
+// 1. Utility functions
 numeric.bench = function bench (f,interval) {
     var t1,t2,n,i;
     if(typeof interval === "undefined") { interval = 15; }
@@ -284,7 +284,7 @@ numeric.imageURL = function imageURL(img) {
     stream.push(0);
     stream.push(0);
     stream.push(0);
-    a = stream.length;
+//    a = stream.length;
     stream.push(73);  // I
     stream.push(69);  // E
     stream.push(78);  // N
@@ -296,9 +296,7 @@ numeric.imageURL = function imageURL(img) {
     return 'data:image/png;base64,'+base64(stream);
 }
 
-/*
- * 2. Linear algebra with Arrays.
- */
+// 2. Linear algebra with Arrays.
 numeric._dim = function _dim(x) {
     var ret = [];
     while(typeof x === "object") { ret.push(x.length); x = x[0]; }
@@ -487,7 +485,7 @@ numeric.diag = function diag(d) {
     return A;
 }
 numeric.getDiag = function(A) {
-    var n = Math.min(A.length,A[0].length),i,i1,i2,i3,ret = Array(n);
+    var n = Math.min(A.length,A[0].length),i,ret = Array(n);
     for(i=n-1;i>=1;--i) {
         ret[i] = A[i][i];
         --i;
@@ -1437,7 +1435,7 @@ numeric.eig = function eig(A,maxiter) {
 
 var sparse = sparse || function sparse() {};
 
-sparse.dim = function dim(A,ret,k) {
+numeric.sdim = function dim(A,ret,k) {
     if(typeof ret === "undefined") { ret = []; }
     if(typeof A !== "object") return ret;
     if(typeof k === "undefined") { k=0; }
@@ -1450,9 +1448,9 @@ sparse.dim = function dim(A,ret,k) {
     return ret;
 };
 
-sparse.clone = function clone(A,k,n) {
+numeric.sclone = function clone(A,k,n) {
     if(typeof k === "undefined") { k=0; }
-    if(typeof n === "undefined") { n = sparse.dim(A).length; }
+    if(typeof n === "undefined") { n = numeric.sdim(A).length; }
     var i,ret = Array(A.length);
     if(k === n-1) {
         for(i in A) { if(A.hasOwnProperty(i)) ret[i] = A[i]; }
@@ -1464,7 +1462,7 @@ sparse.clone = function clone(A,k,n) {
     return ret;
 }
 
-sparse.diag = function diag(d) {
+numeric.sdiag = function diag(d) {
     var n = d.length,i,ret = Array(n),i1,i2,i3;
     for(i=n-1;i>=1;i-=2) {
         i1 = i-1;
@@ -1475,9 +1473,9 @@ sparse.diag = function diag(d) {
     return ret;
 }
 
-sparse.identity = function identity(n) { return sparse.diag(numeric.rep([n],1)); }
+numeric.sidentity = function identity(n) { return numeric.sdiag(numeric.rep([n],1)); }
 
-sparse.transpose = function transpose(A) {
+numeric.stranspose = function transpose(A) {
     var ret = [], n = A.length, i,j,Ai;
     for(i in A) {
         if(!(A.hasOwnProperty(i))) continue;
@@ -1491,10 +1489,10 @@ sparse.transpose = function transpose(A) {
     return ret;
 }
 
-sparse.LUP = function LUP(A,tol) {
+numeric.sLUP = function LUP(A,tol) {
     if(typeof tol === "undefined") { tol = 1; }
     var n = A.length, i,j,k;
-    var L = sparse.identity(n), U = sparse.clone(A), UT = sparse.transpose(U);
+    var L = numeric.sidentity(n), U = numeric.sclone(A), UT = numeric.stranspose(U);
     var P = numeric.linspace(0,n-1),Q = numeric.linspace(0,n-1);
     var Ui, Uj, UTi, temp,alpha;
     var abs = Math.abs;
@@ -1537,8 +1535,8 @@ sparse.LUP = function LUP(A,tol) {
     return {L:L, U:U, P:P, Pinv:Q};
 };
 
-sparse.dotMM = function dotMM(A,B) {
-    var p = A.length, q = B.length, BT = sparse.transpose(B), r = BT.length, Ai, BTk;
+numeric.sdotMM = function dotMM(A,B) {
+    var p = A.length, q = B.length, BT = numeric.stranspose(B), r = BT.length, Ai, BTk;
     var i,j,k,accum;
     var ret = Array(p),reti;
     for(i=p-1;i>=0;i--) {
@@ -1558,7 +1556,7 @@ sparse.dotMM = function dotMM(A,B) {
     return ret;
 }
 
-sparse.dotMV = function dotMV(A,x) {
+numeric.sdotMV = function dotMV(A,x) {
     var p = A.length, Ai, i,j;
     var ret = Array(p), accum;
     for(i=p-1;i>=0;i--) {
@@ -1573,7 +1571,7 @@ sparse.dotMV = function dotMV(A,x) {
     return ret;
 }
 
-sparse.dotVM = function dotMV(x,A) {
+numeric.sdotVM = function dotMV(x,A) {
     var i,j,Ai,alpha;
     var ret = [], accum;
     for(i in x) {
@@ -1589,26 +1587,26 @@ sparse.dotVM = function dotMV(x,A) {
     return ret;
 }
 
-sparse.dotVV = function dotVV(x,y) {
+numeric.sdotVV = function dotVV(x,y) {
     var i,ret=0;
     for(i in x) { if(x[i] && y[i]) ret+= x[i]*y[i]; }
     return ret;
 }
 
-sparse.dot = function dot(A,B) {
-    var m = sparse.dim(A).length, n = sparse.dim(B).length;
+numeric.sdot = function dot(A,B) {
+    var m = numeric.sdim(A).length, n = numeric.sdim(B).length;
     var k = m*1000+n;
     switch(k) {
     case 0: return A*B;
-    case 1001: return sparse.dotVV(A,B);
-    case 2001: return sparse.dotMV(A,B);
-    case 1002: return sparse.dotVM(A,B);
-    case 2002: return sparse.dotMM(A,B);
-    default: throw new Error('sparse.dot not implemented for tensors of order '+m+' and '+n);
+    case 1001: return numeric.sdotVV(A,B);
+    case 2001: return numeric.sdotMV(A,B);
+    case 1002: return numeric.sdotVM(A,B);
+    case 2002: return numeric.sdotMM(A,B);
+    default: throw new Error('numeric.sdot not implemented for tensors of order '+m+' and '+n);
     }
 }
 
-sparse.LUPsolve = function LUPsolve(lup,b) {
+numeric.sLUPsolve = function LUPsolve(lup,b) {
     var L = lup.L, U = lup.U, P = lup.P;
     var n = L.length, i,j, ret = Array(n), accum, Ai,foo;
     for(i = 0;i<n;i++) {
@@ -1633,7 +1631,7 @@ sparse.LUPsolve = function LUPsolve(lup,b) {
     return ret;
 }
 
-sparse.scatter = function scatter(V) {
+numeric.sscatter = function scatter(V) {
     var n = V[0].length, Vij, i, j, m = V.length, A = [], Aj;
     for(i=n-1;i>=0;--i) {
         if(!V[m-1][i]) continue;
@@ -1648,7 +1646,7 @@ sparse.scatter = function scatter(V) {
     return A;
 }
 
-sparse.gather = function gather(A,ret,k) {
+numeric.sgather = function gather(A,ret,k) {
     if(typeof ret === "undefined") ret = [];
     if(typeof k === "undefined") k = [];
     var n,i,Ai;
@@ -1675,7 +1673,7 @@ sparse.gather = function gather(A,ret,k) {
 // 6. Coordinate matrices
 var coord = coord || function coord() {};
 
-coord.LU = function LU(A) {
+numeric.cLU = function LU(A) {
     var I = A[0], J = A[1], V = A[2];
     var p = I.length, m=0, i,j,k,a,b,c;
     for(i=0;i<p;i++) if(I[i]>m) m=I[i];
@@ -1744,7 +1742,7 @@ coord.LU = function LU(A) {
     return {U:[Ui,Uj,Uv], L:[Li,Lj,Lv]};
 };
 
-coord.LUsolve = function LUsolve(lu,b) {
+numeric.cLUsolve = function LUsolve(lu,b) {
     var L = lu.L, U = lu.U, ret = numeric.clone(b);
     var Li = L[0], Lj = L[1], Lv = L[2];
     var Ui = U[0], Uj = U[1], Uv = U[2];
@@ -1770,7 +1768,7 @@ coord.LUsolve = function LUsolve(lu,b) {
     return ret;
 };
 
-coord.grid = function grid(n,shape) {
+numeric.cgrid = function grid(n,shape) {
     if(typeof n === "number") n = [n,n];
     var ret = numeric.rep(n,-1);
     var i,j,count;
@@ -1793,7 +1791,7 @@ coord.grid = function grid(n,shape) {
     return ret;
 }
 
-coord.delsq = function delsq(g) {
+numeric.cdelsq = function delsq(g) {
     var dir = [[-1,0],[0,-1],[0,1],[1,0]];
     var s = numeric.dim(g), m = s[0], n = s[1], i,j,k,p,q;
     var Li = [], Lj = [], Lv = [];
@@ -1814,7 +1812,7 @@ coord.delsq = function delsq(g) {
     return [Li,Lj,Lv];
 }
 
-coord.dotMV = function dotMV(A,x) {
+numeric.cdotMV = function dotMV(A,x) {
     var ret, Ai = A[0], Aj = A[1], Av = A[2],k,p=Ai.length,N;
     N=0;
     for(k=0;k<p;k++) { if(Ai[k]>N) N = Ai[k]; }
@@ -2028,12 +2026,12 @@ numeric.spline = function spline(x,y,k1,kn) {
     var k = Array(b.length);
     if(typeof k1 === "string") {
         for(i=k.length-1;i!==-1;--i) {
-            k[i] = sparse.LUPsolve(sparse.LUP(sparse.scatter(T)),b[i]);
+            k[i] = numeric.sLUPsolve(numeric.sLUP(numeric.sscatter(T)),b[i]);
             k[i][n-1] = k[i][0];
         }
     } else {
         for(i=k.length-1;i!==-1;--i) {
-            k[i] = coord.LUsolve(coord.LU(T),b[i]);
+            k[i] = numeric.cLUsolve(numeric.cLU(T),b[i]);
         }
     }
     if(typeof y[0] === "number") k = k[0];
@@ -2431,12 +2429,5 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
     }
     ret.iterations = it;
     return ret;
-}
-
-//This is for node support:
-if (typeof exports !== "undefined") {
-    exports.numeric = numeric;
-    exports.sparse = sparse;
-    exports.coord = coord;
 }
 

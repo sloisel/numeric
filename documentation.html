@@ -596,15 +596,15 @@ true
 <h1>Sparse linear algebra</h1>
 Sparse linear algebra is available in the sparse module:
 <pre>
-> sparse.identity(3)
+> numeric.sidentity(3)
 [[1],
  [ ,1],
  [ , ,1]]
-> sparse.transpose([[1],[2,3],[4,5,6]])
+> numeric.stranspose([[1],[2,3],[4,5,6]])
 [[1,2,4],
  [ ,3,5],
  [ , ,6]]
-> A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = sparse.LUP(A)
+> A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = numeric.sLUP(A)
 {L: [[   1],
      [-0.5,      1],
      [    ,-0.6667,     1]],
@@ -613,36 +613,36 @@ Sparse linear algebra is available in the sparse module:
      [    ,       , 1.333]],
  P: [0,1,2],
  Pinv: [0,1,2]}
-> sparse.dot(lup.L,lup.U)
+> numeric.sdot(lup.L,lup.U)
 [[   2,  -1],
  [  -1,   2,  -1],
  [    ,  -1,   2]]
-> x = [3,1,7]; b = sparse.dot(A,x);
+> x = [3,1,7]; b = numeric.sdot(A,x);
 [5,-8,13]
-> sparse.LUPsolve(lup,b)
+> numeric.sLUPsolve(lup,b)
 [3,1,7]
 </pre>
 
 <!--
 Some more tests.
 <pre>
-> sparse.dot([1,2,3],[,4,5])
+> numeric.sdot([1,2,3],[,4,5])
 23
-> sparse.dot([1, ,3],[[4,5,],[,6,7],[1,,8]])
+> numeric.sdot([1, ,3],[[4,5,],[,6,7],[1,,8]])
 [7,5,24]
-> sparse.dot([[3,1],[4,5,9],[,3,2]],[7,3])
+> numeric.sdot([[3,1],[4,5,9],[,3,2]],[7,3])
 [24,43,9]
 </pre>
 -->
 
-The <tt>sparse.scatter()</tt> and <tt>sparse.gather()</tt> functions can be used to convert between
+The <tt>numeric.sscatter()</tt> and <tt>numeric.sgather()</tt> functions can be used to convert between
 sparse matrices and the coordinate encoding:
 <pre>
-> A = sparse.scatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]])
+> A = numeric.sscatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]])
 [[1,2],
  [3,4,5],
  [ ,6,7]]
-> sparse.gather(A)
+> numeric.sgather(A)
 [[0,0,1,1,1,2,2],
  [0,1,0,1,2,1,2],
  [1,2,3,4,5,6,7]]
@@ -656,35 +656,35 @@ your matrices happen to be banded.<br><br>
 
 LU decomposition:
 <pre>
-> lu = coord.LU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]])
+> lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]])
 {U:[[    0,    0,    1,      1,  2   ],
     [    0,    1,    1,      2,  2   ],
     [    2,   -1,  1.5,     -1, 1.333]],
  L:[[    0,    1,    1,      2,  2   ],
     [    0,    0,    1,      1,  2   ],
     [    1, -0.5,    1,-0.6667,  1   ]]}
-> coord.LUsolve(lu,[5,-8,13])
+> numeric.cLUsolve(lu,[5,-8,13])
 [3,1,7]
 </pre>
-Note that <tt>coord.LU()</tt> does not have any pivoting.
+Note that <tt>numeric.cLU()</tt> does not have any pivoting.
 
 <h1>Solving PDEs</h1>
 
-The functions <tt>coord.grid()</tt> and <tt>coord.delsq()</tt> can be used to obtain a
+The functions <tt>numeric.cgrid()</tt> and <tt>numeric.cdelsq()</tt> can be used to obtain a
 numerical Laplacian for a domain.
 
 <pre>
-> g = coord.grid(5)
+> g = numeric.cgrid(5)
 [[-1,-1,-1,-1,-1],
  [-1, 0, 1, 2,-1],
  [-1, 3, 4, 5,-1],
  [-1, 6, 7, 8,-1],
  [-1,-1,-1,-1,-1]]
-> coordL = coord.delsq(g)
+> coordL = numeric.cdelsq(g)
 [[ 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8],
  [ 1, 3, 0, 0, 2, 4, 1, 1, 5, 2, 0, 4, 6, 3, 1, 3, 5, 7, 4, 2, 4, 8, 5, 3, 7, 6, 4, 6, 8, 7, 5, 7, 8],
  [-1,-1, 4,-1,-1,-1, 4,-1,-1, 4,-1,-1,-1, 4,-1,-1,-1,-1, 4,-1,-1,-1, 4,-1,-1, 4,-1,-1,-1, 4,-1,-1, 4]]
-> L = sparse.scatter(coordL); // Just to see what it looks like
+> L = numeric.sscatter(coordL); // Just to see what it looks like
 [[          4,         -1,           ,         -1],
  [         -1,          4,         -1,           ,         -1],
  [           ,         -1,          4,           ,           ,         -1],
@@ -694,9 +694,9 @@ numerical Laplacian for a domain.
  [           ,           ,           ,         -1,           ,           ,          4,         -1],
  [           ,           ,           ,           ,         -1,           ,         -1,          4,         -1],
  [           ,           ,           ,           ,           ,         -1,           ,         -1,          4]]
-> lu = coord.LU(coordL); x = coord.LUsolve(lu,[1,1,1,1,1,1,1,1,1]);
+> lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]);
 [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-> coord.dotMV(coordL,x)
+> numeric.cdotMV(coordL,x)
 [1,1,1,1,1,1,1,1,1]
 > G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G
 [[ 0     , 0     , 0     , 0     , 0     ],
@@ -710,14 +710,14 @@ numerical Laplacian for a domain.
 
 You can also work on an L-shaped or arbitrary-shape domain:
 <pre>
-> coord.grid(6,'L')
+> numeric.cgrid(6,'L')
 [[-1,-1,-1,-1,-1,-1],
  [-1, 0, 1,-1,-1,-1],
  [-1, 2, 3,-1,-1,-1],
  [-1, 4, 5, 6, 7,-1],
  [-1, 8, 9,10,11,-1],
  [-1,-1,-1,-1,-1,-1]]
-> coord.grid(5,function(i,j) { return i!==2 || j!==2; })
+> numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; })
 [[-1,-1,-1,-1,-1],
  [-1, 0, 1, 2,-1],
  [-1, 3,-1, 4,-1],
