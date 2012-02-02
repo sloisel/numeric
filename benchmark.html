@@ -18,8 +18,8 @@
 </ul>
 <ul class="nav">
 	<li class="sep">DOWNLOADS:</li>
-	<li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
-	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
+  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
 </ul>
 </table>
 
@@ -146,13 +146,13 @@ var benchmarks = [
 	],
     [
     'Sparse Laplacian LU', [3,5,10,15,20],
-    function(n) { var A = sparse.scatter(coord.delsq(coord.grid(n))); return bench(function() { sparse.LUP(A); }); },
+    function(n) { var A = numeric.sscatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.sLUP(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
     ],
     [
     'Banded Laplacian LU', [3,5,10,20,30],
-    function(n) { var A = coord.delsq(coord.grid(n)); return bench(function() { coord.LU(A); }); },
+    function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); return bench(function() { numeric.cLU(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
     ]

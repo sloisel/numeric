@@ -17,8 +17,8 @@
 </ul>
 <ul class="nav">
   <li class="sep">DOWNLOADS:</li>
-  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
-  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
+  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
 </ul>
 </table>
 <!--
@@ -594,7 +594,7 @@ true
 -->
 
 <h1>Sparse linear algebra</h1>
-Sparse linear algebra is available in the sparse module:
+Sparse linear algebra:
 <pre>
 > numeric.sidentity(3)
 [[1],
@@ -650,8 +650,8 @@ sparse matrices and the coordinate encoding:
 
 <h1>Coordinate matrices</h1>
 
-Sparse matrices can be very slow in certain browsers. The <tt>coord</tt> module provides functions that
-work with matrices in the coordinate encoding using band strategies that often execute faster if
+Sparse matrices can be very slow in certain browsers. Functions that
+work with matrices in the coordinate encoding using band strategies may execute faster if
 your matrices happen to be banded.<br><br>
 
 LU decomposition:

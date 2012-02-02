@@ -44,7 +44,7 @@ if url == "":
 mainlinks = [("linkhome","library for numerical computations"),
              ("linkworkshop","IN"),
              ("linkdoc","vectors and matrices"),
-             ("linklib","use strict"),
+             ("linklib","var numeric"),
              ("linklibmin","var numeric="),]
 driver=0
 print "Link testing."

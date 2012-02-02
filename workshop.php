@@ -21,6 +21,7 @@ if(isset($_POST['savedata'])) {
 }
 ?>
 
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -49,8 +50,8 @@ if(isset($_POST['savedata'])) {
 </ul>
 <ul class="nav">
 	<li class="sep">DOWNLOADS:</li>
-	<li class="nav"><a id = "linklib" class="dl" href="lib/numeric.js">numeric.js</a></li>
-	<li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-min.js">numeric-min.js</a></li>
+  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
+  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
 </ul>
 </table>
 
@@ -390,7 +391,6 @@ return {
 <br><br><br>
 
 
-
 <script>
 <?php
 $incs = NULL;
@@ -405,7 +405,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => '/scripts/numeric.js?key=709eb0c78c0bfcf40eeee9b10f4be6919eb3a6271c38003e93ad62bafd07cfc6');
+		$incs = array(1 => 'lib/numeric-1.0.0.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -415,13 +415,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["/scripts/numeric.js?key=709eb0c78c0bfcf40eeee9b10f4be6919eb3a6271c38003e93ad62bafd07cfc6"] });
+	                 scripts: ["lib/numeric-1.0.0.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "noversion";
-workshop.updateVersion = "/scripts/numeric.js?key=709eb0c78c0bfcf40eeee9b10f4be6919eb3a6271c38003e93ad62bafd07cfc6";
+workshop.version = "1.0.0";
+workshop.updateVersion = "lib/numeric-1.0.0.js";
 workshop.preload(workshop._restore);
 </script>
 

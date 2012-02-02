@@ -20,6 +20,10 @@ function XMLHttpRequest() {
 var foo;
 if(typeof system !== "undefined") { foo = new Stream('./documentation.html').readFile(); }
 else { foo = read('./documentation.html'); }
+var baz;
+if(typeof system !== "undefined") { baz = new Stream('./src/numeric.js').readFile(); }
+else { baz = read('./src/numeric.js'); }
+var ver = baz.match(/numeric.version[ =]*"([0-9.]*)".*/)[1]
 var bar = foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\n> ')
 var baz = [];
 var k,k0=0;
@@ -28,7 +32,7 @@ for(k=0;k<bar.length;k++) {
     if(j>0) { baz[k0] = [bar[k].substring(0,j),bar[k].substring(j+1)]; k0++; }
 }
 
-load('./lib/numeric.js');
+load('./lib/numeric-'+ver+'.js');
 if(typeof numeric === "undefined") { throw new Error("Could not load numeric.js"); }
 var unit_pass = 0, unit_fail = 0;
 var a,b,msg;

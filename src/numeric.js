@@ -1,8 +1,6 @@
-"use strict";
-
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 
-numeric.version = "0.9.0";
+numeric.version = "1.0.0";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -898,6 +896,7 @@ numeric.tensor = function tensor(x,y) {
 
 // 3. The Tensor type T
 numeric.T = function T(x,y) { this.x = x; this.y = y; }
+numeric.t = function t(x,y) { return new numeric.T(x,y); }
 
 numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
     var io = numeric.indexOf;
@@ -2266,7 +2265,6 @@ numeric.Dopri = function Dopri(x,y,f,ymid,iterations,msg,events) {
 numeric.Dopri.prototype._at = function _at(xi,j) {
     function sqr(x) { return x*x; }
     var sol = this;
-    var k,l, m = x.length;
     var xs = sol.x;
     var ys = sol.y;
     var k1 = sol.f;
