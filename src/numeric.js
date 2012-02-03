@@ -1432,8 +1432,6 @@ numeric.eig = function eig(A,maxiter) {
 
 // 5. Real sparse linear algebra
 
-var sparse = sparse || function sparse() {};
-
 numeric.sdim = function dim(A,ret,k) {
     if(typeof ret === "undefined") { ret = []; }
     if(typeof A !== "object") return ret;
@@ -1670,8 +1668,6 @@ numeric.sgather = function gather(A,ret,k) {
 }
 
 // 6. Coordinate matrices
-var coord = coord || function coord() {};
-
 numeric.cLU = function LU(A) {
     var I = A[0], J = A[1], V = A[2];
     var p = I.length, m=0, i,j,k,a,b,c;
