@@ -2,8 +2,14 @@
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <style>
-table { font-size:11px; }
+table { font-size:14px; }
 td { vertical-align:top; }
+@media print
+{
+table { font-size:12px; }
+td.navmain { font-size:26px; }
+body { margin: 5mm 5mm 5mm 5mm; }
+}
 </style>
 <title>Numeric Javascript: Documentation</title>
 </head>
@@ -34,7 +40,7 @@ This allows regression tests to run predictably:
 -->
 
 <table cellspacing=5 style="border:5px solid black;">
-<tr><td colspan=3 align="center" style="font-size:16px;">
+<tr><td colspan=3 align="center" style="font-size:18px;">
     <b>Reference card for the <tt>numeric</tt> module</b>
 <tr valign="top"><td valign="top" width="33%">
 <table>
