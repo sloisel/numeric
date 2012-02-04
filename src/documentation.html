@@ -1,6 +1,10 @@
 <head>
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link rel="stylesheet" type="text/css" href="resources/style.css">
+<style>
+table { font-size:11px; }
+td { vertical-align:top; }
+</style>
 <title>Numeric Javascript: Documentation</title>
 </head>
 <body>
@@ -29,11 +33,10 @@ This allows regression tests to run predictably:
 </pre>
 -->
 
-<table cellspacing=10 style="padding:5px; border:5px solid black;">
-<tr><td colspan=2>
-    <center><h1>Reference card for the <tt>numeric</tt> module</h1></center>
-
-<tr valign="top"><td valign="top" width="50%">
+<table cellspacing=5 style="border:5px solid black;">
+<tr><td colspan=3 align="center" style="font-size:16px;">
+    <b>Reference card for the <tt>numeric</tt> module</b>
+<tr valign="top"><td valign="top" width="33%">
 <table>
 <tr><td><b>Function</b><td><b>Description</b>
 <tr><td colspan=2><hr>
@@ -80,6 +83,11 @@ This allows regression tests to run predictably:
 <tr><td><tt>gt</tt><td>Pointwise x&gt;y
 <tr><td><tt>identity</tt><td>Identity matrix
 <tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>inv</tt><td>Matrix inverse
 <tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
 <tr><td><tt>isNaN</tt><td>Pointwise isNaN(x)
@@ -100,11 +108,6 @@ This allows regression tests to run predictably:
 <tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of x
 <tr><td><tt>norminf</tt><td>Largest modulus entry of x
 <tr><td><tt>not</tt><td>Pointwise logical negation !x
-</table>
-<td valign="top" width="50%">
-<table>
-<tr><td><b>Function</b><td><b>Description</b>
-<tr><td colspan=2><hr>
 <tr><td><tt>or</tt><td>Pointwise logical or x||y
 <tr><td><tt>oreq</tt><td>Pointwise x|=y
 <tr><td><tt>parseCSV</tt><td>Parse a CSV file into an Array
@@ -127,6 +130,11 @@ This allows regression tests to run predictably:
 <tr><td><tt>sclone</tt><td>Sparse clone Array
 <tr><td><tt>sdiag</tt><td>Sparse diagonal matrix
 <tr><td><tt>sdim</tt><td>Sparse dimension of Array
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>sdot</tt><td>Sparse matrix-matrix, matrix-vector, vector-matrix and vector-vector product.
 <tr><td><tt>seedrandom</tt><td>The seedrandom module
 <tr><td><tt>setBlock</tt><td>Set a block of a matrix
