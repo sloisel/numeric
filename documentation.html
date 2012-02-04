@@ -28,6 +28,146 @@ This allows regression tests to run predictably:
 0.2694
 </pre>
 -->
+
+<table cellspacing=10 style="padding:5px; border:5px solid black;">
+<tr><td colspan=2>
+    <center><h1>Reference card for the <tt>numeric</tt> module</h1></center>
+
+<tr valign="top"><td valign="top" width="50%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
+<tr><td><tt>abs</tt><td>Absolute value
+<tr><td><tt>acos</tt><td>Arc-cosine
+<tr><td><tt>add</tt><td>Pointwise sum x+y
+<tr><td><tt>addeq</tt><td>Pointwise sum x+=y
+<tr><td><tt>all</tt><td>All the components of x are true
+<tr><td><tt>and</tt><td>Pointwise x &amp;&amp; y
+<tr><td><tt>andeq</tt><td>Pointwise x &amp;= y
+<tr><td><tt>any</tt><td>One or more of the components of x are true
+<tr><td><tt>asin</tt><td>Arc-sine
+<tr><td><tt>atan</tt><td>Arc-tangeant
+<tr><td><tt>atan2</tt><td>Arc-tangeant (two parameters)
+<tr><td><tt>band</tt><td>Pointwise x &amp; y
+<tr><td><tt>bench</tt><td>Benchmarking routine
+<tr><td><tt>bnot</tt><td>Binary negation ~x
+<tr><td><tt>bor</tt><td>Binary or x|y
+<tr><td><tt>bxor</tt><td>Binary xor x^y
+<tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
+<tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
+<tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
+<tr><td><tt>cdotMV</tt><td>Coordinate matrix-vector product
+<tr><td><tt>ceil</tt><td>Pointwise Math.ceil(x)
+<tr><td><tt>cgrid</tt><td>Coordinate grid for cdelsq
+<tr><td><tt>clone</tt><td>Deep copy of Array
+<tr><td><tt>cos</tt><td>Pointwise Math.cos(x)
+<tr><td><tt>det</tt><td>Determinant
+<tr><td><tt>diag</tt><td>Create diagonal matrix
+<tr><td><tt>dim</tt><td>Get Array dimensions
+<tr><td><tt>div</tt><td>Pointwise x/y
+<tr><td><tt>diveq</tt><td>Pointwise x/=y
+<tr><td><tt>dopri</tt><td>Numerical integration of ODE using Dormand-Prince RK method. Returns an object Dopri.
+<tr><td><tt>Dopri.at</tt><td>Evaluate the ODE solution at a point
+<tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
+<tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
+<tr><td><tt>epsilon</tt><td>2.220446049250313e-16
+<tr><td><tt>eq</tt><td>Pointwise comparison x === y
+<tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
+<tr><td><tt>floor</tt><td>Poinwise Math.floor(x)
+<tr><td><tt>geq</tt><td>Pointwise x&gt;=y
+<tr><td><tt>getBlock</tt><td>Extract a block from a matrix
+<tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
+<tr><td><tt>gt</tt><td>Pointwise x&gt;y
+<tr><td><tt>identity</tt><td>Identity matrix
+<tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
+<tr><td><tt>inv</tt><td>Matrix inverse
+<tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
+<tr><td><tt>isNaN</tt><td>Pointwise isNaN(x)
+<tr><td><tt>largeArray</tt><td>Don't prettyPrint Arrays larger than this
+<tr><td><tt>leq</tt><td>Pointwise x&lt;=y
+<tr><td><tt>linspace</tt><td>Generate evenly spaced values
+<tr><td><tt>log</tt><td>Pointwise Math.log(x)
+<tr><td><tt>lshift</tt><td>Pointwise x&lt;&lt;y
+<tr><td><tt>lshifteq</tt><td>Pointwise x&lt;&lt;=y
+<tr><td><tt>lt</tt><td>Pointwise x&lt;y
+<tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
+<tr><td><tt>mod</tt><td>Pointwise x%y
+<tr><td><tt>modeq</tt><td>Pointwise x%=y
+<tr><td><tt>mul</tt><td>Pointwise x*y
+<tr><td><tt>neg</tt><td>Pointwise -x
+<tr><td><tt>neq</tt><td>Pointwise x!=y
+<tr><td><tt>norm2</tt><td>Square root of the sum of the square of the entries of x
+<tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of x
+<tr><td><tt>norminf</tt><td>Largest modulus entry of x
+<tr><td><tt>not</tt><td>Pointwise logical negation !x
+</table>
+<td valign="top" width="50%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
+<tr><td><tt>or</tt><td>Pointwise logical or x||y
+<tr><td><tt>oreq</tt><td>Pointwise x|=y
+<tr><td><tt>parseCSV</tt><td>Parse a CSV file into an Array
+<tr><td><tt>parseDate</tt><td>Pointwise parseDate(x)
+<tr><td><tt>parseFloat</tt><td>Pointwise parseFloat(x)
+<tr><td><tt>pointwise</tt><td>Create a pointwise function
+<tr><td><tt>pow</tt><td>Pointwise Math.pow(x)
+<tr><td><tt>precision</tt><td>Number of digits to prettyPrint
+<tr><td><tt>prettyPrint</tt><td>Pretty-prints x
+<tr><td><tt>random</tt><td>Create an Array of random numbers
+<tr><td><tt>rep</tt><td>Create an Array by duplicating values
+<tr><td><tt>round</tt><td>Pointwise Math.round(x)
+<tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
+<tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
+<tr><td><tt>rshift</tt><td>Pointwise x&gt;&gt;y
+<tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
+<tr><td><tt>sLUP</tt><td>Sparse LUP decomposition
+<tr><td><tt>sLUPsolve</tt><td>Sparse LUP solve
+<tr><td><tt>same</tt><td>x and y are entrywise identical
+<tr><td><tt>sclone</tt><td>Sparse clone Array
+<tr><td><tt>sdiag</tt><td>Sparse diagonal matrix
+<tr><td><tt>sdim</tt><td>Sparse dimension of Array
+<tr><td><tt>sdot</tt><td>Sparse matrix-matrix, matrix-vector, vector-matrix and vector-vector product.
+<tr><td><tt>seedrandom</tt><td>The seedrandom module
+<tr><td><tt>setBlock</tt><td>Set a block of a matrix
+<tr><td><tt>sgather</tt><td>Sparse gather values
+<tr><td><tt>sidentity</tt><td>Sparse identity
+<tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
+<tr><td><tt>solveQP</tt><td>Solve a quadratic programming problem
+<tr><td><tt>spline</tt><td>Create a Spline object
+<tr><td><tt>Spline.at</tt><td>Evaluate the Spline at a point
+<tr><td><tt>Spline.diff</tt><td>Differentiate the Spline
+<tr><td><tt>Spline.roots</tt><td>Find all the roots of the Spline
+<tr><td><tt>sqrt</tt><td>Pointwise Math.sqrt(x)
+<tr><td><tt>sscatter</tt><td>Sparse scatter values
+<tr><td><tt>stranspose</tt><td>Sparse transpose
+<tr><td><tt>sub</tt><td>Pointwise x-y
+<tr><td><tt>subeq</tt><td>Pointwise x-=y
+<tr><td><tt>sum</tt><td>Sum all the entries of x
+<tr><td><tt>svd</tt><td>Singular value decomposition
+<tr><td><tt>t</tt><td>Create a tensor type T (may be complex-valued)
+<tr><td><tt>T.&lt;numericfun&gt;</tt><td>Supported &lt;numericfun&gt; are: abs, add, cos, diag, div, dot, exp, getBlock, getDiag, inv, log, mul, neg, norm2, setBlock, sin, sub, transpose
+<tr><td><tt>T.conj</tt><td>Pointwise complex conjugate
+<tr><td><tt>T.fft</tt><td>Fast Fourier transform
+<tr><td><tt>T.get</tt><td>Read an entry
+<tr><td><tt>T.getRow</tt><td>Get a row
+<tr><td><tt>T.getRows</tt><td>Get a range of rows
+<tr><td><tt>T.ifft</tt><td>Inverse FFT
+<tr><td><tt>T.reciprocal</tt><td>Pointwise 1/z
+<tr><td><tt>T.set</tt><td>Set an entry
+<tr><td><tt>T.setRow</tt><td>Set a row
+<tr><td><tt>T.setRows</tt><td>Set a range of rows
+<tr><td><tt>T.transjugate</tt><td>The conjugate-transpose of a matrix
+<tr><td><tt>tan</tt><td>Pointwise Math.tan(x)
+<tr><td><tt>tensor</tt><td>Tensor product ret[i][j] = x[i]*y[j]
+<tr><td><tt>toCSV</tt><td>Make a CSV file
+<tr><td><tt>transpose</tt><td>Matrix transpose
+<tr><td><tt>uncmin</tt><td>Unconstrained optimization
+<tr><td><tt>version</tt><td>Version string for the numeric library
+<tr><td><tt>xoreq</tt><td>Pointwise x^=y
+</table></table>
+
+
 <h1>Numerical analysis in Javascript</h1>
 
 <a href="http://www.numericjs.com/">Numeric Javascript</a> is
@@ -941,135 +1081,6 @@ For performance reasons, <tt>numeric.random()</tt> uses the default <tt>Math.ran
 the seedrandom version, just do <tt>Math.random = numeric.seedrandom.random</tt>. Note that this may slightly
 decrease the performance of all <tt>Math</tt> operations.
 
-<h1>Reference card</h1>
 
-Here is a list of the functions available in the <tt>numeric</tt> module:
-
-<table>
-<tr><td><td><b>Description</b>
-<tr><td><tt>abs</tt><td>Absolute value
-<tr><td><tt>acos</tt><td>Arc-cosine
-<tr><td><tt>add</tt><td>Pointwise sum x+y
-<tr><td><tt>addeq</tt><td>Pointwis sum x+=y
-<tr><td><tt>all</tt><td>All the components of x are true
-<tr><td><tt>and</tt><td>Pointwise x &amp;&amp; y
-<tr><td><tt>andeq</tt><td>Pointwise x &amp;= y
-<tr><td><tt>any</tt><td>One or more of the components of x are true
-<tr><td><tt>asin</tt><td>Arc-sine
-<tr><td><tt>atan</tt><td>Arc-tangeant
-<tr><td><tt>atan2</tt><td>Arc-tangeant (two parameters)
-<tr><td><tt>band</tt><td>Pointwise x &amp; y
-<tr><td><tt>bench</tt><td>Benchmarking routine
-<tr><td><tt>bnot</tt><td>Binary negation ~x
-<tr><td><tt>bor</tt><td>Binary or x|y
-<tr><td><tt>bxor</tt><td>Binary xor x^y
-<tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
-<tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
-<tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
-<tr><td><tt>cdotMV</tt><td>Coordinate matrix-vector product
-<tr><td><tt>ceil</tt><td>Pointwise Math.ceil(x)
-<tr><td><tt>cgrid</tt><td>Coordinate grid for cdelsq
-<tr><td><tt>clone</tt><td>Deep copy of Array
-<tr><td><tt>cos</tt><td>Pointwise Math.cos(x)
-<tr><td><tt>det</tt><td>Determinant
-<tr><td><tt>diag</tt><td>Create diagonal matrix
-<tr><td><tt>dim</tt><td>Get Array dimensions
-<tr><td><tt>div</tt><td>Pointwise x/y
-<tr><td><tt>diveq</tt><td>Pointwise x/=y
-<tr><td><tt>dopri</tt><td>Numerical integration of ODE using Dormand-Prince RK method. Returns an object Dopri.
-<tr><td><tt>Dopri.at</tt><td>Evaluate the ODE solution at a point
-<tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
-<tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
-<tr><td><tt>epsilon</tt><td>2.220446049250313e-16
-<tr><td><tt>eq</tt><td>Pointwise comparison x === y
-<tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
-<tr><td><tt>floor</tt><td>Poinwise Math.floor(x)
-<tr><td><tt>geq</tt><td>Pointwise x&gt;=y
-<tr><td><tt>getBlock</tt><td>Extract a block from a matrix
-<tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
-<tr><td><tt>gt</tt><td>Pointwise x&gt;y
-<tr><td><tt>identity</tt><td>Identity matrix
-<tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
-<tr><td><tt>inv</tt><td>Matrix inverse
-<tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
-<tr><td><tt>isNaN</tt><td>Pointwise isNaN(x)
-<tr><td><tt>largeArray</tt><td>Don't prettyPrint Arrays larger than this
-<tr><td><tt>leq</tt><td>Pointwise x&lt;=y
-<tr><td><tt>linspace</tt><td>Generate evenly spaced values
-<tr><td><tt>log</tt><td>Pointwise Math.log(x)
-<tr><td><tt>lshift</tt><td>Pointwise x&lt;&lt;y
-<tr><td><tt>lshifteq</tt><td>Pointwise x&lt;&lt;=y
-<tr><td><tt>lt</tt><td>Pointwise x&lt;y
-<tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
-<tr><td><tt>mod</tt><td>Pointwise x%y
-<tr><td><tt>modeq</tt><td>Pointwise x%=y
-<tr><td><tt>mul</tt><td>Pointwise x*y
-<tr><td><tt>neg</tt><td>Pointwise -x
-<tr><td><tt>neq</tt><td>Pointwise x!=y
-<tr><td><tt>norm2</tt><td>Square root of the sum of the square of the entries of x
-<tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of x
-<tr><td><tt>norminf</tt><td>Largest modulus entry of x
-<tr><td><tt>not</tt><td>Pointwise logical negation !x
-<tr><td><tt>or</tt><td>Pointwise logical or x||y
-<tr><td><tt>oreq</tt><td>Pointwise x|=y
-<tr><td><tt>parseCSV</tt><td>Parse a CSV file into an Array
-<tr><td><tt>parseDate</tt><td>Pointwise parseDate(x)
-<tr><td><tt>parseFloat</tt><td>Pointwise parseFloat(x)
-<tr><td><tt>pointwise</tt><td>Create a pointwise function
-<tr><td><tt>pow</tt><td>Pointwise Math.pow(x)
-<tr><td><tt>precision</tt><td>Number of digits to prettyPrint
-<tr><td><tt>prettyPrint</tt><td>Pretty-prints x
-<tr><td><tt>random</tt><td>Create an Array of random numbers
-<tr><td><tt>rep</tt><td>Create an Array by duplicating values
-<tr><td><tt>round</tt><td>Pointwise Math.round(x)
-<tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
-<tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
-<tr><td><tt>rshift</tt><td>Pointwise x&gt;&gt;y
-<tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
-<tr><td><tt>sLUP</tt><td>Sparse LUP decomposition
-<tr><td><tt>sLUPsolve</tt><td>Sparse LUP solve
-<tr><td><tt>same</tt><td>x and y are entrywise identical
-<tr><td><tt>sclone</tt><td>Sparse clone Array
-<tr><td><tt>sdiag</tt><td>Sparse diagonal matrix
-<tr><td><tt>sdim</tt><td>Sparse dimension of Array
-<tr><td><tt>sdot</tt><td>Sparse matrix-matrix, matrix-vector, vector-matrix and vector-vector product.
-<tr><td><tt>seedrandom</tt><td>The seedrandom module
-<tr><td><tt>setBlock</tt><td>Set a block of a matrix
-<tr><td><tt>sgather</tt><td>Sparse gather values
-<tr><td><tt>sidentity</tt><td>Sparse identity
-<tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
-<tr><td><tt>solveQP</tt><td>Solve a quadratic programming problem
-<tr><td><tt>spline</tt><td>Create a Spline object
-<tr><td><tt>Spline.at</tt><td>Evaluate the Spline at a point
-<tr><td><tt>Spline.diff</tt><td>Differentiate the Spline
-<tr><td><tt>Spline.roots</tt><td>Find all the roots of the Spline
-<tr><td><tt>sqrt</tt><td>Pointwise Math.sqrt(x)
-<tr><td><tt>sscatter</tt><td>Sparse scatter values
-<tr><td><tt>stranspose</tt><td>Sparse transpose
-<tr><td><tt>sub</tt><td>Pointwise x-y
-<tr><td><tt>subeq</tt><td>Pointwise x-=y
-<tr><td><tt>sum</tt><td>Sum all the entries of x
-<tr><td><tt>svd</tt><td>Singular value decomposition
-<tr><td><tt>t</tt><td>Create a tensor type T (may be complex-valued)
-<tr><td><tt>T.&lt;numericfun&gt;</tt><td>Supported &lt;numericfun&gt; are: abs, add, cos, diag, div, dot, exp, getBlock, getDiag, inv, log, mul, neg, norm2, setBlock, sin, sub, transpose
-<tr><td><tt>T.conj</tt><td>Pointwise complex conjugate
-<tr><td><tt>T.fft</tt><td>Fast Fourier transform
-<tr><td><tt>T.get</tt><td>Read an entry
-<tr><td><tt>T.getRow</tt><td>Get a row
-<tr><td><tt>T.getRows</tt><td>Get a range of rows
-<tr><td><tt>T.ifft</tt><td>Inverse FFT
-<tr><td><tt>T.reciprocal</tt><td>Pointwise 1/z
-<tr><td><tt>T.set</tt><td>Set an entry
-<tr><td><tt>T.setRow</tt><td>Set a row
-<tr><td><tt>T.setRows</tt><td>Set a range of rows
-<tr><td><tt>T.transjugate</tt><td>The conjugate-transpose of a matrix
-<tr><td><tt>tan</tt><td>Pointwise Math.tan(x)
-<tr><td><tt>tensor</tt><td>Tensor product ret[i][j] = x[i]*y[j]
-<tr><td><tt>toCSV</tt><td>Make a CSV file
-<tr><td><tt>transpose</tt><td>Matrix transpose
-<tr><td><tt>uncmin</tt><td>Unconstrained optimization
-<tr><td><tt>version</tt><td>Version string for the numeric library
-<tr><td><tt>xoreq</tt><td>Pointwise x^=y
-</table>
 <br><br><br>
 
