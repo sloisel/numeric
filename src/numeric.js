@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.0.1";
+numeric.version = "1.0.2";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -22,10 +22,23 @@ numeric.bench = function bench (f,interval) {
     return 1000*(3*n-1)/(t2-t1);
 }
 
+numeric.Function = function() {
+    var foo = '(function (';
+    for(var k=0;k<arguments.length-1;++k) { if(k>0) foo+=','; foo += arguments[k]; }
+    foo += ') { \n'+arguments[k]+'\n});';
+    return numeric.geval(foo);
+}
+
+if(typeof window === "undefined") numeric.geval = eval;
+else if(typeof window.execScript === "undefined") numeric.geval = window.eval;
+else numeric.Function = Function; // IE does not have a global eval that works?
+/* This apparently returns nothing: window.execScript('function () {}').            *
+ * Other things that don't work: window.execScript('foo = eval("function () {}");') */
+
 numeric.precision = 4;
 numeric.largeArray = 50;
 
-numeric.prettyPrint = function(x) {
+numeric.prettyPrint = function prettyPrint(x) {
     function fmtnum(x) {
         if(x === 0) { return '0'; }
         if(isNaN(x)) { return 'NaN'; }
@@ -319,7 +332,7 @@ numeric.dim = function dim(x) {
 }
 
 numeric.mapreduce = function mapreduce(body,init) {
-    return Function('x','accum','_s','_k',
+    return numeric.Function('x','accum','_s','_k',
             'if(typeof accum === "undefined") accum = '+init+';\n'+
             'if(typeof _s === "undefined") _s = numeric.dim(x);\n'+
             'if(typeof _k === "undefined") _k = 0;\n'+
@@ -536,7 +549,7 @@ numeric.pointwise = function pointwise(params,body,setup) {
             '}\n'+
             'return ret;'
             );
-    return Function.apply(null,fun);
+    return numeric.Function.apply(null,fun);
 }
 
 numeric._biforeach = (function _biforeach(x,y,s,k,f) {
@@ -600,7 +613,7 @@ numeric.ops1 = {
             numeric[i+'VV'] = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i] '+o+' y[i];');
             numeric[i+'SV'] = numeric.pointwise(['x','y[i]'],'ret[i] = x '+o+' y[i];');
             numeric[i+'VS'] = numeric.pointwise(['x[i]','y'],'ret[i] = x[i] '+o+' y;');
-            numeric[i] = Function(
+            numeric[i] = numeric.Function(
                     'var n = arguments.length, i, x = arguments[0], y;\n'+
                     'var VV = numeric.'+i+'VV, VS = numeric.'+i+'VS, SV = numeric.'+i+'SV;\n'+
                     'for(i=1;i!==n;++i) { \n'+
@@ -618,13 +631,13 @@ numeric.ops1 = {
         if(numeric.ops1.hasOwnProperty(i)) {
             o = numeric.ops1[i];
             numeric[i+'V'] = numeric.pointwise(['x[i]'],'ret[i] = '+o+'x[i];');
-            numeric[i] = Function('x','if(typeof x === "object") return numeric.'+i+'V(x);\nreturn '+o+'(x);');
+            numeric[i] = numeric.Function('x','if(typeof x === "object") return numeric.'+i+'V(x);\nreturn '+o+'(x);');
         }
     }
     for(i=0;i<numeric.mathfuns.length;i++) {
         o = numeric.mathfuns[i];
         numeric[o+'V'] = numeric.pointwise(['x[i]'],'ret[i] = fun(x[i]);','var fun = Math.'+o+';');
-        numeric[o] = Function('x','if(typeof x === "object") return numeric.'+o+'V(x);\nreturn Math.'+o+'(x);');
+        numeric[o] = numeric.Function('x','if(typeof x === "object") return numeric.'+o+'V(x);\nreturn Math.'+o+'(x);');
     }
     numeric.isNaNV = numeric.pointwise(['x[i]'],'ret[i] = isNaN(x[i]);');
     numeric.isNaN = function isNaN(x) { if(typeof x === "object") return numeric.isNaNV(x); return isNaN(x); }
@@ -632,13 +645,13 @@ numeric.ops1 = {
     numeric.isFinite = function isNaN(x) { if(typeof x === "object") return numeric.isFiniteV(x); return isFinite(x); }
     for(i in numeric.opseq) {
         if(numeric.opseq.hasOwnProperty(i)) {
-            numeric[i+'S'] = Function('x','y',
+            numeric[i+'S'] = numeric.Function('x','y',
                     'var n = x.length, i;\n'+
                     'for(i=n-1;i>=0;i--) x[i] '+numeric.opseq[i]+' y;');
-            numeric[i+'V'] = Function('x','y',
+            numeric[i+'V'] = numeric.Function('x','y',
                     'var n = x.length, i;\n'+
                     'for(i=n-1;i>=0;i--) x[i] '+numeric.opseq[i]+' y[i];');
-            numeric[i] = Function('x','y',
+            numeric[i] = numeric.Function('x','y',
                     'var s = numeric.dim(x);\n'+
                     'if(typeof y === "number") { numeric._biforeach(x,y,s,0,numeric.'+i+'S); return x; }\n'+
                     'numeric._biforeach(x,y,s,0,numeric.'+i+'V);\n'+
@@ -910,7 +923,7 @@ numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
             }
         }
     }
-    return Function(['y'],
+    return numeric.Function(['y'],
             'var x = this;\n'+
             'if(!(y instanceof numeric.T)) { y = new numeric.T(y); }\n'+
             setup+'\n'+
@@ -976,7 +989,7 @@ numeric.T.prototype.transjugate = function transjugate() {
 }
 numeric.Tunop = function Tunop(r,c,s) {
     if(typeof s !== "string") { s = ''; }
-    return Function(
+    return numeric.Function(
             'var x = this;\n'+
             s+'\n'+
             'if(x.y) {'+

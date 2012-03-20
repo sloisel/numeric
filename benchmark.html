@@ -15,7 +15,7 @@ is fastened and your tray table is upright while we invert 100x100 matrices.<br>
 <div id="placeholder" style="width:700px;height:500px;float:left;"></div>
 <div id="legend" style="width:250px;height:100px;overflow:hidden;"></div>
 </div>
-<br>
+<div id="meanscore">Geometric mean of scores: </div><br>
 
 <b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time.
 The number of function calls per seconds is converted into a FLOP rate. As we move right within each test, the matrix size increases.<br><br>
@@ -72,8 +72,9 @@ if (!('map' in Array.prototype)) {
 
 goog.require('goog.math.Matrix');
 var bench = numeric.bench;
-var mkA = function(n) { return numeric.random([n,n]); }
-var mkV = function(n) { return numeric.random([n]); }
+var geometricmeans = [0,0,0];
+var mkA = function(n) { return numeric.random([n,n]); };
+var mkV = function(n) { return numeric.random([n]); };
 var benchmarks = [
 	[
 	'abs(vector)', [3,10,30,100,300,1000,3000],
@@ -173,6 +174,7 @@ var count = 1;
 var MSIE = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
 numeric.precision = 6;
 var c0 = [[],[],[]];
+var counts = [0,0,0];
 function invbench(b,k,lib,rep) {
 	var ks,sz = benchmarks[b][1][k];
 	var i,j,foo;
@@ -193,6 +195,10 @@ function invbench(b,k,lib,rep) {
 		}
 		for(i=0;i<cps.length;i++) {
 			if(MSIE || cps[i]) datasets[i].data.push([count,cps[i]]);
+			if(cps[i]) {
+			    counts[i]++;
+			    geometricmeans[i] += Math.log(cps[i]);
+			}
 		}
 		var foo = '<td>n='+ks+'</td>';
 		var color = '', uncolor='';
@@ -229,9 +235,12 @@ function invbench(b,k,lib,rep) {
 		                  +','+k.toString()
 		                  +','+lib.toString()
 		                  +','+rep.toString()
-		                  +')',MSIE?10:0); }
+		                  +')',MSIE?10:0); 
+    } else {
+        geometricmeans = numeric.exp(numeric.div(geometricmeans,counts));
+        $('#meanscore')[0].innerHTML += numeric.prettyPrint(geometricmeans)+'MFLOPS';
+    }
 }
-
 window.onload = function() { invbench(0,0,0,0); }
 </script>
 

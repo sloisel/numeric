@@ -57,10 +57,6 @@ workshop.updateVersion = "lib/numeric-VERSIONSTRING.js";
 workshop.preload(workshop._restore);
 </script>
 
-<!--[if lte IE 9]>
-<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
-<![endif]-->
-<script src="tools/megalib.js"></script>
 <script>
 workshop.restore(workshop._restore);
 </script>

@@ -36,6 +36,10 @@ if(isset($_POST['savedata'])) {
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <!--<![endif]-->
 <title>Numeric Javascript: Workshop</title>
+<!--[if lte IE 9]>
+<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
+<![endif]-->
+<script src="tools/megalib.js"></script>
 <body onload="workshop.restore2();">
 <?php include "resources/header.html" ?>
 
@@ -394,7 +398,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => 'lib/numeric-1.0.1.js');
+		$incs = array(1 => 'lib/numeric-1.0.2.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -404,20 +408,16 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.0.1.js"] });
+	                 scripts: ["lib/numeric-1.0.2.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.0.1";
-workshop.updateVersion = "lib/numeric-1.0.1.js";
+workshop.version = "1.0.2";
+workshop.updateVersion = "lib/numeric-1.0.2.js";
 workshop.preload(workshop._restore);
 </script>
 
-<!--[if lte IE 9]>
-<script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
-<![endif]-->
-<script src="tools/megalib.js"></script>
 <script>
 workshop.restore(workshop._restore);
 </script>
