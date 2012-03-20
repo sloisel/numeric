@@ -1,4 +1,4 @@
-var console = { 
+if(typeof console === "undefined") console = { 
     log: function() { 
         var k; 
         for(k=0;k<arguments.length;k++) { 
@@ -8,21 +8,24 @@ var console = {
         if(typeof system !== "undefined") { system.stdout.flush(); }
     }
 };
+var myread;
+if(typeof system !== "undefined") {
+    myread = (function(x) { return new Stream(x).readFile(); });
+} else if(typeof read !== "undefined") {
+    myread = read;
+} else {
+    fs = require('fs');
+    myread = (function(x) { return fs.readFileSync(x,'utf8') });
+    console.log(process.cwd());
+}
 function XMLHttpRequest() {
     this.response = "";
-    if(typeof system !== "undefined") {
-        this.open = function(get,url) { this.responseText = new Stream(url).readFile(); }
-    } else {
-        this.open = function(get,url) { this.responseText = read(url); }
-    }
-    this.send = function() {}
+    this.open = (function(get,url) { this.responseText = myread(url); });
+    this.send = (function() {});
 }
-var foo;
-if(typeof system !== "undefined") { foo = new Stream('./documentation.html').readFile(); }
-else { foo = read('./documentation.html'); }
-var baz;
-if(typeof system !== "undefined") { baz = new Stream('./src/numeric.js').readFile(); }
-else { baz = read('./src/numeric.js'); }
+if(typeof fs !== "undefined") global.XMLHttpRequest = XMLHttpRequest;
+var foo = myread('./documentation.html');
+var baz = myread('./src/numeric.js');
 var ver = baz.match(/numeric.version[ =]*"([0-9.]*)".*/)[1]
 var bar = foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\n> ')
 var baz = [];
@@ -32,7 +35,10 @@ for(k=0;k<bar.length;k++) {
     if(j>0) { baz[k0] = [bar[k].substring(0,j),bar[k].substring(j+1)]; k0++; }
 }
 
-load('./lib/numeric-'+ver+'.js');
+var numfile = './lib/numeric-'+ver+'.js';
+var numeric;
+if(typeof fs === "undefined") load(numfile);
+else { numeric = require('../'+numfile); }
 if(typeof numeric === "undefined") { throw new Error("Could not load numeric.js"); }
 var unit_pass = 0, unit_fail = 0;
 var a,b,msg;
