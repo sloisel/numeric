@@ -1,6 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
+if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.0.0";
+numeric.version = "1.0.1";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -1004,7 +1005,7 @@ numeric.T.prototype.cos = numeric.Tunop(
         'return x.exp().add(x.neg().exp()).div(2);');
 numeric.T.prototype.abs = numeric.Tunop(
         'return new numeric.T(numeric.abs(x.x));',
-        'return new numeric.T(numeric.sqrt(numeric.add(mul(x.x,x.x),(x.y,x.y))));',
+        'return new numeric.T(numeric.sqrt(numeric.add(mul(x.x,x.x),mul(x.y,x.y))));',
         'var mul = numeric.mul;');
 numeric.T.prototype.log = numeric.Tunop(
         'return new numeric.T(numeric.log(x.x));',
@@ -1369,6 +1370,7 @@ numeric.eig = function eig(A,maxiter) {
             b = H[i][j];
             c = H[j][i];
             d = H[j][j];
+            if(b === 0 && c === 0) continue;
             p1 = -a-d;
             p2 = a*d-b*c;
             disc = p1*p1-4*p2;
@@ -1415,9 +1417,15 @@ numeric.eig = function eig(A,maxiter) {
     for(j=0;j<n;j++) {
         if(j>0) {
             for(k=j-1;k>=0;k--) {
-                x = R.getRow(k).getBlock([k],[j-1]);
-                y = E.getRow(j).getBlock([k],[j-1]);
-                E.set([j,k],(R.get([k,j]).neg().sub(x.dot(y))).div(R.get([k,k]).sub(R.get([j,j]))));
+                var Rk = R.get([k,k]), Rj = R.get([j,j]);
+                if(numeric.neq(Rk.x,Rj.x) || numeric.neq(Rk.y,Rj.y)) {
+                    x = R.getRow(k).getBlock([k],[j-1]);
+                    y = E.getRow(j).getBlock([k],[j-1]);
+                    E.set([j,k],(R.get([k,j]).neg().sub(x.dot(y))).div(Rk.sub(Rj)));
+                } else {
+                    E.setRow(j,E.getRow(k));
+                    continue;
+                }
             }
         }
     }
@@ -1502,7 +1510,7 @@ numeric.sLUP = function LUP(A,tol) {
             if(k<=i) continue;
             if(abs(U[k][i]) > abs(U[j][i])) { j = k; }
         }
-        if(abs(U[i]) >= tol*abs(U[j])) { j = i; }
+        if(abs(U[i][i]) >= tol*abs(U[j][i])) { j = i; }
         if(j!==i) {
             temp = U[i]; U[i] = U[j]; U[j] = temp;
             temp = L[i]; L[i] = L[j]; L[j] = temp;
@@ -2424,4 +2432,3 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
     ret.iterations = it;
     return ret;
 }
-

@@ -14,23 +14,7 @@ body { margin: 5mm 5mm 5mm 5mm; }
 <title>Numeric Javascript: Documentation</title>
 </head>
 <body>
-<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
-<table class="nav"><tr class="nav">
-<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
-<td class="navmain">
-<b>Numeric Javascript: Documentation</b>
-<ul class="nav">
-  <li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
-  <li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
-  <li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
-  <li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
-</ul>
-<ul class="nav">
-  <li class="sep">DOWNLOADS:</li>
-  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
-  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
-</ul>
-</table>
+<!--#include file="resources/header.html" -->
 <!--
 This allows regression tests to run predictably:
 <pre>
@@ -609,7 +593,7 @@ Complex vectors and matrices can also be handled:
 > z = new numeric.T([1,2],[3,4]);
 {x: [1,2], y: [3,4]}
 > z.abs()
-{x:[2,2.828],y:}
+{x:[3.162,4.472],y:}
 > z.conj()
 {x:[1,2],y:[-3,-4]}
 > z.norm2()
@@ -621,7 +605,7 @@ Complex vectors and matrices can also be handled:
 > z.sin()
 {x:[0.2178,-2.847],y:[1.163,2.371]}
 > z.log()
-{x:[0.6931,1.04],y:[1.249,1.107]}
+{x:[1.151,1.498],y:[1.249,1.107]}
 </pre>
 
 Complex matrices:

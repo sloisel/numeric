@@ -37,34 +37,21 @@ if(isset($_POST['savedata'])) {
 <!--<![endif]-->
 <title>Numeric Javascript: Workshop</title>
 <body onload="workshop.restore2();">
-<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
-<table class="nav"><tr class="nav">
-<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
-<td class="navmain">
-<b>Numeric Javascript: Workshop</b>
-<ul class="nav">
-	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
-	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
-	<li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
-	<li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
-</ul>
-<ul class="nav">
-	<li class="sep">DOWNLOADS:</li>
-  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
-  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
-</ul>
-</table>
+<?php include "resources/header.html" ?>
 
-<div style="display:none;border:5px solid green;margin:10px;" id="divupdate">
-There is a more recent version of <tt>numeric.js</tt> than the one that is loaded in this worksheet.
-<a href="javascript: workshop.update();">Click here</a> to reload the page with the latest version of the library.
-</div>
 
 <form name="myform" action="workshop.php" method="post">
+<table cellspacing=20px cellpadding=0>
+<tr><td>
 <ul class="nav">
 	<li class="nav"><a id = "NEW" class="nav" href="#" onclick="workshop.reset();">START OVER</a></li>
 	<li class="nav"><a href="javascript: workshop.submit();" class="nav" id="permalink">MAKE PERMALINK</a>
 </ul>
+</td>
+<td style="margin:10px; font-size:12px;" id="divupdate">
+</td>
+</tr>
+</table>
 <input type="hidden" name="savedata" value="">
 </form>
 
@@ -287,9 +274,11 @@ function restore2(foo) {
     if(rc<2) return;
     foo = _foo;
 	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
+	var baz = 'Version: <tt>'+foo.scripts[0]+'</tt>';
 	if(_indexOf(foo.scripts,workshop.updateVersion)<0) {
-		$("#divupdate").css({display: 'block'});
+	    baz = baz + ' (Update to <tt><a href="javascript: workshop.update();">'+workshop.updateVersion+'</a></tt>)';
 	}
+	$('#divupdate')[0].innerHTML = baz;
 	if(foo.inputs.length === 0) { mkdiv(0); return; }
 	var input,output,i,j,f0;
 	for(i=1;i<foo.inputs.length;i++) {
@@ -405,7 +394,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => 'lib/numeric-1.0.0.js');
+		$incs = array(1 => 'lib/numeric-1.0.1.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -415,13 +404,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.0.0.js"] });
+	                 scripts: ["lib/numeric-1.0.1.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.0.0";
-workshop.updateVersion = "lib/numeric-1.0.0.js";
+workshop.version = "1.0.1";
+workshop.updateVersion = "lib/numeric-1.0.1.js";
 workshop.preload(workshop._restore);
 </script>
 

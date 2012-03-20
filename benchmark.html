@@ -5,23 +5,7 @@
 <title>Numeric Javascript: Benchmarks</title>
 </head>
 <body>
-<a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="resources/forkme.png" alt="Fork me on GitHub"></a>
-<table class="nav"><tr class="nav">
-<td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
-<td class="navmain">
-<b>Numeric Javascript: Benchmarks</b>
-<ul class="nav">
-	<li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
-	<li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
-	<li class="nav"><a id = "linkbenchmarks" class="nav" href="benchmark.html">BENCHMARKS</a></li>
-	<li class="nav"><a id = "linkdoc" class="nav" href="documentation.html">DOCUMENTATION</a></li>
-</ul>
-<ul class="nav">
-	<li class="sep">DOWNLOADS:</li>
-  <li class="nav"><a id = "linklib" class="dl" href="lib/numeric-1.0.0.js">numeric-1.0.0.js</a></li>
-  <li class="nav"><a id = "linklibmin" class="dl" href="lib/numeric-1.0.0.min.js">numeric-1.0.0.min.js</a></li>
-</ul>
-</table>
+<!--#include file="resources/header.html" -->
 
 We are now running a linear algebra performance benchmark in your browser! Please ensure that your seatbelt
 is fastened and your tray table is upright while we invert 100x100 matrices.<br><br>
@@ -145,7 +129,7 @@ var benchmarks = [
 	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
 	],
     [
-    'Sparse Laplacian LU', [3,5,10,15,20],
+    'Sparse Laplacian LU', [3,5,10,20,30],
     function(n) { var A = numeric.sscatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.sLUP(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
