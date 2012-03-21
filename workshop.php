@@ -398,7 +398,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => 'lib/numeric-1.0.2.js');
+		$incs = array(1 => 'lib/numeric-1.0.3.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -408,13 +408,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.0.2.js"] });
+	                 scripts: ["lib/numeric-1.0.3.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.0.2";
-workshop.updateVersion = "lib/numeric-1.0.2.js";
+workshop.version = "1.0.3";
+workshop.updateVersion = "lib/numeric-1.0.3.js";
 workshop.preload(workshop._restore);
 </script>
 

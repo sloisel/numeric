@@ -27,6 +27,7 @@
 tools/benchlib.js
 tools/deploy/report.html
 tools/deploy/version.txt
+resources/header.html
 
 # Logs and databases #
 ######################

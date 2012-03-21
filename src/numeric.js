@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.0.2";
+numeric.version = "1.0.3";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
