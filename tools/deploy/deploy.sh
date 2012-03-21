@@ -1,6 +1,19 @@
 #!/bin/bash
 set -e
 cd `dirname $0`
+cd ../..
+foo=`git status --porcelain` && 
+if [ -z "$foo" ]; then
+    #ok
+else
+    echo "Cannot deploy while there are uncommited changes."
+    exit
+fi
+ver=`grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/'`
+git tag v$ver
+git push --tags
+chmod a-w lib/numeric-$ver*.js
+cd tools/deploy
 source config.sh
 echo Fetching staging copy...
 curl $server/staging/ > staging-copy.html

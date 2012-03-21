@@ -22,18 +22,18 @@ numeric.bench = function bench (f,interval) {
     return 1000*(3*n-1)/(t2-t1);
 }
 
-numeric.Function = function() {
+/* 
+ * IE doesn't have a global eval that works?
+ * This apparently returns nothing: window.execScript('function () {}').            
+ * Other things that don't work: window.execScript('foo = eval("function () {}");')
+ */
+if(1 || typeof window === "undefined" || typeof window.execScript !== "undefined") numeric.Function = Function;
+else numeric.Function = function() {
     var foo = '(function (';
     for(var k=0;k<arguments.length-1;++k) { if(k>0) foo+=','; foo += arguments[k]; }
     foo += ') { \n'+arguments[k]+'\n});';
-    return numeric.geval(foo);
+    return window.eval(foo);
 }
-
-if(typeof window === "undefined") numeric.geval = eval;
-else if(typeof window.execScript === "undefined") numeric.geval = window.eval;
-else numeric.Function = Function; // IE does not have a global eval that works?
-/* This apparently returns nothing: window.execScript('function () {}').            *
- * Other things that don't work: window.execScript('foo = eval("function () {}");') */
 
 numeric.precision = 4;
 numeric.largeArray = 50;

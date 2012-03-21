@@ -25,6 +25,8 @@
 
 # generated files
 tools/benchlib.js
+tools/deploy/report.html
+tools/deploy/version.txt
 
 # Logs and databases #
 ######################

@@ -5,7 +5,15 @@ cd `dirname $0`
 rm -f version.txt
 echo $version > version.txt
 source config.sh
-cd ../../..
+cd ../../
+ver=`grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/'`
+foo=`git tag -l v$ver`
+if [ "x$foo" != "x" ]; then
+    echo "The version $ver already exists."
+    echo "You must update the version number in numeric.js."
+    exit
+fi
+cd ..
 rm -f numeric.tar.gz
 echo "stage.sh: preparing tarball"
 tar cvfz numeric.tar.gz numeric
