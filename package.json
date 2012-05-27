@@ -1,0 +1,17 @@
+{
+  "name": "numericjs",
+  "version": "1.0.3",
+  "author": "Sébastien Loisel",
+  "description": "a javascript library for doing numerical analysis in the browser",
+  "keywords": [
+    "numeric",
+    "analysis",
+    "math"
+  ],
+  "homepage": "http://numericjs.com",
+  "main": "./lib/numeric-1.0.3.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sloisel/numeric.git"
+  }
+}
