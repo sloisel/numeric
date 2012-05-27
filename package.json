@@ -9,7 +9,7 @@
     "math"
   ],
   "homepage": "http://numericjs.com",
-  "main": "./src/numeric.js",
+  "main": "./lib/numeric-1.0.3.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/sloisel/numeric.git"
