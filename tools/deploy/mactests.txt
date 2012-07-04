@@ -152,7 +152,7 @@ Using Chrome
 140 PASS: x = numeric.ccsLUPSolve(LUP,[96,63,82,51,89]) ==> [3,1,4,1,5]
 141 PASS: X = numeric.trunc(numeric.ccsFull(numeric.ccsLUPSolve(LUP,A)),1e-15); // Solve LUX = PA ==> [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
 142 PASS: numeric.ccsLUP(A,0.4).P; ==> [0,2,1,3,4]
-143 FAIL: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) { result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res           }           break;       }     }     result; ==> SyntaxError:UnexpectedtokenbreakSyntaxError:Unexpectedtokenbreakateval(native)atDedicatedWorkerContext.onmessage(http://numericjs.com/staging/myworker.js:34:16) reason: 
+143 PASS: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) {          result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res         };         break;       };     };     result; ==> "SparseLUPStressTestOK"
 144 PASS: A = numeric.ccsSparse([[1,2,0],[0,3,0],[0,0,5]]);     B = numeric.ccsSparse([[2,9,0],[0,4,0],[-2,0,0]]);     numeric.ccsadd(A,B); ==> [[0,2,4,5],[0,2,0,1,2],[3,-2,11,7,5]]
 145 PASS: X = [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]];     SX = numeric.ccsScatter(X); ==> [[0,1,3,5,6],[0,0,1,1,2,2],[1,2,3,4,5,6]]
 146 PASS: numeric.ccsGather(SX) ==> [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]]
@@ -203,7 +203,7 @@ Using Chrome
 191 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
 192 PASS: numeric.seedrandom.random() ==> 0.6139
 193 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Chrome testing complete. PASS: 193 FAIL: 1 Total: 194
+Chrome testing complete. PASS: 194 FAIL: 0 Total: 194
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -350,7 +350,7 @@ Using Firefox
 140 PASS: x = numeric.ccsLUPSolve(LUP,[96,63,82,51,89]) ==> [3,1,4,1,5]
 141 PASS: X = numeric.trunc(numeric.ccsFull(numeric.ccsLUPSolve(LUP,A)),1e-15); // Solve LUX = PA ==> [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
 142 PASS: numeric.ccsLUP(A,0.4).P; ==> [0,2,1,3,4]
-143 FAIL: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) { result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res           }           break;       }     }     result; ==> SyntaxError:missing;beforestatement([objectMessageEvent])@http://numericjs.com/staging/myworker.js:34 reason: 
+143 PASS: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) {          result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res         };         break;       };     };     result; ==> "SparseLUPStressTestOK"
 144 PASS: A = numeric.ccsSparse([[1,2,0],[0,3,0],[0,0,5]]);     B = numeric.ccsSparse([[2,9,0],[0,4,0],[-2,0,0]]);     numeric.ccsadd(A,B); ==> [[0,2,4,5],[0,2,0,1,2],[3,-2,11,7,5]]
 145 PASS: X = [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]];     SX = numeric.ccsScatter(X); ==> [[0,1,3,5,6],[0,0,1,1,2,2],[1,2,3,4,5,6]]
 146 PASS: numeric.ccsGather(SX) ==> [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]]
@@ -401,4 +401,4 @@ Using Firefox
 191 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
 192 PASS: numeric.seedrandom.random() ==> 0.6139
 193 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Firefox testing complete. PASS: 193 FAIL: 1 Total: 194
+Firefox testing complete. PASS: 194 FAIL: 0 Total: 194
