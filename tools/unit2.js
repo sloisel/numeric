@@ -27,12 +27,12 @@ if(typeof _fs !== "undefined") global.XMLHttpRequest = XMLHttpRequest;
 var _foo = myread('./documentation.html');
 var _baz = myread('./src/numeric.js');
 var _ver = _baz.match(/numeric.version[ =]*"([0-9.]*)".*/)[1];
-var _bar = _foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\n> ');
+var _bar = _foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g).join('\n').replace(/<pre>/g,'').split('\nIN> ');
 _baz = [];
 var _k,k0=0;
 for(_k=0;_k<_bar.length;_k++) {
-    var _j = _bar[_k].indexOf('\n');
-    if(_j>0) { _baz[k0] = [_bar[_k].substring(0,_j),_bar[_k].substring(_j+1)]; k0++; }
+    var _j = _bar[_k].indexOf('\nOUT>');
+    if(_j>0) { _baz[k0] = [_bar[_k].substring(0,_j),_bar[_k].substring(_j+5)]; k0++; }
 }
 
 var numfile = './lib/numeric-'+_ver+'.js';
@@ -55,10 +55,10 @@ for(_k=0;_k<k0;_k++) {
     _a = _foo.replace(/\s/g,'');
     _b = _baz[_k][1].replace(/\s/g,'');
     if(_a===_b) {
-        _msg = k1+" PASS "+_baz[_k][0]+"==>"+_a+"==="+_b;
+        _msg = k1+" PASS "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"==="+_b;
         unit_pass++;
     } else {
-        _msg = k1+" FAIL "+_baz[_k][0]+"==>"+_a+"!=="+_b;
+        _msg = k1+" FAIL "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"!=="+_b;
         unit_fail++;
     }
     console.log(_msg);

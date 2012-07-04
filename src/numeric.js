@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.0.3";
+numeric.version = "1.1.0";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -673,6 +673,18 @@ numeric.atan2 = function atan2(x,y) {
     return Math.atan2(x,y);
 }
 
+numeric.truncVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = round(x[i]/y[i])*y[i];','var round = Math.round;');
+numeric.truncVS = numeric.pointwise(['x[i]','y'],'ret[i] = round(x[i]/y)*y;','var round = Math.round;');
+numeric.truncSV = numeric.pointwise(['x','y[i]'],'ret[i] = round(x/y[i])*y[i];','var round = Math.round;');
+numeric.trunc = function trunc(x,y) {
+    if(typeof x === "object") {
+        if(typeof y === "object") return numeric.truncVV(x,y);
+        return numeric.truncVS(x,y);
+    }
+    if (typeof y === "object") return numeric.truncSV(x,y);
+    return Math.round(x/y)*y;
+}
+
 numeric.powVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = pow(x[i],y[i]);','var pow = Math.pow;');
 numeric.powVS = numeric.pointwise(['x[i]','y'],'ret[i] = pow(x[i],y);','var pow = Math.pow;');
 numeric.powSV = numeric.pointwise(['x','y[i]'],'ret[i] = pow(x,y[i]);','var pow = Math.pow;');
@@ -849,6 +861,7 @@ numeric.norm2Squared = numeric.mapreduce('accum += xi*xi;','0');
 numeric.norm2 = function norm2(x) { return Math.sqrt(numeric.norm2Squared(x)); }
 numeric.norminf = numeric.mapreduce('accum = max(abs(xi),accum);','0; var max = Math.max, abs = Math.abs;');
 numeric.sum = numeric.mapreduce('accum += xi;','0');
+numeric.sup = numeric.mapreduce('accum = max(xi,accum);','-Infinity; var max = Math.max;');
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.round(b-a)+1;
@@ -1451,7 +1464,381 @@ numeric.eig = function eig(A,maxiter) {
     return { lambda:R.getDiag(), E:E };
 };
 
-// 5. Real sparse linear algebra
+// 5. Compressed Column Storage matrices
+numeric.ccsSparse = function ccsSparse(A) {
+    var m = A.length,n,foo, i,j, counts = [];
+    for(i=m-1;i!==-1;--i) {
+        foo = A[i];
+        for(j in foo) {
+            j = parseInt(j);
+            while(j>=counts.length) counts[counts.length] = 0;
+            if(foo[j]!==0) counts[j]++;
+        }
+    }
+    var n = counts.length;
+    var Ai = Array(n+1);
+    Ai[0] = 0;
+    for(i=0;i<n;++i) Ai[i+1] = Ai[i] + counts[i];
+    var Aj = Array(Ai[n]), Av = Array(Ai[n]);
+    for(i=m-1;i!==-1;--i) {
+        foo = A[i];
+        for(j in foo) {
+            if(foo[j]!==0) {
+                counts[j]--;
+                Aj[Ai[j]+counts[j]] = i;
+                Av[Ai[j]+counts[j]] = foo[j];
+            }
+        }
+    }
+    return [Ai,Aj,Av];
+}
+numeric.ccsFull = function ccsFull(A) {
+    var Ai = A[0], Aj = A[1], Av = A[2], s = numeric.ccsDim(A), m = s[0], n = s[1], i,j,j0,j1,k;
+    var B = numeric.rep([m,n],0);
+    for(i=0;i<n;i++) {
+        j0 = Ai[i];
+        j1 = Ai[i+1];
+        for(j=j0;j<j1;++j) { B[Aj[j]][i] = Av[j]; }
+    }
+    return B;
+}
+numeric.ccsTSolve = function ccsTSolve(A,b,x,bj,xj) {
+    var Ai = A[0], Aj = A[1], Av = A[2],m = Ai.length-1, max = Math.max,n=0;
+    if(typeof bj === "undefined") x = numeric.rep([m],0);
+    if(typeof bj === "undefined") bj = numeric.linspace(0,x.length-1);
+    if(typeof xj === "undefined") xj = [];
+    function dfs(j) {
+        var k;
+        if(x[j] !== 0) return;
+        x[j] = 1;
+        for(k=Ai[j];k<Ai[j+1];++k) dfs(Aj[k]);
+        xj[n] = j;
+        ++n;
+    }
+    var i,j,j0,j1,k,l,l0,l1,a;
+    for(i=bj.length-1;i!==-1;--i) { dfs(bj[i]); }
+    xj.length = n;
+    for(i=xj.length-1;i!==-1;--i) { x[xj[i]] = 0; }
+    for(i=bj.length-1;i!==-1;--i) { j = bj[i]; x[j] = b[j]; }
+    for(i=xj.length-1;i!==-1;--i) {
+        j = xj[i];
+        j0 = Ai[j];
+        j1 = max(Ai[j+1],j0);
+        for(k=j0;k!==j1;++k) { if(Aj[k] === j) { x[j] /= Av[k]; break; } }
+        a = x[j];
+        for(k=j0;k!==j1;++k) {
+            l = Aj[k];
+            if(l !== j) x[l] -= a*Av[k];
+        }
+    }
+    return x;
+}
+numeric.ccsLPSolve = function ccsLPSolve(A,B,x,xj,I,Pinv) {
+    var Ai = A[0], Aj = A[1], Av = A[2],m = Ai.length-1, n=0;
+    var Bi = B[0], Bj = B[1], Bv = B[2];
+    
+    if(typeof xj === "undefined") xj = [];
+    function dfs(j) {
+        var k,k0,k1;
+        if(x[j] !== 0) return;
+        x[j] = 1;
+        k0 = Ai[j];
+        k1 = Ai[j+1];
+        for(k=k0;k<k1;++k) dfs(Pinv[Aj[k]]);
+        xj[n] = j;
+        ++n;
+    }
+    var i,i0,i1,j,J,j0,j1,k,l,l0,l1,a;
+    i0 = Bi[I];
+    i1 = Bi[I+1];
+    for(i=i0;i<i1;++i) { dfs(Pinv[Bj[i]]); }
+    xj.length = n;
+    for(i=xj.length-1;i!==-1;--i) { x[xj[i]] = 0; }
+    for(i=i0;i!==i1;++i) { j = Pinv[Bj[i]]; x[j] = Bv[i]; }
+    for(i=xj.length-1;i!==-1;--i) {
+        j = xj[i];
+        j0 = Ai[j];
+        j1 = Ai[j+1];
+        for(k=j0;k<j1;++k) { if(Pinv[Aj[k]] === j) { x[j] /= Av[k]; break; } }
+        a = x[j];
+        for(k=j0;k<j1;++k) {
+            l = Pinv[Aj[k]];
+            if(l !== j) x[l] -= a*Av[k];
+        }
+    }
+    return x;
+}
+numeric.ccsLUP = function ccsLUP(A,threshold) {
+    var m = A[0].length-1;
+    var L = [numeric.rep([m+1],0),[],[]], U = [numeric.rep([m+1], 0),[],[]];
+    var Li = L[0], Lj = L[1], Lv = L[2], Ui = U[0], Uj = U[1], Uv = U[2];
+    var x = numeric.rep([m],0), xj = numeric.rep([m],0);
+    var i,j,k,j0,j1,a,e,c,d,K;
+    var sol = numeric.ccsLPSolve, max = Math.max, abs = Math.abs;
+    var P = numeric.linspace(0,m-1),Pinv = numeric.linspace(0,m-1);
+    if(typeof threshold === "undefined") { threshold = 1; }
+    for(i=0;i<m;++i) {
+        sol(L,A,x,xj,i,Pinv);
+        a = -1;
+        e = -1;
+        for(j=xj.length-1;j!==-1;--j) {
+            k = xj[j];
+            if(k <= i) continue;
+            c = abs(x[k]);
+            if(c > a) { e = k; a = c; }
+        }
+        if(abs(x[i])<threshold*a) {
+            j = P[i];
+            a = P[e];
+            P[i] = a; Pinv[a] = i;
+            P[e] = j; Pinv[j] = e;
+            a = x[i]; x[i] = x[e]; x[e] = a;
+        }
+        a = Li[i];
+        e = Ui[i];
+        d = x[i];
+        Lj[a] = P[i];
+        Lv[a] = 1;
+        ++a;
+        for(j=xj.length-1;j!==-1;--j) {
+            k = xj[j];
+            c = x[k];
+            xj[j] = 0;
+            x[k] = 0;
+            if(k<=i) { Uj[e] = k; Uv[e] = c;   ++e; }
+            else     { Lj[a] = P[k]; Lv[a] = c/d; ++a; }
+        }
+        Li[i+1] = a;
+        Ui[i+1] = e;
+    }
+    for(j=Lj.length-1;j!==-1;--j) { Lj[j] = Pinv[Lj[j]]; }
+    return {L:L, U:U, P:P, Pinv:Pinv};
+}
+
+numeric.ccsDim = function ccsDim(A) { return [numeric.sup(A[1])+1,A[0].length-1]; }
+numeric.ccsGetBlock = function ccsGetBlock(A,i,j) {
+    var s = numeric.ccsDim(A),m=s[0],n=s[1];
+    if(typeof i === "undefined") { i = numeric.linspace(0,m-1); }
+    else if(typeof i === "number") { i = [i]; }
+    if(typeof j === "undefined") { j = numeric.linspace(0,n-1); }
+    else if(typeof j === "number") { j = [j]; }
+    var p,p0,p1,P = i.length,q,Q = j.length,r,jq,ip;
+    var Bi = numeric.rep([n],0), Bj=[], Bv=[], B = [Bi,Bj,Bv];
+    var Ai = A[0], Aj = A[1], Av = A[2];
+    var x = numeric.rep([m],0),count=0,flags = numeric.rep([m],0);
+    for(q=0;q<Q;++q) {
+        jq = j[q];
+        q0 = Ai[jq];
+        q1 = Ai[jq+1];
+        for(p=q0;p<q1;++p) {
+            r = Aj[p];
+            flags[r] = 1;
+            x[r] = Av[p];
+        }
+        for(p=0;p<P;++p) {
+            ip = i[p];
+            if(flags[ip]) {
+                Bj[count] = p;
+                Bv[count] = x[i[p]];
+                ++count;
+            }
+        }
+        for(p=q0;p<q1;++p) {
+            r = Aj[p];
+            flags[r] = 0;
+        }
+        Bi[q+1] = count;
+    }
+    return B;
+}
+
+numeric.ccsDot = function ccsDot(A,B) {
+    var Ai = A[0], Aj = A[1], Av = A[2];
+    var Bi = B[0], Bj = B[1], Bv = B[2];
+    var sA = numeric.ccsDim(A), sB = numeric.ccsDim(B);
+    var m = sA[0], n = sA[1], o = sB[1];
+    var x = numeric.rep([m],0), flags = numeric.rep([m],0), xj = Array(m);
+    var Ci = numeric.rep([o],0), Cj = [], Cv = [], C = [Ci,Cj,Cv];
+    var i,j,k,j0,j1,i0,i1,l,p,a,b;
+    for(k=0;k!==o;++k) {
+        j0 = Bi[k];
+        j1 = Bi[k+1];
+        p = 0;
+        for(j=j0;j<j1;++j) {
+            a = Bj[j];
+            b = Bv[j];
+            i0 = Ai[a];
+            i1 = Ai[a+1];
+            for(i=i0;i<i1;++i) {
+                l = Aj[i];
+                if(flags[l]===0) {
+                    xj[p] = l;
+                    flags[l] = 1;
+                    p = p+1;
+                }
+                x[l] = x[l] + Av[i]*b;
+            }
+        }
+        j0 = Ci[k];
+        j1 = j0+p;
+        Ci[k+1] = j1;
+        for(j=p-1;j!==-1;--j) {
+            b = j0+j;
+            i = xj[j];
+            Cj[b] = i;
+            Cv[b] = x[i];
+            flags[i] = 0;
+            x[i] = 0;
+        }
+        Ci[k+1] = Ci[k]+p;
+    }
+    return C;
+}
+
+numeric.ccsLUPSolve = function ccsLUPSolve(LUP,B) {
+    var L = LUP.L, U = LUP.U, P = LUP.P;
+    var Bi = B[0];
+    var flag = false;
+    if(typeof Bi !== "object") { B = [[0,B.length],numeric.linspace(0,B.length-1),B]; Bi = B[0]; flag = true; }
+    var Bj = B[1], Bv = B[2];
+    var n = L[0].length-1, m = Bi.length-1;
+    var x = numeric.rep([n],0), xj = Array(n);
+    var b = numeric.rep([n],0), bj = Array(n);
+    var Xi = numeric.rep([m+1],0), Xj = [], Xv = [];
+    var sol = numeric.ccsTSolve;
+    var i,j,j0,j1,k,J,N=0;
+    for(i=0;i<m;++i) {
+        k = 0;
+        j0 = Bi[i];
+        j1 = Bi[i+1];
+        for(j=j0;j<j1;++j) { 
+            J = LUP.Pinv[Bj[j]];
+            bj[k] = J;
+            b[J] = Bv[j];
+            ++k;
+        }
+        bj.length = k;
+        sol(L,b,x,bj,xj);
+        for(j=bj.length-1;j!==-1;--j) b[bj[j]] = 0;
+        sol(U,x,b,xj,bj);
+        if(flag) return b;
+        for(j=xj.length-1;j!==-1;--j) x[xj[j]] = 0;
+        for(j=bj.length-1;j!==-1;--j) {
+            J = bj[j];
+            Xj[N] = J;
+            Xv[N] = b[J];
+            b[J] = 0;
+            ++N;
+        }
+        Xi[i+1] = N;
+    }
+    return [Xi,Xj,Xv];
+}
+
+numeric.ccsbinop = function ccsbinop(body,setup) {
+    if(typeof setup === "undefined") setup='';
+    return Function('X','Y',
+            'var Xi = X[0], Xj = X[1], Xv = X[2];\n'+
+            'var Yi = Y[0], Yj = Y[1], Yv = Y[2];\n'+
+            'var n = Xi.length-1,m = Math.max(numeric.sup(Xj),numeric.sup(Yj))+1;\n'+
+            'var Zi = numeric.rep([n+1],0), Zj = [], Zv = [];\n'+
+            'var x = numeric.rep([m],0),y = numeric.rep([m],0);\n'+
+            'var xk,yk,zk;\n'+
+            'var i,j,j0,j1,k,p=0;\n'+
+            setup+
+            'for(i=0;i<n;++i) {\n'+
+            '  j0 = Xi[i]; j1 = Xi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) {\n'+
+            '    k = Xj[j];\n'+
+            '    x[k] = 1;\n'+
+            '    Zj[p] = k;\n'+
+            '    ++p;\n'+
+            '  }\n'+
+            '  j0 = Yi[i]; j1 = Yi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) {\n'+
+            '    k = Yj[j];\n'+
+            '    y[k] = Yv[j];\n'+
+            '    if(x[k] === 0) {\n'+
+            '      Zj[p] = k;\n'+
+            '      ++p;\n'+
+            '    }\n'+
+            '  }\n'+
+            '  Zi[i+1] = p;\n'+
+            '  j0 = Xi[i]; j1 = Xi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) x[Xj[j]] = Xv[j];\n'+
+            '  j0 = Zi[i]; j1 = Zi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) {\n'+
+            '    k = Zj[j];\n'+
+            '    xk = x[k];\n'+
+            '    yk = y[k];\n'+
+            body+'\n'+
+            '    Zv[j] = zk;\n'+
+            '  }\n'+
+            '  j0 = Xi[i]; j1 = Xi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) x[Xj[j]] = 0;\n'+
+            '  j0 = Yi[i]; j1 = Yi[i+1];\n'+
+            '  for(j=j0;j!==j1;++j) y[Yj[j]] = 0;\n'+
+            '}\n'+
+            'return [Zi,Zj,Zv];'
+            );
+};
+
+(function() {
+    var k,A,B,C;
+    for(k in numeric.ops2) {
+        if(isFinite(eval('1'+numeric.ops2[k]+'0'))) A = '[Y[0],Y[1],numeric.'+k+'(X,Y[2])]';
+        else A = 'NaN';
+        if(isFinite(eval('0'+numeric.ops2[k]+'1'))) B = '[X[0],X[1],numeric.'+k+'(X[2],Y)]';
+        else B = 'NaN';
+        if(isFinite(eval('1'+numeric.ops2[k]+'0')) && isFinite(eval('0'+numeric.ops2[k]+'1'))) C = 'numeric.ccs'+k+'MM(X,Y)';
+        else C = 'NaN';
+        numeric['ccs'+k+'MM'] = numeric.ccsbinop('zk = xk '+numeric.ops2[k]+'yk;');
+        numeric['ccs'+k] = Function('X','Y',
+                'if(typeof X === "number") return '+A+';\n'+
+                'if(typeof Y === "number") return '+B+';\n'+
+                'return '+C+';\n'
+                );
+    }
+}());
+
+numeric.ccsScatter = function ccsScatter(A) {
+    var Ai = A[0], Aj = A[1], Av = A[2];
+    var n = numeric.sup(Aj)+1,m=Ai.length;
+    var Ri = numeric.rep([n],0),Rj=Array(m), Rv = Array(m);
+    var counts = numeric.rep([n],0),i;
+    for(i=0;i<m;++i) counts[Aj[i]]++;
+    for(i=0;i<n;++i) Ri[i+1] = Ri[i] + counts[i];
+    var ptr = Ri.slice(0),k,Aii;
+    for(i=0;i<m;++i) {
+        Aii = Aj[i];
+        k = ptr[Aii];
+        Rj[k] = Ai[i];
+        Rv[k] = Av[i];
+        ptr[Aii]=ptr[Aii]+1;
+    }
+    return [Ri,Rj,Rv];
+}
+
+numeric.ccsGather = function ccsGather(A) {
+    var Ai = A[0], Aj = A[1], Av = A[2];
+    var n = Ai.length-1,m = Aj.length;
+    var Ri = Array(m), Rj = Array(m), Rv = Array(m);
+    var i,j,j0,j1,p;
+    p=0;
+    for(i=0;i<n;++i) {
+        j0 = Ai[i];
+        j1 = Ai[i+1];
+        for(j=j0;j!==j1;++j) {
+            Rj[p] = i;
+            Ri[p] = Aj[j];
+            Rv[p] = Av[j];
+            ++p;
+        }
+    }
+    return [Ri,Rj,Rv];
+}
+
+// The following sparse linear algebra routines are deprecated.
 
 numeric.sdim = function dim(A,ret,k) {
     if(typeof ret === "undefined") { ret = []; }
@@ -1508,49 +1895,7 @@ numeric.stranspose = function transpose(A) {
 }
 
 numeric.sLUP = function LUP(A,tol) {
-    if(typeof tol === "undefined") { tol = 1; }
-    var n = A.length, i,j,k;
-    var L = numeric.sidentity(n), U = numeric.sclone(A), UT = numeric.stranspose(U);
-    var P = numeric.linspace(0,n-1),Q = numeric.linspace(0,n-1);
-    var Ui, Uj, UTi, temp,alpha;
-    var abs = Math.abs;
-    for(i=0;i<n-1;i++) {
-        UTi = UT[i];
-        j = i;
-        for(k in UTi) {
-            if(!(Q.hasOwnProperty(k))) continue;
-            k = Q[k];
-            if(k<=i) continue;
-            if(abs(U[k][i]) > abs(U[j][i])) { j = k; }
-        }
-        if(abs(U[i][i]) >= tol*abs(U[j][i])) { j = i; }
-        if(j!==i) {
-            temp = U[i]; U[i] = U[j]; U[j] = temp;
-            temp = L[i]; L[i] = L[j]; L[j] = temp;
-            temp = P[i]; P[i] = P[j]; P[j] = temp;
-            Q = Array(n);
-            for(j=0;j<n;j++) { Q[P[j]] = j; }
-        }
-        Ui = U[i];
-        for(j in UTi) {
-            if(!(Q.hasOwnProperty(j))) continue;
-            j = Q[j];
-            if(j<=i) continue;
-            Uj = U[j];
-            alpha = Uj[i]/Ui[i];
-            L[j][i] = alpha;
-            for(k in Ui) {
-                if(!Ui.hasOwnProperty(k)) continue;
-                if(k > i) {
-                    if(!(k in Uj)) { Uj[k] = 0; UT[k][j] = 0; }
-                    Uj[k] -= alpha*Ui[k];
-                } else {
-                    delete Uj[k];
-                }
-            }
-        }
-    }
-    return {L:L, U:U, P:P, Pinv:Q};
+    throw new Error("The function numeric.sLUP had a bug in it and has been removed. Please use the new numeric.ccsLUP function instead.");
 };
 
 numeric.sdotMM = function dotMM(A,B) {
@@ -1622,31 +1967,6 @@ numeric.sdot = function dot(A,B) {
     case 2002: return numeric.sdotMM(A,B);
     default: throw new Error('numeric.sdot not implemented for tensors of order '+m+' and '+n);
     }
-}
-
-numeric.sLUPsolve = function LUPsolve(lup,b) {
-    var L = lup.L, U = lup.U, P = lup.P;
-    var n = L.length, i,j, ret = Array(n), accum, Ai,foo;
-    for(i = 0;i<n;i++) {
-        if(b.hasOwnProperty(P[i])) accum = b[P[i]];
-        else accum = 0;
-        Ai = L[i];
-        for(j in Ai) {
-            if(!Ai.hasOwnProperty(j)) continue;
-            if(j<i) { accum -= Ai[j]*ret[j]; }
-        }
-        ret[i] = accum;
-    }
-    for(i = n-1;i>=0;i--) {
-        accum = ret[i];
-        Ai = U[i];
-        for(j in Ai) {
-            if(!Ai.hasOwnProperty(j)) continue;
-            if(j>i) { accum -= Ai[j]*ret[j]; }
-        }
-        ret[i] = accum/Ai[i];
-    }
-    return ret;
 }
 
 numeric.sscatter = function scatter(V) {
@@ -2042,7 +2362,7 @@ numeric.spline = function spline(x,y,k1,kn) {
     var k = Array(b.length);
     if(typeof k1 === "string") {
         for(i=k.length-1;i!==-1;--i) {
-            k[i] = numeric.sLUPsolve(numeric.sLUP(numeric.sscatter(T)),b[i]);
+            k[i] = numeric.ccsLUPSolve(numeric.ccsLUP(numeric.ccsScatter(T)),b[i]);
             k[i][n-1] = k[i][0];
         }
     } else {
