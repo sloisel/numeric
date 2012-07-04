@@ -822,13 +822,14 @@ IN> result = "Sparse LUP Stress Test OK";
       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));
       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));
       res = numeric.norminf(numeric.sub(foo,PA));
-      if(!isFinite(res) || res>1e-6) { result = { 
+      if(!isFinite(res) || res>1e-6) { 
+        result = { 
           code: "Failed during 1000 sparse LUP",
           k:k,A:A,LUP:LUP,res:res
-          }
-          break;
-      }
-    }
+        };
+        break;
+      };
+    };
     result;
 OUT> "Sparse LUP Stress Test OK"
 </pre>

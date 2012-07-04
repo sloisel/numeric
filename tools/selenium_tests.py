@@ -54,10 +54,10 @@ tests = [];
 
 print "In-browser unit tests."
 for x in y:
-    baz = x.split('\n> ')[1:]
+    baz = x.split('\nIN> ')[1:]
     for foo in baz:
-        bar = foo.find('\n')
-        tests.append((foo[0:bar],re.sub(r'\s','',foo[bar+1:])))
+        bar = foo.find('\nOUT>')
+        tests.append((re.sub(r'\s',' ',foo[0:bar]),re.sub(r'\s','',foo[bar+5:])))
 driver=0
 try:
     driver = eval('webdriver.'+client+'()')
@@ -69,7 +69,8 @@ try:
         test(client,driver)
     except Exception as ex:
         print "FAIL: text_1 not found. ",ex
-except:
+except Exception as ex:
     print "Could not use browser",client
+    print ex
 if(driver):
     driver.quit()

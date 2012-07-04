@@ -141,65 +141,69 @@ Using Chrome
 129 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 130 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 131 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-132 PASS: numeric.sidentity(3) ==> [[1],[,1],[,,1]]
-133 PASS: numeric.stranspose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = numeric.sLUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-135 PASS: numeric.sdot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-136 PASS: x = [3,1,7]; b = numeric.sdot(A,x); ==> [5,-8,13]
-137 PASS: numeric.sLUPsolve(lup,b) ==> [3,1,7]
-138 PASS: numeric.sdot([1,2,3],[,4,5]) ==> 23
-139 PASS: numeric.sdot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-140 PASS: numeric.sdot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-141 PASS: A = numeric.sscatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-142 PASS: numeric.sgather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-143 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-144 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
-145 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-146 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-147 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-148 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-149 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
-150 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
-151 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
-152 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-153 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
-154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
-155 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
-156 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-157 PASS: numeric.spline([1,2,3],[[0,1],[1,0],[0,1]]).at(1.78) ==> [0.9327,0.06728]
-158 PASS: xs = [0,1,2,3]; numeric.spline(xs,numeric.sin(xs)).diff().at(1.5) ==> 0.07302
-159 PASS: xs = numeric.linspace(0,30,31); ys = numeric.sin(xs); s = numeric.spline(xs,ys).roots(); ==> [0,3.142,6.284,9.425,12.57,15.71,18.85,21.99,25.13,28.27]
-160 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
-161 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
-162 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-163 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
-164 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
-165 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
-166 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1e6,2e-6]
-167 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
-168 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [0.2578,0.2578]
-169 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
-170 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
-171 PASS: f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5) ==> [0,0,0,0]
-172 PASS: f = function(x) { return sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3]); }; x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution ==> [1,1,1,1]
-173 PASS: y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; f = function(x) { var ret=0, i; for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); return ret; }; x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution ==> [0.1928,0.1913,0.1231,0.1361]
-174 PASS: y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution ==> [0.3754,1.936,-1.465,0.01287,0.02212]
-175 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
-176 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
-177 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
-178 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
-179 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
-180 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
-181 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
-182 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
-183 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
-184 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-185 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-186 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
-187 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-188 PASS: numeric.seedrandom.random() ==> 0.6139
-189 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Chrome testing complete. PASS: 190 FAIL: 0 Total: 190
+132 PASS: A = [[1,2,0],          [0,3,0],          [2,0,5]];     SA = numeric.ccsSparse(A); ==> [[0,2,4,5],[0,2,0,1,2],[1,2,2,3,5]]
+133 PASS: A = numeric.ccsSparse([[ 3, 5, 8,10, 8],                           [ 7,10, 3, 5, 3],                           [ 6, 3, 5, 1, 8],                           [ 2, 6, 7, 1, 2],                           [ 1, 2, 9, 3, 9]]); ==> [[0,5,10,15,20,25],[0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4],[3,7,6,2,1,5,10,3,6,2,8,3,5,7,9,10,5,1,1,3,8,3,8,2,9]]
+134 PASS: numeric.ccsFull(A); ==> [[3,5,8,10,8],[7,10,3,5,3],[6,3,5,1,8],[2,6,7,1,2],[1,2,9,3,9]]
+135 PASS: numeric.ccsDot(numeric.ccsSparse([[1,2,3],[4,5,6]]),numeric.ccsSparse([[7,8],[9,10],[11,12]])) ==> [[0,2,4],[0,1,0,1],[58,139,64,154]]
+136 PASS: M = [[0,1,3,6],[0,0,1,0,1,2],[3,-1,2,3,-2,4]];     b = [9,3,2];     x = numeric.ccsTSolve(M,b); ==> [3.167,2,0.5]
+137 PASS: numeric.ccsDot(M,[[0,3],[0,1,2],x]) ==> [[0,3],[0,1,2],[9,3,2]]
+138 PASS: LUP = numeric.ccsLUP(A); ==> {L:[[0,5,9,12,14,15],[0,2,4,1,3,1,3,4,2,2,4,3,3,4,4],[1,0.1429,0.2857,0.8571,0.4286,1,-0.1282,-0.5641,-0.1026,1,0.8517,0.7965,1,-0.67,1]],U:[[0,1,3,6,10,15],[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4],[7,10,-5.571,3,2.429,8.821,5,-3.286,1.949,5.884,3,5.429,9.128,0.1395,-3.476]],P:[1,2,4,0,3],Pinv:[3,0,1,4,2]}
+139 PASS: numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U)) ==> [[7,10,3,5,3],[6,3,5,1,8],[1,2,9,3,9],[3,5,8,10,8],[2,6,7,1,2]]
+140 PASS: x = numeric.ccsLUPSolve(LUP,[96,63,82,51,89]) ==> [3,1,4,1,5]
+141 PASS: X = numeric.trunc(numeric.ccsFull(numeric.ccsLUPSolve(LUP,A)),1e-15); // Solve LUX = PA ==> [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
+142 PASS: numeric.ccsLUP(A,0.4).P; ==> [0,2,1,3,4]
+143 FAIL: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) { result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res           }           break;       }     }     result; ==> SyntaxError:UnexpectedtokenbreakSyntaxError:Unexpectedtokenbreakateval(native)atDedicatedWorkerContext.onmessage(http://numericjs.com/staging/myworker.js:34:16) reason: 
+144 PASS: A = numeric.ccsSparse([[1,2,0],[0,3,0],[0,0,5]]);     B = numeric.ccsSparse([[2,9,0],[0,4,0],[-2,0,0]]);     numeric.ccsadd(A,B); ==> [[0,2,4,5],[0,2,0,1,2],[3,-2,11,7,5]]
+145 PASS: X = [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]];     SX = numeric.ccsScatter(X); ==> [[0,1,3,5,6],[0,0,1,1,2,2],[1,2,3,4,5,6]]
+146 PASS: numeric.ccsGather(SX) ==> [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]]
+147 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+148 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
+149 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+150 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+151 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+152 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+153 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+154 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
+155 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
+156 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+157 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+158 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
+159 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
+160 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
+161 PASS: numeric.spline([1,2,3],[[0,1],[1,0],[0,1]]).at(1.78) ==> [0.9327,0.06728]
+162 PASS: xs = [0,1,2,3]; numeric.spline(xs,numeric.sin(xs)).diff().at(1.5) ==> 0.07302
+163 PASS: xs = numeric.linspace(0,30,31); ys = numeric.sin(xs); s = numeric.spline(xs,ys).roots(); ==> [0,3.142,6.284,9.425,12.57,15.71,18.85,21.99,25.13,28.27]
+164 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
+165 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
+166 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+167 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
+168 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
+169 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
+170 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1e6,2e-6]
+171 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
+172 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [0.2578,0.2578]
+173 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
+174 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
+175 PASS: f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5) ==> [0,0,0,0]
+176 PASS: f = function(x) { return sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3]); }; x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution ==> [1,1,1,1]
+177 PASS: y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; f = function(x) { var ret=0, i; for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); return ret; }; x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution ==> [0.1928,0.1913,0.1231,0.1361]
+178 PASS: y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution ==> [0.3754,1.936,-1.465,0.01287,0.02212]
+179 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
+180 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
+181 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
+182 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
+183 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
+184 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
+185 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
+186 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
+187 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
+188 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+189 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+190 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
+191 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+192 PASS: numeric.seedrandom.random() ==> 0.6139
+193 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Chrome testing complete. PASS: 193 FAIL: 1 Total: 194
 Fetching http://numericjs.com/staging/documentation.html
 In-browser unit tests.
 Using Firefox
@@ -335,62 +339,66 @@ Using Firefox
 129 PASS: m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 130 PASS: m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
 131 PASS: m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12 ==> true
-132 PASS: numeric.sidentity(3) ==> [[1],[,1],[,,1]]
-133 PASS: numeric.stranspose([[1],[2,3],[4,5,6]]) ==> [[1,2,4],[,3,5],[,,6]]
-134 PASS: A = [[2,-1],[-1,2,-1],[,-1,2]]; lup = numeric.sLUP(A) ==> {L:[[1],[-0.5,1],[,-0.6667,1]],U:[[2,-1],[,1.5,-1],[,,1.333]],P:[0,1,2],Pinv:[0,1,2]}
-135 PASS: numeric.sdot(lup.L,lup.U) ==> [[2,-1],[-1,2,-1],[,-1,2]]
-136 PASS: x = [3,1,7]; b = numeric.sdot(A,x); ==> [5,-8,13]
-137 PASS: numeric.sLUPsolve(lup,b) ==> [3,1,7]
-138 PASS: numeric.sdot([1,2,3],[,4,5]) ==> 23
-139 PASS: numeric.sdot([1, ,3],[[4,5,],[,6,7],[1,,8]]) ==> [7,5,24]
-140 PASS: numeric.sdot([[3,1],[4,5,9],[,3,2]],[7,3]) ==> [24,43,9]
-141 PASS: A = numeric.sscatter([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]) ==> [[1,2],[3,4,5],[,6,7]]
-142 PASS: numeric.sgather(A) ==> [[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[1,2,3,4,5,6,7]]
-143 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
-144 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
-145 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
-146 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
-147 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
-148 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
-149 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
-150 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
-151 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
-152 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
-153 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
-154 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
-155 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
-156 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
-157 PASS: numeric.spline([1,2,3],[[0,1],[1,0],[0,1]]).at(1.78) ==> [0.9327,0.06728]
-158 PASS: xs = [0,1,2,3]; numeric.spline(xs,numeric.sin(xs)).diff().at(1.5) ==> 0.07302
-159 PASS: xs = numeric.linspace(0,30,31); ys = numeric.sin(xs); s = numeric.spline(xs,ys).roots(); ==> [0,3.142,6.284,9.425,12.57,15.71,18.85,21.99,25.13,28.27]
-160 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
-161 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
-162 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
-163 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
-164 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
-165 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
-166 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1e6,2e-6]
-167 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
-168 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [0.2578,0.2578]
-169 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
-170 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
-171 PASS: f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5) ==> [0,0,0,0]
-172 PASS: f = function(x) { return sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3]); }; x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution ==> [1,1,1,1]
-173 PASS: y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; f = function(x) { var ret=0, i; for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); return ret; }; x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution ==> [0.1928,0.1913,0.1231,0.1361]
-174 PASS: y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution ==> [0.3754,1.936,-1.465,0.01287,0.02212]
-175 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
-176 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
-177 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
-178 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
-179 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
-180 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
-181 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
-182 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
-183 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
-184 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
-185 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
-186 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
-187 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-188 PASS: numeric.seedrandom.random() ==> 0.6139
-189 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
-Firefox testing complete. PASS: 190 FAIL: 0 Total: 190
+132 PASS: A = [[1,2,0],          [0,3,0],          [2,0,5]];     SA = numeric.ccsSparse(A); ==> [[0,2,4,5],[0,2,0,1,2],[1,2,2,3,5]]
+133 PASS: A = numeric.ccsSparse([[ 3, 5, 8,10, 8],                           [ 7,10, 3, 5, 3],                           [ 6, 3, 5, 1, 8],                           [ 2, 6, 7, 1, 2],                           [ 1, 2, 9, 3, 9]]); ==> [[0,5,10,15,20,25],[0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4],[3,7,6,2,1,5,10,3,6,2,8,3,5,7,9,10,5,1,1,3,8,3,8,2,9]]
+134 PASS: numeric.ccsFull(A); ==> [[3,5,8,10,8],[7,10,3,5,3],[6,3,5,1,8],[2,6,7,1,2],[1,2,9,3,9]]
+135 PASS: numeric.ccsDot(numeric.ccsSparse([[1,2,3],[4,5,6]]),numeric.ccsSparse([[7,8],[9,10],[11,12]])) ==> [[0,2,4],[0,1,0,1],[58,139,64,154]]
+136 PASS: M = [[0,1,3,6],[0,0,1,0,1,2],[3,-1,2,3,-2,4]];     b = [9,3,2];     x = numeric.ccsTSolve(M,b); ==> [3.167,2,0.5]
+137 PASS: numeric.ccsDot(M,[[0,3],[0,1,2],x]) ==> [[0,3],[0,1,2],[9,3,2]]
+138 PASS: LUP = numeric.ccsLUP(A); ==> {L:[[0,5,9,12,14,15],[0,2,4,1,3,1,3,4,2,2,4,3,3,4,4],[1,0.1429,0.2857,0.8571,0.4286,1,-0.1282,-0.5641,-0.1026,1,0.8517,0.7965,1,-0.67,1]],U:[[0,1,3,6,10,15],[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4],[7,10,-5.571,3,2.429,8.821,5,-3.286,1.949,5.884,3,5.429,9.128,0.1395,-3.476]],P:[1,2,4,0,3],Pinv:[3,0,1,4,2]}
+139 PASS: numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U)) ==> [[7,10,3,5,3],[6,3,5,1,8],[1,2,9,3,9],[3,5,8,10,8],[2,6,7,1,2]]
+140 PASS: x = numeric.ccsLUPSolve(LUP,[96,63,82,51,89]) ==> [3,1,4,1,5]
+141 PASS: X = numeric.trunc(numeric.ccsFull(numeric.ccsLUPSolve(LUP,A)),1e-15); // Solve LUX = PA ==> [[1,0,0,0,0],[0,1,0,0,0],[0,0,1,0,0],[0,0,0,1,0],[0,0,0,0,1]]
+142 PASS: numeric.ccsLUP(A,0.4).P; ==> [0,2,1,3,4]
+143 FAIL: result = "Sparse LUP Stress Test OK";     for(k=0;k<1000;++k) {       A = numeric.ccsSparse(numeric.random([10,10]));       LUP = numeric.ccsLUP(A);       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));       res = numeric.norminf(numeric.sub(foo,PA));       if(!isFinite(res) || res>1e-6) { result = {            code: "Failed during 1000 sparse LUP",           k:k,A:A,LUP:LUP,res:res           }           break;       }     }     result; ==> SyntaxError:missing;beforestatement([objectMessageEvent])@http://numericjs.com/staging/myworker.js:34 reason: 
+144 PASS: A = numeric.ccsSparse([[1,2,0],[0,3,0],[0,0,5]]);     B = numeric.ccsSparse([[2,9,0],[0,4,0],[-2,0,0]]);     numeric.ccsadd(A,B); ==> [[0,2,4,5],[0,2,0,1,2],[3,-2,11,7,5]]
+145 PASS: X = [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]];     SX = numeric.ccsScatter(X); ==> [[0,1,3,5,6],[0,0,1,1,2,2],[1,2,3,4,5,6]]
+146 PASS: numeric.ccsGather(SX) ==> [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]]
+147 PASS: lu = numeric.cLU([[0,0,1,1,1,2,2],[0,1,0,1,2,1,2],[2,-1,-1,2,-1,-1,2]]) ==> {U:[[0,0,1,1,2],[0,1,1,2,2],[2,-1,1.5,-1,1.333]],L:[[0,1,1,2,2],[0,0,1,1,2],[1,-0.5,1,-0.6667,1]]}
+148 PASS: numeric.cLUsolve(lu,[5,-8,13]) ==> [3,1,7]
+149 PASS: g = numeric.cgrid(5) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,4,5,-1],[-1,6,7,8,-1],[-1,-1,-1,-1,-1]]
+150 PASS: coordL = numeric.cdelsq(g) ==> [[0,0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,7,7,7,7,8,8,8],[1,3,0,0,2,4,1,1,5,2,0,4,6,3,1,3,5,7,4,2,4,8,5,3,7,6,4,6,8,7,5,7,8],[-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,-1,-1,4,-1,-1,-1,4,-1,-1,4,-1,-1,-1,4,-1,-1,4]]
+151 PASS: L = numeric.sscatter(coordL); // Just to see what it looks like ==> [[4,-1,,-1],[-1,4,-1,,-1],[,-1,4,,,-1],[-1,,,4,-1,,-1],[,-1,,-1,4,-1,,-1],[,,-1,,-1,4,,,-1],[,,,-1,,,4,-1],[,,,,-1,,-1,4,-1],[,,,,,-1,,-1,4]]
+152 PASS: lu = numeric.cLU(coordL); x = numeric.cLUsolve(lu,[1,1,1,1,1,1,1,1,1]); ==> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
+153 PASS: numeric.cdotMV(coordL,x) ==> [1,1,1,1,1,1,1,1,1]
+154 PASS: G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G ==> [[0,0,0,0,0],[0,0.6875,0.875,0.6875,0],[0,0.875,1.125,0.875,0],[0,0.6875,0.875,0.6875,0],[0,0,0,0,0]]
+155 PASS: workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;'); ==> <imgsrc="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg=="width=100/>
+156 PASS: numeric.cgrid(6,'L') ==> [[-1,-1,-1,-1,-1,-1],[-1,0,1,-1,-1,-1],[-1,2,3,-1,-1,-1],[-1,4,5,6,7,-1],[-1,8,9,10,11,-1],[-1,-1,-1,-1,-1,-1]]
+157 PASS: numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; }) ==> [[-1,-1,-1,-1,-1],[-1,0,1,2,-1],[-1,3,-1,4,-1],[-1,5,6,7,-1],[-1,-1,-1,-1,-1]]
+158 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10)) ==> [1,1.731,2.039,1.604,1.019,1.294,2.364,3.085,2.82,2]
+159 PASS: numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10)) ==> [1,1.435,1.98,1.669,1.034,1.316,2.442,3.017,2.482,2]
+160 PASS: numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10)) ==> [0.8415,0.9024,0.5788,0.04718,-0.5106,-0.8919,-0.8887,-0.3918,0.3131,0.8415]
+161 PASS: numeric.spline([1,2,3],[[0,1],[1,0],[0,1]]).at(1.78) ==> [0.9327,0.06728]
+162 PASS: xs = [0,1,2,3]; numeric.spline(xs,numeric.sin(xs)).diff().at(1.5) ==> 0.07302
+163 PASS: xs = numeric.linspace(0,30,31); ys = numeric.sin(xs); s = numeric.spline(xs,ys).roots(); ==> [0,3.142,6.284,9.425,12.57,15.71,18.85,21.99,25.13,28.27]
+164 PASS: z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft() ==> {x:[15,-5.941,-3.312,-1.688,0.941],y:[40,0.941,-1.688,-3.312,-5.941]}
+165 PASS: z.ifft() ==> {x:[1,2,3,4,5],y:[6,7,8,9,10]}
+166 PASS: numeric.solveQP([[1,0,0],[0,1,0],[0,0,1]],[0,5,0],[[-4,2,0],[-3,1,-2],[0,0,1]],[-8,2,0]); ==> {solution:[0.4762,1.048,2.095],value:[-2.381],unconstrained_solution:[0,5,0],iterations:[3,0],iact:[3,2,0],message:""}
+167 PASS: sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution ==> [1,1]
+168 PASS: f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution ==> [11.41,-0.8968]
+169 PASS: f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution ==> [1.098e-5,9.106]
+170 PASS: f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution ==> [1e6,2e-6]
+171 PASS: f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution ==> [3,0.5]
+172 PASS: f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution ==> [0.2578,0.2578]
+173 PASS: y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution ==> [0.08241,1.133,2.344]
+174 PASS: y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000) ==> [0.399,1,0]
+175 PASS: f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5) ==> [0,0,0,0]
+176 PASS: f = function(x) { return sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3]); }; x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution ==> [1,1,1,1]
+177 PASS: y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; f = function(x) { var ret=0, i; for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); return ret; }; x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution ==> [0.1928,0.1913,0.1231,0.1361]
+178 PASS: y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution ==> [0.3754,1.936,-1.465,0.01287,0.02212]
+179 PASS: f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20; ==> true
+180 PASS: z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb); ==> {solution:[1.571],f:-1,gradient:[2.242e-11],invHessian:[[0.25]],iterations:6,message:"Newtonstepsmallerthantol"}
+181 PASS: z ==> [{i:0,x:[1],f:-0.4161,g:[-1.819],H:[[1]]},{i:2,x:[1.909],f:-0.7795,g:[1.253],H:[[0.296]]},{i:3,x:[1.538],f:-0.9979,g:[-0.1296],H:[[0.2683]]},{i:4,x:[1.573],f:-1,g:[9.392e-3],H:[[0.2502]]},{i:5,x:[1.571],f:-1,g:[-6.105e-6],H:[[0.25]]},{i:6,x:[1.571],f:-1,g:[2.242e-11],H:[[0.25]]}]
+182 PASS: sol = numeric.dopri(0,1,1,function(t,y) { return y; }) ==> {x:[0,0.1,0.1522,0.361,0.5792,0.7843,0.9813,1],y:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],f:[1,1.105,1.164,1.435,1.785,2.191,2.668,2.718],ymid:[1.051,1.134,1.293,1.6,1.977,2.418,2.693],iterations:8,events:,message:""}
+183 PASS: sol.at([0.3,0.7]) ==> [1.35,2.014]
+184 PASS: numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI]) ==> [[3,0],[-9.534e-8,-3],[-3,2.768e-7],[3.63e-7,3],[3,-3.065e-7]]
+185 PASS: numeric.dopri(0,20,[2,0],function(t,y) { return [y[1], (1-y[0]*y[0])*y[1]-y[0]]; }).at([18,19,20]) ==> [[-1.208,0.9916],[0.4258,2.535],[2.008,-0.04251]]
+186 PASS: sol = numeric.dopri(0,2,1,function (x,y) { return y; },1e-8,100,function (x,y) { return y-1.3; }); ==> {x:[0,0.0181,0.09051,0.1822,0.2624],y:[1,1.018,1.095,1.2,1.3],f:[1,1.018,1.095,1.2,1.3],ymid:[1.009,1.056,1.146,1.249],iterations:5,events:true,message:""}
+187 PASS: sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; }); ==> {x:[0,0.2,0.4055],y:[1,1.221,1.5],f:[1,1.221,1.5],ymid:[1.105,1.354],iterations:2,events:[true,true],message:""}
+188 PASS: D = numeric.identity(8); d = numeric.rep([8],0); A = [[1, 1, -1, 0,  0, 0,  0, 0,  0, 0],[-1, 1,  0, 1,  0, 0,  0, 0,  0, 0],[1, 1,  0, 0, -1, 0,  0, 0,  0, 0],[-1, 1,  0, 0,  0, 1,  0, 0,  0, 0],[1, 1,  0, 0,  0, 0, -1, 0,  0, 0],[-1, 1,  0, 0,  0, 0,  0, 1,  0, 0],[1, 1,  0, 0,  0, 0,  0, 0, -1, 0],[-1, 1,  0, 0,  0, 0,  0, 0,  0, 1]]; b = [1,  1, -1,  0, -1,  0, -1,  0, -1,  0]; numeric.solveQP(D,d,A,b,undefined,2) ==> {solution:[0.25,0,0.25,0,0.25,0,0.25,0],value:[0.125],unconstrained_solution:[0,0,0,0,0,0,0,0],iterations:[3,0],iact:[1,2,0,0,0,0,0,0,0,0],message:""}
+189 PASS: numeric.imageURL(numeric.rep([3],[[1,2],[3,4]])); ==> "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAH0lEQVQIHQAIAPf/AAEBAQICAgABBwD4/wMDAwQEBAAAogAfhs2H3QAAAABJRU5ErkJggg=="
+190 PASS: numeric.gradient(function(x) { return Math.exp(Math.sin(x[0])*(x[1]+2)); },[1,2]); ==> [62.59,24.37]
+191 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+192 PASS: numeric.seedrandom.random() ==> 0.6139
+193 PASS: numeric.seedrandom.seedrandom(3); numeric.seedrandom.random() ==> 0.7569
+Firefox testing complete. PASS: 193 FAIL: 1 Total: 194
