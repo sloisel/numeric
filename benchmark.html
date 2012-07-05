@@ -131,7 +131,7 @@ var benchmarks = [
 	],
     [
     'Sparse Laplacian LU', [3,5,10,20,30],
-    function(n) { var A = numeric.sscatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.sLUP(A); }); },
+    function(n) { var A = numeric.ccsScatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.ccsLUP(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
     ],
