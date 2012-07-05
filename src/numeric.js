@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.2";
+numeric.version = "1.1.3";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -700,62 +700,31 @@ numeric.pow = function pow(x,y) {
 numeric.clone = numeric.pointwise(['x[i]'],'ret[i] = x[i];');
 
 numeric.inv = function inv(x) {
-    var s = numeric.dim(x), abs = Math.abs;
-    if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: inv() only works on square matrices'); }
-    var n = s[0], ret = numeric.identity(n),i,j,k,A = numeric.clone(x),Aj,Ai,Ij,Ii,alpha,temp,k0,k1,k2,k3;
-    var P = numeric.linspace(0,n-1), Q = numeric.rep([n],0);
-    for(j=0;j<n-1;j++) {
-        k=j;
-        for(i=j+1;i<n;i++) { if(abs(A[i][j]) > abs(A[k][j])) { k = i; } }
-        if(k!==j) {
-            temp = A[k]; A[k] = A[j]; A[j] = temp;
-            temp = ret[k]; ret[k] = ret[j]; ret[j] = temp;
-            temp = P[k]; P[k] = P[j]; P[j] = temp;
-        }
-        Aj = A[j];
-        Ij = ret[j];
-        for(i=j+1;i<n;i++) {
-            Ai = A[i];
-            Ii = ret[i];
-            alpha = Ai[j]/Aj[j];
-            if(alpha === 0) continue;
-            for(k=j+1;k<n-1;k+=2) {
-                k1 = k+1;
-                Ai[k] -= Aj[k]*alpha;
-                Ai[k1] -= Aj[k1]*alpha;
+    var s = numeric.dim(x), abs = Math.abs, m = s[0], n = s[1];
+    var A = numeric.clone(x), Ai, Aj;
+    var I = numeric.identity(m), Ii, Ij;
+    var i,j,k,x;
+    for(j=0;j<n;++j) {
+        i0 = -1;
+        v0 = -1;
+        for(i=j;i!==m;++i) { k = abs(A[i][j]); if(k>v0) { i0 = i; v0 = k; } }
+        Aj = A[i0]; A[i0] = A[j]; A[j] = Aj;
+        Ij = I[i0]; I[i0] = I[j]; I[j] = Ij;
+        x = Aj[j];
+        for(k=j;k!==n;++k)    Aj[k] /= x; 
+        for(k=n-1;k!==-1;--k) Ij[k] /= x;
+        for(i=m-1;i!==-1;--i) {
+            if(i!==j) {
+                Ai = A[i];
+                Ii = I[i];
+                x = Ai[j];
+                for(k=j+1;k!==n;++k)  Ai[k] -= Aj[k]*x;
+                for(k=n-1;k>0;--k) { Ii[k] -= Ij[k]*x; --k; Ii[k] -= Ij[k]*x; }
+                if(k===0) Ii[0] -= Ij[0]*x;
             }
-            if(k<n) { Ai[k] -= Aj[k]*alpha; }
-            for(k=j;k>=1;k-=2) {
-                k2 = P[k-1]; 
-                k3 = P[k];
-                Ii[k2] -= Ij[k2]*alpha;
-                Ii[k3] -= Ij[k3]*alpha;
-            }
-            if(k>=0) { Ii[P[k]] -= Ij[P[k]]*alpha; }
         }
     }
-    for(j=n-1;j>0;j--) {
-        Aj = A[j];
-        Ij = ret[j];
-        for(i=0;i<j;i++) {
-            Ii = ret[i];
-            alpha = A[i][j]/Aj[j];
-            if(alpha === 0) continue;
-            for(k=0;k<n-1;k+=2) {
-                k1 = k+1;
-                Ii[k] -= Ij[k]*alpha;
-                Ii[k1] -= Ij[k1]*alpha;
-            }
-            if(k!==n) { Ii[k] -= Ij[k]*alpha; }
-        }
-    }
-    for(i=0;i<n;i++) {
-        alpha = A[i][i];
-        if(alpha === 1) continue;
-        Ii = ret[i];
-        for(j=0;j<n;j++) { Ii[j] /= alpha; }
-    }
-    return ret;
+    return I;
 }
 
 numeric.det = function det(x) {
