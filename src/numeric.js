@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.4";
+numeric.version = "1.1.5";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -833,7 +833,8 @@ numeric.sum = numeric.mapreduce('accum += xi;','0');
 numeric.sup = numeric.mapreduce('accum = max(xi,accum);','-Infinity; var max = Math.max;');
 
 numeric.linspace = function linspace(a,b,n) {
-    if(typeof n === "undefined") n = Math.round(b-a)+1;
+    if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
+    if(n<2) { return n===1?[a]:[]; }
     var i,ret = Array(n);
     n--;
     for(i=n;i>=0;i--) { ret[i] = (i*b+(n-i)*a)/n; }
@@ -1560,7 +1561,7 @@ numeric.ccsLPSolve = function ccsLPSolve(A,B,x,xj,I,Pinv,dfs) {
     }
     return x;
 }
-numeric.ccsLUP = function ccsLUP(A,threshold) {
+numeric.ccsLUP1 = function ccsLUP1(A,threshold) {
     var m = A[0].length-1;
     var L = [numeric.rep([m+1],0),[],[]], U = [numeric.rep([m+1], 0),[],[]];
     var Li = L[0], Lj = L[1], Lv = L[2], Ui = U[0], Uj = U[1], Uv = U[2];
@@ -1607,26 +1608,50 @@ numeric.ccsLUP = function ccsLUP(A,threshold) {
     for(j=Lj.length-1;j!==-1;--j) { Lj[j] = Pinv[Lj[j]]; }
     return {L:L, U:U, P:P, Pinv:Pinv};
 }
-numeric.ccsLPSolve0 = function ccsLPSolve(A,B,y,xj,I,Pinv,P) {
+numeric.ccsDFS0 = function ccsDFS0(n) {
+    this.k = Array(n);
+    this.k1 = Array(n);
+    this.j = Array(n);
+}
+numeric.ccsDFS0.prototype.dfs = function dfs(J,Ai,Aj,x,xj,Pinv,P) {
+    var m = 0,foo,n=xj.length;
+    var k = this.k, k1 = this.k1, j = this.j,km,k11;
+    if(x[J]!==0) return;
+    x[J] = 1;
+    j[0] = J;
+    k[0] = km = Ai[Pinv[J]];
+    k1[0] = k11 = Ai[Pinv[J]+1];
+    while(1) {
+        if(isNaN(km)) throw new Error("Ow!");
+        if(km >= k11) {
+            xj[n] = Pinv[j[m]];
+            if(m===0) return;
+            ++n;
+            --m;
+            km = k[m];
+            k11 = k1[m];
+        } else {
+            foo = Aj[km];
+            if(x[foo] === 0) {
+                x[foo] = 1;
+                k[m] = km;
+                ++m;
+                j[m] = foo;
+                km = Ai[Pinv[foo]];
+                k1[m] = k11 = Ai[Pinv[foo]+1];
+            } else ++km;
+        }
+    }
+}
+numeric.ccsLPSolve0 = function ccsLPSolve0(A,B,y,xj,I,Pinv,P,dfs) {
     var Ai = A[0], Aj = A[1], Av = A[2],m = Ai.length-1, n=0;
     var Bi = B[0], Bj = B[1], Bv = B[2];
     
-    if(typeof xj === "undefined") xj = [];
-    function dfs(j) {
-        var k,k0,k1;
-        if(y[j] !== 0) return;
-        y[j] = 1;
-        k0 = Ai[Pinv[j]];
-        k1 = Ai[Pinv[j]+1];
-        for(k=k0;k<k1;++k) dfs(Aj[k]);
-        xj[n] = Pinv[j];
-        ++n;
-    }
     var i,i0,i1,j,J,j0,j1,k,l,l0,l1,a;
     i0 = Bi[I];
     i1 = Bi[I+1];
-    for(i=i0;i<i1;++i) { dfs(Bj[i]); }
-    xj.length = n;
+    xj.length = 0;
+    for(i=i0;i<i1;++i) { dfs.dfs(Bj[i],Ai,Aj,y,xj,Pinv,P); }
     for(i=xj.length-1;i!==-1;--i) { j = xj[i]; y[P[j]] = 0; }
     for(i=i0;i!==i1;++i) { j = Bj[i]; y[j] = Bv[i]; }
     for(i=xj.length-1;i!==-1;--i) {
@@ -1640,17 +1665,18 @@ numeric.ccsLPSolve0 = function ccsLPSolve(A,B,y,xj,I,Pinv,P) {
         y[l] = a;
     }
 }
-numeric.ccsLUP0 = function ccsLUP(A,threshold) {
+numeric.ccsLUP0 = function ccsLUP0(A,threshold) {
     var m = A[0].length-1;
     var L = [numeric.rep([m+1],0),[],[]], U = [numeric.rep([m+1], 0),[],[]];
     var Li = L[0], Lj = L[1], Lv = L[2], Ui = U[0], Uj = U[1], Uv = U[2];
     var y = numeric.rep([m],0), xj = numeric.rep([m],0);
     var i,j,k,j0,j1,a,e,c,d,K;
-    var sol = numeric.ccsLPSolve, max = Math.max, abs = Math.abs;
+    var sol = numeric.ccsLPSolve0, max = Math.max, abs = Math.abs;
     var P = numeric.linspace(0,m-1),Pinv = numeric.linspace(0,m-1);
+    var dfs = new numeric.ccsDFS0(m);
     if(typeof threshold === "undefined") { threshold = 1; }
     for(i=0;i<m;++i) {
-        sol(L,A,y,xj,i,Pinv,P);
+        sol(L,A,y,xj,i,Pinv,P,dfs);
         a = -1;
         e = -1;
         for(j=xj.length-1;j!==-1;--j) {
@@ -1685,6 +1711,7 @@ numeric.ccsLUP0 = function ccsLUP(A,threshold) {
     for(j=Lj.length-1;j!==-1;--j) { Lj[j] = Pinv[Lj[j]]; }
     return {L:L, U:U, P:P, Pinv:Pinv};
 }
+numeric.ccsLUP = numeric.ccsLUP0;
 
 numeric.ccsDim = function ccsDim(A) { return [numeric.sup(A[1])+1,A[0].length-1]; }
 numeric.ccsGetBlock = function ccsGetBlock(A,i,j) {

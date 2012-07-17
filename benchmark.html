@@ -130,13 +130,13 @@ var benchmarks = [
 	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
 	],
     [
-    'Sparse Laplacian LU', [3,5,10,20,30],
+    'Sparse Laplacian LU', [5,10,20,30],
     function(n) { var A = numeric.ccsScatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.ccsLUP(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
     ],
     [
-    'Banded Laplacian LU', [3,5,10,20,30],
+    'Banded Laplacian LU', [5,10,20,30],
     function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); return bench(function() { numeric.cLU(A); }); },
     function(n) { return 0; },
     function(n) { return 0; }
