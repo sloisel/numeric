@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.5";
+numeric.version = "1.1.6";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -1638,8 +1638,9 @@ numeric.ccsDFS0.prototype.dfs = function dfs(J,Ai,Aj,x,xj,Pinv,P) {
                 k[m] = km;
                 ++m;
                 j[m] = foo;
-                km = Ai[Pinv[foo]];
-                k1[m] = k11 = Ai[Pinv[foo]+1];
+                foo = Pinv[foo];
+                km = Ai[foo];
+                k1[m] = k11 = Ai[foo+1];
             } else ++km;
         }
     }
