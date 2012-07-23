@@ -43,8 +43,8 @@ user=ec2-user
 server=numericjs.com
 webroot='/var/www/html'
 
-4. On your dev machine, run tools/deploy/stage.sh. Your server should now have
-a staging version of the web site eg. at numericjs.com/staging
+4. On your dev machine, run tools/deploy/stage.sh. This will run for a few minutes.
+Your server should now have a staging version of the web site eg. at numericjs.com/staging
 
 5. On your dev machine, run tools/deploy/test.sh. This will run the Selenium tests
 in browsers. Right now there's some complicated thing in there to run the IE test on my
