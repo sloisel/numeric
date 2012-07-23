@@ -1,4 +1,6 @@
 #!/bin/bash -e
+home=`dirname $0`
+cd $home
 if [ -f buildpid.log ]; then
 	buildpid=`cat buildpid.log`
 	kill -9 $buildpid || true
@@ -39,7 +41,7 @@ cp ../src/documentation.html ..
 rm -f ../workshop.php
 sed -e '/WORKSHOPHTML/r workshop.html' -e 's/WORKSHOPHTML//' -e "s/VERSIONSTRING/$ver/" workshop_in.php > ../workshop.php
 cd ..
-runjs=`which d8 || which jsdb`
+runjs=`which d8 || which jsdb || which node`
 echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log

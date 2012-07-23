@@ -35,12 +35,17 @@ Here are some of the subdirectories and their contents:
 
 * /src holds the source files. The .js files are concatenated together to produce lib/numeric.js
 
-* /lib holds numeric.js and numeric-min.js
+* /lib holds numeric.js and numeric-min.js. These files aren't checked into the git tree because
+they are created from the files in the /src subdirectory.
 
 * /resources holds some small images, css files, etc...
 
-* /tools is all the scripts and auxiliary javascript libraries that are required for building, testing
-as well as some supplemental javascript libraries used by the workshop. There's a tools/README.markdown.
+* /tools contains build/test scripts. If you're going to patch or otherwise make tweaks to numeric,
+you will need to use the /tools/build.sh script. There are also a bunch of scripts to deploy to
+the numericjs.com web site, which you probably won't need.
 
-* /tools/deploy are the scripts that are used to deploy to the numericjs.com web site.
+Building and testing
+--------------------
 
+If you tweak the code, you can build and test the library by running the script /tools/build.sh. If you plan
+to send me patches, please at least run this build script and check that all the tests pass.
