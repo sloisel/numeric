@@ -386,29 +386,6 @@ numeric.rep = function rep(s,v,k) {
 }
 
 
-numeric.dotMMbig = function dotMMbig(x,y) {
-    var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0,s1,s2,s3,baz,accum;
-    var dotVV = numeric.dotVV,min = Math.min;
-    p = x.length; q = y.length; r = y[0].length;
-    ret = Array(p);
-    woo = numeric.transpose(y);
-    for(i0=0;i0<p;i0+=4) {
-        p0 = min(i0+4,p);
-        for(i=i0;i<p0;i++) { ret[i] = Array(r); }
-        for(k0=0;k0<r;k0+=4) {
-            r0 = min(k0+4,r);
-            for(i=i0;i<p0;i++) {
-                bar = x[i];
-                foo = ret[i];
-                for(k=k0;k<r0;k++) {
-                    foo[k] = dotVV(bar,woo[k]);
-                }
-            }
-        }
-    }
-    return ret;
-}
-
 numeric.dotMMsmall = function dotMMsmall(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
     p = x.length; q = y.length; r = y[0].length;
@@ -438,16 +415,6 @@ numeric._getCol = function _getCol(A,j,x) {
     }
     if(i===0) x[0] = A[0][j];
 }
-/*
-numeric._setCol = function _setCol(A,j,x) {
-    var n = A.length, i;
-    for(i=n-1;i>0;--i) {
-        A[i][j] = x[i];
-        --i;
-        A[i][j] = x[i];
-    }
-    if(i===0) A[0][j] = x[0];
-}*/
 numeric.dotMMbig = function dotMMbig(x,y){
     var gc = numeric._getCol, p = y.length, v = Array(p);
     var m = x.length, n = y[0].length, A = new Array(m), xj;
