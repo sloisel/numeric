@@ -2928,7 +2928,7 @@ numeric.LU = function(A, fast) {
 
   return {
     LU: A,
-    P:  P,
+    P:  P
   };
 }
 
