@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.6";
+numeric.version = "1.1.7";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -844,6 +844,7 @@ numeric.norm2 = function norm2(x) { return Math.sqrt(numeric.norm2Squared(x)); }
 numeric.norminf = numeric.mapreduce('accum = max(abs(xi),accum);','0; var max = Math.max, abs = Math.abs;');
 numeric.sum = numeric.mapreduce('accum += xi;','0');
 numeric.sup = numeric.mapreduce('accum = max(xi,accum);','-Infinity; var max = Math.max;');
+numeric.inf = numeric.mapreduce('accum = min(xi,accum);','Infinity; var min = Math.min;');
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
