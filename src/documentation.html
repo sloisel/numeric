@@ -46,6 +46,17 @@ OUT> 0.2694
 <tr><td><tt>bnot</tt><td>Binary negation ~x
 <tr><td><tt>bor</tt><td>Binary or x|y
 <tr><td><tt>bxor</tt><td>Binary xor x^y
+<tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
+<tr><td><tt>ccsDot</tt><td>Sparse matrix-matrix product
+<tr><td><tt>ccsFull</tt><td>Convert sparse to full
+<tr><td><tt>ccsGather</tt><td>Gather entries of sparse matrix
+<tr><td><tt>ccsGetBlock</tt><td>Get rows/columns of sparse matrix
+<tr><td><tt>ccsLUP</tt><td>Compute LUP decomposition of sparse matrix
+<tr><td><tt>ccsLUPSolve</tt><td>Solve Ax=b using LUP decomp
+<tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
+<tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
+<tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
+<tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
 <tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
 <tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
 <tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
@@ -61,6 +72,11 @@ OUT> 0.2694
 <tr><td><tt>diveq</tt><td>Pointwise x/=y
 <tr><td><tt>dopri</tt><td>Numerical integration of ODE using Dormand-Prince RK method. Returns an object Dopri.
 <tr><td><tt>Dopri.at</tt><td>Evaluate the ODE solution at a point
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
 <tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
@@ -72,11 +88,6 @@ OUT> 0.2694
 <tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
 <tr><td><tt>gt</tt><td>Pointwise x&gt;y
 <tr><td><tt>identity</tt><td>Identity matrix
-</table>
-<td valign="top" width="33%">
-<table>
-<tr><td><b>Function</b><td><b>Description</b>
-<tr><td colspan=2><hr>
 <tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
 <tr><td><tt>inv</tt><td>Matrix inverse
 <tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
@@ -88,6 +99,8 @@ OUT> 0.2694
 <tr><td><tt>lshift</tt><td>Pointwise x&lt;&lt;y
 <tr><td><tt>lshifteq</tt><td>Pointwise x&lt;&lt;=y
 <tr><td><tt>lt</tt><td>Pointwise x&lt;y
+<tr><td><tt>LU</tt><td>Dense LU decomposition
+<tr><td><tt>LUsolve</tt><td>Dense LU solve
 <tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
 <tr><td><tt>mod</tt><td>Pointwise x%y
 <tr><td><tt>modeq</tt><td>Pointwise x%=y
@@ -109,31 +122,21 @@ OUT> 0.2694
 <tr><td><tt>prettyPrint</tt><td>Pretty-prints x
 <tr><td><tt>random</tt><td>Create an Array of random numbers
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>round</tt><td>Pointwise Math.round(x)
 <tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
 <tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
 <tr><td><tt>rshift</tt><td>Pointwise x&gt;&gt;y
 <tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
 <tr><td><tt>same</tt><td>x and y are entrywise identical
-<tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
-<tr><td><tt>ccsDot</tt><td>Sparse matrix-matrix product
-<tr><td><tt>ccsFull</tt><td>Convert sparse to full
-<tr><td><tt>ccsGather</tt><td>Gather entries of sparse matrix
-<tr><td><tt>ccsGetBlock</tt><td>Get rows/columns of sparse matrix
-</table>
-<td valign="top" width="33%">
-<table>
-<tr><td><b>Function</b><td><b>Description</b>
-<tr><td colspan=2><hr>
-<tr><td><tt>ccsLUP</tt><td>Compute LUP decomposition of sparse matrix
-<tr><td><tt>ccsLUPSolve</tt><td>Solve Ax=b using LUP decomp
-<tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
-<tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
-<tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
-<tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
 <tr><td><tt>seedrandom</tt><td>The seedrandom module
 <tr><td><tt>setBlock</tt><td>Set a block of a matrix
 <tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
+<tr><td><tt>solve</tt><td>Solve Ax=b
 <tr><td><tt>solveQP</tt><td>Solve a quadratic programming problem
 <tr><td><tt>spline</tt><td>Create a Spline object
 <tr><td><tt>Spline.at</tt><td>Evaluate the Spline at a point
@@ -492,6 +495,40 @@ IN> numeric.dot([[1,2,3],[4,5,6]],[7,8,9])
 OUT> [50,122]
 </pre>
 
+Solving the linear problem Ax=b (<a href="https://github.com/yuzeh">Dan Huang</a>):
+<pre>
+IN> numeric.solve([[1,2],[3,4]],[17,39])
+OUT> [5,6]
+</pre>
+The algorithm is based on the LU decomposition:
+<pre>
+IN> LU = numeric.LU([[1,2],[3,4]])
+OUT> {LU:[[3     ,4     ],
+          [0.3333,0.6667]],
+       P:[1,1]}
+IN> numeric.LUsolve(LU,[17,39])
+OUT> [5,6]
+</pre>
+<!--
+Stress testing
+<pre>
+IN> ns = [5,6,10,16,25,40,41];
+    for(j=0;j<ns.length;j++) {
+        n = ns[j];
+        for(k=0;k<10;++k) {
+            A = numeric.random([n,n]);
+            x = numeric.random([n]);
+            b = numeric.dot(A,x);
+            y = numeric.solve(A,b);
+            if(!(numeric.norminf(numeric.sub(x,y))<1e-12)) throw new Error(
+                "numeric.solve Stress Test:"+numeric.prettyPrint({j:j,k:k,A:A,x:x,b:b,y:y}));
+        }
+    }
+    "numeric.solve Stress Test OK";
+OUT> "numeric.solve Stress Test OK"
+</pre>
+-->
+
 The determinant:
 <pre>
 IN> numeric.det([[1,2],[3,4]]);
@@ -540,6 +577,7 @@ IN> numeric.tensor([1,2],[3,4,5])
 OUT> [[3,4,5],
       [6,8,10]]
 </pre>
+
 
 <h1>Data manipulation</h1>
 There are also some data manipulation functions. You can parse dates:
@@ -1154,15 +1192,6 @@ For performance reasons, <tt>numeric.random()</tt> uses the default <tt>Math.ran
 the seedrandom version, just do <tt>Math.random = numeric.seedrandom.random</tt>. Note that this may slightly
 decrease the performance of all <tt>Math</tt> operations.
 
-<h1>Ax = b (<a href="https://github.com/yuzeh">Dan Huang</a>)</h1>
-<pre>
-IN> A = numeric.random([5, 5]);
-    b = numeric.random([5]);
-    x = numeric.dot(numeric.inv(A), b);
-    y = numeric.solve(A, b);
-    numeric.norm2(numeric.sub(x,y)) < 1e-12
-OUT> true
-</pre>
 
 <br><br><br>
 

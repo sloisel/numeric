@@ -2932,49 +2932,39 @@ numeric.LU = function(A, fast) {
   };
 }
 
-numeric.solve = function(A, b, fast) {
-  fast = fast || false;
-
+numeric.LUsolve = function LUsolve(LUP, b, x) {
   var i, j;
-  var n   = A.length;
-  var tmp = numeric.LU(A, fast);
-  var LU_ = tmp.LU;
-  var P   = tmp.P;
-  var Pi, LU_i, LU_ii;
+  var LU = LUP.LU;
+  var n   = LU.length;
+  x = x || Array(n);
+  var P   = LUP.P;
+  var Pi, LUi, LUii;
 
-  var x = new Array(n);
-
+  for (i=n-1;i!==-1;--i) x[i] = b[i];
   for (i = 0; i < n; ++i) {
     Pi = P[i];
     if (P[i] !== i) {
-      tmp = b[i];
-      b[i] = b[Pi];
-      b[Pi] = tmp;
+      tmp = x[i];
+      x[i] = x[Pi];
+      x[Pi] = tmp;
     }
 
-    x[i] = b[i];
-
-    LU_i = LU_[i];
+    LUi = LU[i];
     for (j = 0; j < i; ++j) {
-      x[i] -= x[j] * LU_i[j];
+      x[i] -= x[j] * LUi[j];
     }
   }
 
   for (i = n - 1; i >= 0; --i) {
-    Pi = P[i];
-    if (P[i] != i) {
-      tmp = b[i];
-      b[i] = b[Pi];
-      b[Pi] = tmp;
-    }
-
-    LU_i = LU_[i];
+    LUi = LU[i];
     for (j = i + 1; j < n; ++j) {
-      x[i] -= x[j] * LU_i[j];
+      x[i] -= x[j] * LUi[j];
     }
 
-    x[i] /= LU_i[i];
+    x[i] /= LUi[i];
   }
 
   return x;
 }
+
+numeric.solve = function solve(A,b,fast) { return numeric.LUsolve(numeric.LU(A,fast), b); }
