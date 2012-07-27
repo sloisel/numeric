@@ -80,13 +80,14 @@ var benchmarks = [
   'Solve Ax=b, A square', [3,5,10,20,30,50,75,100,200],
   function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.dot(numeric.inv(A), b); }); },
   function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b); }); },
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b, true); }); },
   ],
 ];
 
 var pwr = [3,];
 
 var k=0,b=0;
-var libs = ['inv(A) * b','solve(A,b)'];
+var libs = ['inv(A) * b','solve(A,b)','solve(A,b,true)'];
 var datasets = [];
 var l;
 var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
