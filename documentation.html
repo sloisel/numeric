@@ -520,7 +520,7 @@ IN> ns = [5,6,10,16,25,40,41];
             x = numeric.random([n]);
             b = numeric.dot(A,x);
             y = numeric.solve(A,b);
-            if(!(numeric.norminf(numeric.sub(x,y))<1e-12)) throw new Error(
+            if(!(numeric.norminf(numeric.sub(x,y))<1e-10)) throw new Error(
                 "numeric.solve Stress Test:"+numeric.prettyPrint({j:j,k:k,A:A,x:x,b:b,y:y}));
         }
     }
