@@ -1,0 +1,189 @@
+<html>
+<head>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="resources/style.css">
+<title>Numeric Javascript: Benchmarks</title>
+</head>
+<body>
+<!--#include file="resources/header.html" -->
+
+We are now running a linear algebra performance benchmark in your browser! Please ensure that your seatbelt
+is fastened and your tray table is upright while we invert 100x100 matrices.<br><br>
+
+<b>Performance (<a href="http://en.wikipedia.org/wiki/FLOPS">MFLOPS</a>)</b>
+<div style="width:1000px;overflow:hidden;font-size:14px;">
+<div id="placeholder" style="width:700px;height:500px;float:left;"></div>
+<div id="legend" style="width:250px;height:100px;overflow:hidden;"></div>
+</div>
+<div id="meanscore">Geometric mean of scores: </div><br>
+
+<b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time.
+The number of function calls per seconds is converted into a FLOP rate. As we move right within each test, the matrix size increases.<br><br>
+
+<b>What tricks are used to increase performance in Numeric?</b>
+<ul>
+  <li>Replace inner loop <tt>for(j=0;j&lt;n;j++) A[i][j]</tt> by the equivalent <tt>Ai = A[i]; for(j=0;j&lt;n;j++) Ai[j]</tt> ("hoisting" the <tt>[i]</tt> out of the loop</tt>).
+  <li>Preallocate Arrays: <tt>A = new Array(n)</tt> instead of <tt>A = []</tt>.
+  <li>Use <tt>Array</tt> objects directly (abstractions slow you down). Getters and setters are bad.
+  <li>Use <tt>for(j=n-1;j&gt;=0;j--)</tt> if it is faster.
+  <li>Do not put anything in <tt>Array.prototype</tt>. If you modify <tt>Array.prototype</tt>, it slows down everything significantly.
+  <li>Big Matrix*Matrix product: transpose the second matrix and rearrange the loops to exploit locality.
+  <li>Unroll loops.
+  <li>Don't nest functions.
+  <li>Don't call functions, inline them manually. Except...
+  <li>...big functions can confuse the JIT. If a new code path is run in a function, the function can be deoptimized by the JIT.
+  <li>Avoid polymorphism.
+  <li>Localize references. For example: replace <tt>for(i=n-1;i>=0;i--) x[i] = Math.random();</tt> by <tt>rnd = Math.random; for(i=n-1;i>=0;i--) x[i] = rnd();</tt>. (Make sure <tt>rnd</tt> and <tt>x</tt> really are local variables!)
+  <li>Deep lexical scopes are bad. You can create a function without much of a lexical scope by using
+    <tt>new Function('...');</tt>.
+</ul>
+<br>
+
+<b>GC pauses?</b>
+If you reload the page, the benchmark will run again and will give slightly different results.
+This could be due to GC pauses or other background tasks, DOM updates, etc...
+To get an idea of the impact of this, load this page in two or more different tabs (not at the same time,
+one after the other) and switch between the tabs and see the differences in the performance chart.
+<br><br><br>
+
+<table id="bench"></table>
+
+<!--[if lte IE 9]><script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script><![endif]-->
+<!--<script src="lib/numeric.js"></script>
+<script src="tools/sylvester.js"></script>
+<script src="tools/trunk/closure/goog/base.js"></script>
+<script src="tools/jquery-1.7.1.min.js"></script>
+<script src="tools/jquery.flot.min.js"></script>-->
+<script src="tools/benchlib.js"></script>
+
+<script>
+"use strict";
+
+// Guess which browser needs this.
+if (!('map' in Array.prototype)) {
+    Array.prototype.map= function(mapper, that /*opt*/) {
+        var other= new Array(this.length);
+        for (var i= 0, n= this.length; i<n; i++)
+            if (i in this)
+                other[i]= mapper.call(that, this[i], i, this);
+        return other;
+    };
+}
+
+goog.require('goog.math.Matrix');
+var bench = numeric.bench;
+var geometricmeans = [0,0,0];
+var mkA = function(n) { return numeric.random([n,n]); };
+var mkV = function(n) { return numeric.random([n]); };
+var benchmarks = [
+  [
+  'Solve Ax=b, A square', [3,5,10,20,30,50,75,100,200],
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.dot(numeric.inv(A), b); }); },
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b); }); },
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b, true); }); },
+  ],
+];
+
+var pwr = [3,];
+
+var k=0,b=0;
+var libs = ['inv(A) * b','solve(A,b)','solve(A,b,true)'];
+var datasets = [];
+var l;
+var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
+for(l=0;l<libs.length;l++) { 
+  datasets[l] = { 
+    data: [], 
+    label: libs[l], 
+    color: colors[l], 
+    points: { show: true }, 
+    lines: { show: true } 
+    };
+}
+l=1;
+var l0,xticks = [];
+for(b=0;b<benchmarks.length;b++) {
+  l0 = l;
+  for(k=0;k<benchmarks[b][1].length;k++) {
+    l++;
+  }
+  xticks.push([(l0+l)*0.5,benchmarks[b][0]]);
+}
+k=0;
+b=0;
+var count = 1;
+var MSIE = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
+numeric.precision = 6;
+var c0 = [[],[],[]];
+var counts = [0,0,0];
+function invbench(b,k,lib,rep) {
+  var ks,sz = benchmarks[b][1][k];
+  var i,j,foo;
+  ks = sz.toString();
+  if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
+  else { foo = benchmarks[b][lib+2]; c0[lib][rep] = foo(sz); }
+  rep++;
+  if(rep === 1) { rep = 0; lib++; }
+  if(lib+2 === benchmarks[b].length) {
+    k++;
+    lib=0;
+    var cps = [];
+    var mi = 1e6/Math.pow(benchmarks[b][1][k-1],pwr[b]);
+    for(i=0;i<c0.length;i++) {
+        cps[i] = 0;
+        for(j=0;j<c0[i].length;j++) cps[i] += c0[i][j];
+      cps[i] /= (c0[i].length*mi);
+    }
+    for(i=0;i<cps.length;i++) {
+      if(MSIE || cps[i]) datasets[i].data.push([count,cps[i]]);
+      if(cps[i]) {
+          counts[i]++;
+          geometricmeans[i] += Math.log(cps[i]);
+      }
+    }
+    var foo = '<td>n='+ks+'</td>';
+    var color = '', uncolor='';
+    for(i=0;i<cps.length;i++) {
+      foo +=  '<td>'+cps[i].toPrecision(8)+'</td>';
+    }
+    if(!MSIE) {
+      var t = document.getElementById('bench');
+      var r = t.insertRow(-1);
+      if(k === 1) { 
+        r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
+                      +'<td width=125px><b>Numeric</b></td>'
+                        +'<td width=125px><b>Google Closure</b></td>'
+                        +'<td width=125px><b>Sylvester</b></td>');
+        r = t.insertRow(-1); 
+      }
+      r.innerHTML = foo;
+    }
+    $.plot($("#placeholder"), datasets, 
+        { 
+          legend: {container: '#legend'}, 
+          xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
+          yaxis:  {ticks:20}
+        });
+      c0 = [[],[],[]];
+    count++;
+  }
+  if(k === benchmarks[b][1].length) {
+    for(i=0;i<cps.length;i++) datasets[i].data.push(null);
+    k=0; b++;
+  }
+  if(b < benchmarks.length) { 
+    setTimeout('invbench('+b.toString()
+                      +','+k.toString()
+                      +','+lib.toString()
+                      +','+rep.toString()
+                      +')',MSIE?10:0); 
+    } else {
+        geometricmeans = numeric.exp(numeric.div(geometricmeans,counts));
+        $('#meanscore')[0].innerHTML += numeric.prettyPrint(geometricmeans)+'MFLOPS';
+    }
+}
+window.onload = function() { invbench(0,0,0,0); }
+</script>
+
+<br><br><br>
+</body>

@@ -2878,3 +2878,107 @@ numeric.dopri = function dopri(x0,x1,y0,f,tol,maxit,event) {
     ret.iterations = it;
     return ret;
 }
+
+// 11. Ax = b
+numeric.LU = function(A, fast) {
+  fast = fast || false;
+
+  var abs = Math.abs;
+  var i, j, k, absAjk, Akk, Ak, Pk, Ai;
+  var max;
+  var n = A.length;
+  var P = new Array(n);
+
+  if (!fast) {
+    var A_ = A;
+    var A = new Array(n);
+    for (i = 0; i < n; ++i) {
+      A[i] = A_[i].slice(0);
+    }
+  }
+
+  for (k = 0; k < n; ++k) {
+    Pk = k;
+    Ak = A[k];
+    max = abs(Ak[k]);
+    for (j = k + 1; j < n; ++j) {
+      absAjk = abs(A[j][k]);
+      if (max < absAjk) {
+        max = absAjk;
+        Pk = j;
+      }
+    }
+    P[k] = Pk;
+
+    if (Pk != k) {
+      A[k] = A[Pk];
+      A[Pk] = Ak;
+      Ak = A[k];
+    }
+
+    Akk = Ak[k];
+
+    for (i = k + 1; i < n; ++i) {
+      A[i][k] /= Akk;
+    }
+
+    for (i = k + 1; i < n; ++i) {
+      Ai = A[i];
+      for (j = k + 1; j < n; ++j) {
+        Ai[j] -= Ai[k] * Ak[j];
+      }
+    }
+  }
+
+  return {
+    LU: A,
+    P:  P,
+  };
+}
+
+numeric.solve = function(A, b, fast) {
+  fast = fast || false;
+
+  var i, j;
+  var n   = A.length;
+  var tmp = numeric.LU(A, fast);
+  var LU_ = tmp.LU;
+  var P   = tmp.P;
+  var Pi, LU_i, LU_ii;
+
+  var x = new Array(n);
+
+  for (i = 0; i < n; ++i) {
+    Pi = P[i];
+    if (P[i] !== i) {
+      tmp = b[i];
+      b[i] = b[Pi];
+      b[Pi] = tmp;
+    }
+
+    x[i] = b[i];
+
+    LU_i = LU_[i];
+    for (j = 0; j < i; ++j) {
+      x[i] -= x[j] * LU_i[j];
+    }
+  }
+
+  for (i = n - 1; i >= 0; --i) {
+    Pi = P[i];
+    if (P[i] != i) {
+      tmp = b[i];
+      b[i] = b[Pi];
+      b[Pi] = tmp;
+    }
+
+    LU_i = LU_[i];
+    for (j = i + 1; j < n; ++j) {
+      x[i] -= x[j] * LU_i[j];
+    }
+
+    x[i] /= LU_i[i];
+  }
+
+  return x;
+}
