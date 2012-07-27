@@ -2886,16 +2886,9 @@ numeric.LU = function(A, fast) {
   var abs = Math.abs;
   var i, j, k, absAjk, Akk, Ak, Pk, Ai;
   var max;
-  var n = A.length;
+  var n = A.length, n1 = n-1;
   var P = new Array(n);
-
-  if (!fast) {
-    var A_ = A;
-    var A = new Array(n);
-    for (i = 0; i < n; ++i) {
-      A[i] = A_[i].slice(0);
-    }
-  }
+  if(!fast) A = numeric.clone(A);
 
   for (k = 0; k < n; ++k) {
     Pk = k;
@@ -2924,9 +2917,12 @@ numeric.LU = function(A, fast) {
 
     for (i = k + 1; i < n; ++i) {
       Ai = A[i];
-      for (j = k + 1; j < n; ++j) {
+      for (j = k + 1; j < n1; ++j) {
+        Ai[j] -= Ai[k] * Ak[j];
+        ++j;
         Ai[j] -= Ai[k] * Ak[j];
       }
+      if(j===n1) Ai[j] -= Ai[k] * Ak[j];
     }
   }
 
