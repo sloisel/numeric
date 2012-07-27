@@ -1154,6 +1154,15 @@ For performance reasons, <tt>numeric.random()</tt> uses the default <tt>Math.ran
 the seedrandom version, just do <tt>Math.random = numeric.seedrandom.random</tt>. Note that this may slightly
 decrease the performance of all <tt>Math</tt> operations.
 
+<h1>Ax = b (<a href="https://github.com/yuzeh">Dan Huang</a>)</h1>
+<pre>
+IN> A = numeric.random([5, 5]);
+    b = numeric.random([5]);
+    x = numeric.dot(numeric.inv(A), b);
+    y = numeric.solve(A, b);
+    numeric.norm2(numeric.sub(x,y)) < 1e-12
+OUT> true
+</pre>
 
 <br><br><br>
 
