@@ -701,8 +701,6 @@ OUT> {x: [[ 1,  2,  5],
           [ 3,  5, -1],
           [ 7, -3,  5]],
       y: }
-IN> C.sub(A).norm2()<1e-13
-OUT> true
 </pre>
 Note that eigenvalues and eigenvectors are returned as complex numbers (type <tt>numeric.T</tt>). This is because
 eigenvalues are often complex even when the matrix is real.<br><br>
@@ -744,30 +742,39 @@ V:
 <!--
   Some further tests.
 <pre>
-IN> n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12
+IN> n = 31; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 32; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 33; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 34; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 35; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
+IN> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
-IN> m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
-IN> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
+IN> numeric.eig([[1, 0, 0], [0, 0.7181, -0.6960], [0, 0.6960, 0.7181]]) // This was a bug found by bdmartin
+OUT> {lambda: 
+{x: 
+[          1,     0.7181,     0.7181],
+y: 
+[          0,      0.696,     -0.696]},
+E: 
+{x: 
+[[          1,          0,          0],
+ [          0,          0,     0.7071],
+ [          0,    -0.7071,          0]],
+y: 
+[[          0,          0,          0],
+ [          0,    -0.7071,          0],
+ [          0,          0,     0.7071]]}}
 </pre>
 -->
 

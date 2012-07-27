@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.7";
+numeric.version = "1.1.8";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -1257,17 +1257,19 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     for(j=0;j<m-2;j++) {
         x = Array(m-j-1);
         for(i=j+1;i<m;i++) { x[i-j-1] = A[i][j]; }
-        v = numeric.house(x);
-        B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
-        C = numeric.tensor(v,numeric.dot(v,B));
-        for(i=j+1;i<m;i++) { Ai = A[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Ai[k] -= 2*Ci[k-j]; }
-        B = numeric.getBlock(A,[0,j+1],[m-1,m-1]);
-        C = numeric.tensor(numeric.dot(B,v),v);
-        for(i=0;i<m;i++) { Ai = A[i]; Ci = C[i]; for(k=j+1;k<m;k++) Ai[k] -= 2*Ci[k-j-1]; }
-        B = Array(m-j-1);
-        for(i=j+1;i<m;i++) B[i-j-1] = Q[i];
-        C = numeric.tensor(v,numeric.dot(v,B));
-        for(i=j+1;i<m;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
+        if(numeric.norm2(x)>0) {
+            v = numeric.house(x);
+            B = numeric.getBlock(A,[j+1,j],[m-1,m-1]);
+            C = numeric.tensor(v,numeric.dot(v,B));
+            for(i=j+1;i<m;i++) { Ai = A[i]; Ci = C[i-j-1]; for(k=j;k<m;k++) Ai[k] -= 2*Ci[k-j]; }
+            B = numeric.getBlock(A,[0,j+1],[m-1,m-1]);
+            C = numeric.tensor(numeric.dot(B,v),v);
+            for(i=0;i<m;i++) { Ai = A[i]; Ci = C[i]; for(k=j+1;k<m;k++) Ai[k] -= 2*Ci[k-j-1]; }
+            B = Array(m-j-1);
+            for(i=j+1;i<m;i++) B[i-j-1] = Q[i];
+            C = numeric.tensor(v,numeric.dot(v,B));
+            for(i=j+1;i<m;i++) { Qi = Q[i]; Ci = C[i-j-1]; for(k=0;k<m;k++) Qi[k] -= 2*Ci[k]; }
+        }
     }
     return {H:A, Q:Q};
 }
