@@ -385,28 +385,6 @@ numeric.rep = function rep(s,v,k) {
     return ret;
 }
 
-numeric.dotMMbig = function dotMMbig(x,y) {
-    var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0,s1,s2,s3,baz,accum;
-    var dotVV = numeric.dotVV,min = Math.min;
-    p = x.length; q = y.length; r = y[0].length;
-    ret = Array(p);
-    woo = numeric.transpose(y);
-    for(i0=0;i0<p;i0+=4) {
-        p0 = min(i0+4,p);
-        for(i=i0;i<p0;i++) { ret[i] = Array(r); }
-        for(k0=0;k0<r;k0+=4) {
-            r0 = min(k0+4,r);
-            for(i=i0;i<p0;i++) {
-                bar = x[i];
-                foo = ret[i];
-                for(k=k0;k<r0;k++) {
-                    foo[k] = dotVV(bar,woo[k]);
-                }
-            }
-        }
-    }
-    return ret;
-}
 
 numeric.dotMMsmall = function dotMMsmall(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
@@ -428,6 +406,40 @@ numeric.dotMMsmall = function dotMMsmall(x,y) {
     }
     return ret;
 }
+numeric._getCol = function _getCol(A,j,x) {
+    var n = A.length, i;
+    for(i=n-1;i>0;--i) {
+        x[i] = A[i][j];
+        --i;
+        x[i] = A[i][j];
+    }
+    if(i===0) x[0] = A[0][j];
+}
+numeric.dotMMbig = function dotMMbig(x,y){
+    var gc = numeric._getCol, p = y.length, v = Array(p);
+    var m = x.length, n = y[0].length, A = new Array(m), xj;
+    var i,j,k,z;
+    --p;
+    --m;
+    for(i=m;i!==-1;--i) A[i] = Array(n);
+    --n;
+    for(i=n;i!==-1;--i) {
+        gc(y,i,v);
+        for(j=m;j!==-1;--j) {
+            z=0;
+            xj = x[j];
+            for(k=p;k>0;--k) {
+                z += xj[k] * v[k];
+                --k;
+                z += xj[k] * v[k];
+            }
+            if(k===0) z+= xj[0] * v[0];
+            A[j][i] = z;
+        }
+    }
+    return A;
+}
+
 numeric.dotMV = function dotMV(x,y) {
     var p = x.length, q = y.length,i;
     var ret = Array(p), dotVV = numeric.dotVV;
@@ -465,7 +477,7 @@ numeric.dot = function dot(x,y) {
     var d = numeric.dim;
     switch(d(x).length*1000+d(y).length) {
     case 2002:
-        if(y.length < 40) return numeric.dotMMsmall(x,y);
+        if(y.length < 10) return numeric.dotMMsmall(x,y);
         else return numeric.dotMMbig(x,y);
     case 2001: return numeric.dotMV(x,y);
     case 1002: return numeric.dotVM(x,y);
