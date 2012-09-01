@@ -28,7 +28,7 @@ def test(name,driver):
                 print k,"PASS:",tests[k][0],'==>',foo
                 p=p+1
             except Exception as ex:
-                print k,"FAIL:",tests[k][0],'==>',foo,"reason:",ex
+                print k,"FAIL:",tests[k][0],'==>',foo,"reason:",str(ex)
                 f=f+1
         print name,'testing complete. PASS:',p,'FAIL:',f,'Total:',t
     except:

@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.1.8";
+numeric.version = "1.2.0";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -674,6 +674,24 @@ numeric.ops1 = {
     }
 }());
 
+numeric._f2 = ['atan2','pow','max','min'];
+((function() {
+    var i,j;
+    for(j=0;j<numeric._f2.length;++j) {
+        i = numeric._f2[j];
+        numeric[i+'VV'] = numeric.pointwise(['x[i]','y[i]'],'ret[i] = zz(x[i],y[i]);','var zz = Math.'+i+';');
+        numeric[i+'VS'] = numeric.pointwise(['x[i]','y'],'ret[i] = zz(x[i],y);','var zz = Math.'+i+';');
+        numeric[i+'SV'] = numeric.pointwise(['x','y[i]'],'ret[i] = zz(x,y[i]);','var zz = Math.'+i+';');
+        numeric[i] = Function('x','y',
+            'if(typeof x === "object") {\n'+
+            '    if(typeof y === "object") return numeric.'+i+'VV(x,y);\n'+
+            '    return numeric.'+i+'VS(x,y);\n'+
+            '}\n'+
+            'if (typeof y === "object") return numeric.'+i+'SV(x,y);\n'+
+            'return Math.'+i+'(x,y);\n');
+        }
+})());
+
 numeric.atan2VV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = atan2(x[i],y[i]);','var atan2 = Math.atan2;');
 numeric.atan2VS = numeric.pointwise(['x[i]','y'],'ret[i] = atan2(x[i],y);','var atan2 = Math.atan2;');
 numeric.atan2SV = numeric.pointwise(['x','y[i]'],'ret[i] = atan2(x,y[i]);','var atan2 = Math.atan2;');
@@ -878,6 +896,45 @@ numeric.setBlock = function setBlock(x,from,to,B) {
     }
     foo(x,B,0);
     return x;
+}
+
+numeric.getRange = function getRange(A,I,J) {
+    var m = I.length, n = J.length;
+    var i,j;
+    var B = Array(m), Bi, AI;
+    for(i=m-1;i!==-1;--i) {
+        B[i] = Array(n);
+        Bi = B[i];
+        AI = A[I[i]];
+        for(j=n-1;j!==-1;--j) Bi[j] = AI[J[j]];
+    }
+    return B;
+}
+
+numeric.blockMatrix = function blockMatrix(X) {
+    var s = numeric.dim(X);
+    if(s.length<4) return numeric.blockMatrix([X]);
+    var m=s[0],n=s[1],M,N,i,j,Xij;
+    M = 0; N = 0;
+    for(i=0;i<m;++i) M+=X[i][0].length;
+    for(j=0;j<n;++j) N+=X[0][j][0].length;
+    var Z = Array(M);
+    for(i=0;i<M;++i) Z[i] = Array(N);
+    var I=0,J,ZI,k,l,Xijk;
+    for(i=0;i<m;++i) {
+        J=N;
+        for(j=n-1;j!==-1;--j) {
+            Xij = X[i][j];
+            J -= Xij[0].length;
+            for(k=Xij.length-1;k!==-1;--k) {
+                Xijk = Xij[k];
+                ZI = Z[I+k];
+                for(l = Xijk.length-1;l!==-1;--l) ZI[J+l] = Xijk[l];
+            }
+        }
+        I += X[i][0].length;
+    }
+    return Z;
 }
 
 numeric.tensor = function tensor(x,y) {
@@ -2618,6 +2675,7 @@ numeric.T.prototype.ifft = function ifft() {
 numeric.gradient = function gradient(f,x) {
     var n = x.length;
     var f0 = f(x);
+    if(isNaN(f0)) throw new Error('gradient: f(x) is a NaN!');
     var max = Math.max;
     var i,x0 = numeric.clone(x),f1,f2, J = Array(n);
     var div = numeric.div, sub = numeric.sub,errest,roundoff,max = Math.max,eps = 1e-3,abs = Math.abs, min = Math.min;
@@ -2632,6 +2690,7 @@ numeric.gradient = function gradient(f,x) {
             x0[i] = x[i]-h;
             f2 = f(x0);
             x0[i] = x[i];
+            if(isNaN(f1) || isNaN(f2)) { h/=16; continue; }
             J[i] = (f1-f2)/(2*h);
             t0 = x[i]-h;
             t1 = x[i];
@@ -2650,11 +2709,12 @@ numeric.gradient = function gradient(f,x) {
 numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
     var grad = numeric.gradient;
     if(typeof tol === "undefined") { tol = 1e-8; }
-    if(typeof gradient === "undefined") gradient = function(x) { return grad(f,x); };
+    if(typeof gradient === "undefined") { gradient = function(x) { return grad(f,x); }; }
     if(typeof maxit === "undefined") maxit = 1000;
     x0 = numeric.clone(x0);
     var n = x0.length;
     var f0 = f(x0),f1,df0;
+    if(isNaN(f0)) throw new Error('uncmin: f(x0) is a NaN!');
     var max = Math.max, norm2 = numeric.norm2;
     tol = max(tol,numeric.epsilon);
     var step,g0,g1,H1 = numeric.identity(n);
@@ -2664,7 +2724,7 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
     var msg = "";
     g0 = gradient(x0);
     while(it<maxit) {
-        if(typeof callback === "function") callback(it,x0,f0,g0,H1);
+        if(typeof callback === "function") { if(callback(it,x0,f0,g0,H1)) { msg = "Callback returned true"; break; } }
         if(!all(isfinite(g0))) { msg = "Gradient has Infinity or NaN"; break; }
         step = neg(dot(H1,g0));
         if(!all(isfinite(step))) { msg = "Search direction has Infinity or NaN"; break; }
@@ -2673,12 +2733,13 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
         t = 1;
         df0 = dot(g0,step);
         // line search
+        x1 = x0;
         while(it < maxit) {
             if(t*nstep < tol) { break; }
             s = mul(step,t);
             x1 = add(x0,s);
             f1 = f(x1);
-            if(f1-f0 >= 0.1*t*df0) {
+            if(f1-f0 >= 0.1*t*df0 || isNaN(f1)) {
                 t *= 0.5;
                 ++it;
                 continue;
@@ -2934,11 +2995,11 @@ numeric.LU = function(A, fast) {
   };
 }
 
-numeric.LUsolve = function LUsolve(LUP, b, x) {
+numeric.LUsolve = function LUsolve(LUP, b) {
   var i, j;
   var LU = LUP.LU;
   var n   = LU.length;
-  x = x || Array(n);
+  var x = numeric.clone(b);
   var P   = LUP.P;
   var Pi, LUi, LUii;
 
@@ -2970,3 +3031,153 @@ numeric.LUsolve = function LUsolve(LUP, b, x) {
 }
 
 numeric.solve = function solve(A,b,fast) { return numeric.LUsolve(numeric.LU(A,fast), b); }
+
+// 12. Linear programming
+numeric.echelonize = function echelonize(A) {
+    var s = numeric.dim(A), m = s[0], n = s[1];
+    var I = numeric.identity(m);
+    var P = Array(m);
+    var i,j,k,l,Ai,Ii,Z,a;
+    var abs = Math.abs;
+    var diveq = numeric.diveq;
+    A = numeric.clone(A);
+    for(i=0;i<m;++i) {
+        k = 0;
+        Ai = A[i];
+        Ii = I[i];
+        for(j=1;j<n;++j) if(abs(Ai[k])<abs(Ai[j])) k=j;
+        P[i] = k;
+        diveq(Ii,Ai[k]);
+        diveq(Ai,Ai[k]);
+        for(j=0;j<m;++j) if(j!==i) {
+            Z = A[j]; a = Z[k];
+            for(l=n-1;l!==-1;--l) Z[l] -= Ai[l]*a;
+            Z = I[j];
+            for(l=m-1;l!==-1;--l) Z[l] -= Ii[l]*a;
+        }
+    }
+    return {I:I, A:A, P:P};
+}
+
+numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
+    var sum = numeric.sum, log = numeric.log, mul = numeric.mul, sub = numeric.sub, dot = numeric.dot, div = numeric.div, add = numeric.add;
+    var m = c.length, n = b.length,y;
+    var unbounded = false, cb;
+    if(typeof tol === "undefined") tol = numeric.epsilon;
+    if(typeof maxit === "undefined") maxit = 1000;
+    if(typeof x === "undefined") {
+        var c0 = numeric.rep([m],0).concat([1]);
+        var J = numeric.rep([n,1],-1);
+        var A0 = numeric.blockMatrix([[A                   ,   J  ]]);
+        var b0 = b;
+        y = numeric.rep([m],0).concat(Math.max(0,numeric.sup(numeric.neg(b)))+1);
+        var x0 = _solveLP(c0,A0,b0,tol,maxit,y);
+        x = numeric.clone(x0.solution);
+        x.length = m;
+        var foo = numeric.inf(sub(b,dot(A,x)));
+        if(foo<0) { return { solution: NaN, message: "Infeasible" }; }
+        cb = function cb(it,x0,f0,g0,H1) {
+            var s = dot(c,g0), Ag0 = dot(A,g0),i;
+            for(i=n-1;i!==-1;--i) if(s*Ag0[i]<0) return false;
+            unbounded = true; 
+            return true;
+        };
+    } else {
+        cb = function cb(it,x0,f0,g0,H1) {
+            if(x0[m-1]>0) return false;
+            unbounded = true;
+            return true;
+        };
+    }
+    var alpha = 1.0;
+    var f0,df0;
+    while(1) {
+        f0 = function(z) { return sub(dot(c,z),mul(alpha,sum(log(sub(b,dot(A,z)))))); };
+        df0 = function(z) { return add(c,mul(alpha,dot(div(1,sub(b,dot(A,z))),A))); };
+        y = numeric.uncmin(f0,x,alpha,df0,maxit,cb).solution;
+        if(unbounded) return { solution: y, message: "Unbounded" };
+        if(alpha<tol) return { solution: y, message: "" };
+        x = y;
+        alpha *= 0.01;
+    }
+};
+
+numeric.solveLP = function solveLP(c,A,b,Aeq,beq,tol,maxit) {
+    if(typeof Aeq === "undefined") return numeric._solveLP(c,A,b,tol,maxit,x);
+    var m = Aeq.length, n = Aeq[0].length, o = A.length;
+    var B = numeric.echelonize(Aeq);
+    var flags = numeric.rep([n],0);
+    var P = B.P;
+    var Q = [];
+    var i;
+    for(i=P.length-1;i!==-1;--i) flags[P[i]] = 1;
+    for(i=n-1;i!==-1;--i) if(flags[i]===0) Q.push(i);
+    var g = numeric.getRange;
+    var I = numeric.linspace(0,m-1), J = numeric.linspace(0,o-1);
+    var Aeq2 = g(Aeq,I,Q), A1 = g(A,J,P), A2 = g(A,J,Q), dot = numeric.dot, sub = numeric.sub;
+    var A3 = dot(A1,B.I);
+    var A4 = sub(A2,dot(A3,Aeq2)), b4 = sub(b,dot(A3,beq));
+    var c1 = Array(P.length), c2 = Array(Q.length);
+    for(i=P.length-1;i!==-1;--i) c1[i] = c[P[i]];
+    for(i=Q.length-1;i!==-1;--i) c2[i] = c[Q[i]];
+    var c4 = sub(c2,dot(c1,dot(B.I,Aeq2)));
+    var S = numeric._solveLP(c4,A4,b4,tol,maxit);
+    var x2 = S.solution;
+    var x1 = dot(B.I,sub(beq,dot(Aeq2,x2)));
+    var x = Array(c.length);
+    for(i=P.length-1;i!==-1;--i) x[P[i]] = x1[i];
+    for(i=Q.length-1;i!==-1;--i) x[Q[i]] = x2[i];
+    return { solution: x, message:S.message };
+}
+
+numeric.MPStoLP = function MPStoLP(MPS) {
+    if(MPS instanceof String) { MPS.split('\n'); }
+    var state = 0;
+    var states = ['Initial state','NAME','ROWS','COLUMNS','RHS','BOUNDS','ENDATA'];
+    var n = MPS.length;
+    var i,j,z,N=0,rows = {}, sign = [], rl = 0, vars = {}, nv = 0;
+    var name;
+    var c = [], A = [], b = [];
+    function err(e) { throw new Error('MPStoLP: '+e+'\nLine '+i+': '+MPS[i]+'\nCurrent state: '+states[state]+'\n'); }
+    for(i=0;i<n;++i) {
+        z = MPS[i];
+        var w0 = z.match(/\S*/g);
+        var w = [];
+        for(j=0;j<w0.length;++j) if(w0[j]!=="") w.push(w0[j]);
+        if(w.length === 0) continue;
+        for(j=0;j<states.length;++j) if(z.substr(0,states[j].length) === states[j]) break;
+        if(j<states.length) {
+            state = j;
+            if(j===1) { name = w[1]; }
+            if(j===6) return { name:name, c:c, A:numeric.transpose(A), b:b, rows:rows, vars:vars };
+            continue;
+        }
+        switch(state) {
+        case 0: case 1: err('Unexpected line');
+        case 2: 
+            switch(w[0]) {
+            case 'N': if(N===0) N = w[1]; else err('Two or more N rows'); break;
+            case 'L': rows[w[1]] = rl; sign[rl] = 1; b[rl] = 0; ++rl; break;
+            case 'G': rows[w[1]] = rl; sign[rl] = -1;b[rl] = 0; ++rl; break;
+            case 'E': rows[w[1]] = rl; sign[rl] = 0;b[rl] = 0; ++rl; break;
+            default: err('Parse error '+numeric.prettyPrint(w));
+            }
+            break;
+        case 3:
+            if(!vars.hasOwnProperty(w[0])) { vars[w[0]] = nv; c[nv] = 0; A[nv] = numeric.rep([rl],0); ++nv; }
+            var p = vars[w[0]];
+            for(j=1;j<w.length;j+=2) {
+                if(w[j] === N) { c[p] = parseFloat(w[j+1]); continue; }
+                var q = rows[w[j]];
+                A[p][q] = (sign[q]<0?-1:1)*parseFloat(w[j+1]);
+            }
+            break;
+        case 4:
+            for(j=1;j<w.length;j+=2) b[rows[w[j]]] = (sign[rows[w[j]]]<0?-1:1)*parseFloat(w[j+1]);
+            break;
+        case 5: /*FIXME*/ break;
+        case 6: err('Internal error');
+        }
+    }
+    err('Reached end of file without ENDATA');
+}

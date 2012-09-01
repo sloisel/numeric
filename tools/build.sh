@@ -23,7 +23,7 @@ cat > ../resources/header.html <<XXXXX
 <table class="nav"><tr class="nav">
 <td class="nav" style="width:150px;"><img src="resources/paperplane-small.png">
 <td class="navmain">
-<b>Numeric Javascript: Workshop</b>
+<b>Numeric Javascript</b>
 <ul class="nav">
     <li class="nav"><a id = "linkhome" class="nav" href="index.html">HOME</a></li>
     <li class="nav"><a id = "linkworkshop" class="nav" href="workshop.php">WORKSHOP</a></li>
@@ -45,8 +45,37 @@ runjs=`which d8 || which jsdb || which node`
 echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
-cd tools
+
+cd lib
+rm -rf numeric-$ver
+mkdir numeric-$ver
+cp numeric-$ver.js numeric-$ver
+cp numeric-$ver.min.js numeric-$ver
+cat > numeric-$ver/package.json <<EOF
+{
+"name": "numeric",
+"version": "$ver",
+"author": "Sébastien Loisel",
+"description": "Numerical analysis in javascript",
+"keywords": [
+"numeric",
+"analysis",
+"math"
+],
+"homepage": "http://numericjs.com",
+"main": "numeric-$ver.js",
+"repository": {
+"type": "git",
+"url": "https://github.com/sloisel/numeric.git"
+}
+}
+EOF
+cp ../README.md numeric-$ver
+rm -f numeric-$ver.tar.gz
+tar cfz numeric-$ver.tar.gz numeric-$ver
+rm -rf numeric-$ver
+cd ../tools
 wait
 rm -f buildpid.log
 rm -f nodepid.log
-
+echo "Build complete"
