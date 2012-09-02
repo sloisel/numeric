@@ -1191,7 +1191,7 @@ OUT> { solution: NaN, message: "Infeasible" }
 Unbounded problems:
 <pre>
 IN> numeric.solveLP([1,1],[[1,0],[0,1]],[0,0]);
-OUT> { solution:[-1.009,-1.009], message:"Unbounded" }
+OUT> { solution: [0,0], message: "Unbounded" }
 </pre>
 
 With an equality constraint:
@@ -1202,7 +1202,7 @@ IN> numeric.solveLP([1,2,3],                      /* minimize [1,2,3]*x         
                     [[1,1,1]],                    /* matrix Aeq of equality constraint */
                     [3]                           /* vector beq of equality constraint */
                     );
-OUT> { solution: [3,2.355e-17,9.699e-17], message:"" }
+OUT> { solution: [3,9.977e-17,4.395e-17], message:"" }
 </pre>
 
 <!--
