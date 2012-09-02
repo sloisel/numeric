@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.2.1";
+numeric.version = "1.2.2";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -3084,7 +3084,7 @@ numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
         };
     } else {
         cb = function cb(it,x0,f0,g0,H1) {
-            if(x0[m-1]>0) return false;
+            if(x0[m-1]>=0) return false;
             unbounded = true;
             return true;
         };
@@ -3094,34 +3094,7 @@ numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
     while(1) {
         f0 = function(z) { return sub(dot(c,z),mul(alpha,sum(log(sub(b,dot(A,z)))))); };
         df0 = function(z) { return add(c,mul(alpha,dot(div(1,sub(b,dot(A,z))),A))); };
-        d2f = function(z) {
-            var r = sub(b,dot(A,z));
-            var i,n = A.length;
-            var B = Array(n);
-            var sa = Math.sqrt(alpha);
-            for(i=n-1;i!==-1;--i) B[i] = mul(A[i],sa/r[i]);
-            return dot(numeric.transpose(B),B);
-        };
-        var i,t,solve = numeric.solve, norm = numeric.norm2, z, f1,f2,d2;
-        y = numeric.clone(x);
-        f2 = f0(y);
-        if(isNaN(f2)) throw new Error('Internal error. f(x0) is a NaN!');
-        for(i=0;i<maxit;++i) {
-            d2 = df0(y);
-            cb(i,y,f2,d2)
-            var dx = solve(d2f(y),d2);
-            if(norm(dx)<0.1*alpha) break;
-            t = -1;
-            f1 = f2;
-            while(t<-1e-18) {
-                z = add(y,mul(t,dx));
-                f2 = f0(z);
-                if(!isNaN(f2)) break;
-                t*=0.5;
-            }
-            if(t>=-1e-18 || f2>=f1) break;
-            y = z;
-        }
+        y = numeric.uncmin(f0,x,alpha,df0,maxit,cb).solution;
         if(unbounded) return { solution: y, message: "Unbounded" };
         if(alpha<tol) return { solution: y, message: "" };
         x = y;
@@ -3156,7 +3129,6 @@ numeric.solveLP = function solveLP(c,A,b,Aeq,beq,tol,maxit) {
     for(i=Q.length-1;i!==-1;--i) x[Q[i]] = x2[i];
     return { solution: x, message:S.message };
 }
-//numeric.solveLP = numeric.solveLPold;
 
 numeric.MPStoLP = function MPStoLP(MPS) {
     if(MPS instanceof String) { MPS.split('\n'); }
