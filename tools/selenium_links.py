@@ -41,7 +41,7 @@ else:
 if url == "":
     url = "http://127.0.0.1/staging/"
 
-mainlinks = [("linkhome","library for numerical computations"),
+mainlinks = [("linkhome","Numerical analysis in Javascript"),
              ("linkworkshop","IN"),
              ("linkdoc","vectors and matrices"),
              ("linklib","var numeric"),
@@ -53,6 +53,7 @@ try:
     print "Using",client
     driver.implicitly_wait(10)
     driver.get(url)
+    time.sleep(1);
     test(mainlinks,driver)
     driver.quit()
 except:

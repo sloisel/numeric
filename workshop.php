@@ -29,6 +29,7 @@ if(isset($_POST['savedata'])) {
 <meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
 <meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="resources/style-ie.css">
 <![endif]-->
@@ -41,7 +42,7 @@ if(isset($_POST['savedata'])) {
 <![endif]-->
 <script src="tools/megalib.js"></script>
 <body onload="workshop.restore2();">
-<?php include "resources/header.html" ?>
+<?php $label = ": Workshop"; include "resources/header.html"; ?>
 
 
 <form name="myform" action="workshop.php" method="post">
@@ -398,7 +399,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => 'lib/numeric-1.2.2.js');
+		$incs = array(1 => 'lib/numeric-1.2.3.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -408,13 +409,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.2.2.js"] });
+	                 scripts: ["lib/numeric-1.2.3.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.2.2";
-workshop.updateVersion = "lib/numeric-1.2.2.js";
+workshop.version = "1.2.3";
+workshop.updateVersion = "lib/numeric-1.2.3.js";
 workshop.preload(workshop._restore);
 </script>
 

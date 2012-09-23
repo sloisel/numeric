@@ -1,7 +1,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.2.2";
+numeric.version = "1.2.3";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -2706,8 +2706,9 @@ numeric.gradient = function gradient(f,x) {
     return J;
 }
 
-numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
+numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback,options) {
     var grad = numeric.gradient;
+    if(typeof options === "undefined") { options = {}; }
     if(typeof tol === "undefined") { tol = 1e-8; }
     if(typeof gradient === "undefined") { gradient = function(x) { return grad(f,x); }; }
     if(typeof maxit === "undefined") maxit = 1000;
@@ -2717,7 +2718,7 @@ numeric.uncmin = function uncmin(f,x0,tol,gradient,maxit,callback) {
     if(isNaN(f0)) throw new Error('uncmin: f(x0) is a NaN!');
     var max = Math.max, norm2 = numeric.norm2;
     tol = max(tol,numeric.epsilon);
-    var step,g0,g1,H1 = numeric.identity(n);
+    var step,g0,g1,H1 = options.Hinv || numeric.identity(n);
     var dot = numeric.dot, inv = numeric.inv, sub = numeric.sub, add = numeric.add, ten = numeric.tensor, div = numeric.div, mul = numeric.mul;
     var all = numeric.all, isfinite = numeric.isFinite, neg = numeric.neg;
     var it=0,i,s,x1,y,Hy,Hs,ys,i0,t,nstep,t1,t2;
@@ -3062,7 +3063,7 @@ numeric.echelonize = function echelonize(A) {
 numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
     var sum = numeric.sum, log = numeric.log, mul = numeric.mul, sub = numeric.sub, dot = numeric.dot, div = numeric.div, add = numeric.add;
     var m = c.length, n = b.length,y;
-    var unbounded = false, cb;
+    var unbounded = false, cb,i0=0;
     if(typeof tol === "undefined") tol = numeric.epsilon;
     if(typeof maxit === "undefined") maxit = 1000;
     if(typeof x === "undefined") {
@@ -3075,7 +3076,8 @@ numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
         x = numeric.clone(x0.solution);
         x.length = m;
         var foo = numeric.inf(sub(b,dot(A,x)));
-        if(foo<0) { return { solution: NaN, message: "Infeasible" }; }
+        if(foo<0) { return { solution: NaN, message: "Infeasible", iterations: x0.iterations }; }
+        i0 = x0.iterations;
         cb = function cb(it,x0,f0,g0,H1) {
             var s = dot(c,g0), Ag0 = dot(A,g0),i;
             for(i=n-1;i!==-1;--i) if(s*Ag0[i]<0) return false;
@@ -3090,16 +3092,35 @@ numeric._solveLP = function _solveLP(c,A,b,tol,maxit,x) {
         };
     }
     var alpha = 1.0;
-    var f0,df0;
-    while(1) {
-        f0 = function(z) { return sub(dot(c,z),mul(alpha,sum(log(sub(b,dot(A,z)))))); };
-        df0 = function(z) { return add(c,mul(alpha,dot(div(1,sub(b,dot(A,z))),A))); };
-        y = numeric.uncmin(f0,x,alpha,df0,maxit,cb).solution;
-        if(unbounded) return { solution: y, message: "Unbounded" };
-        if(alpha<tol) return { solution: y, message: "" };
+    var f0,df0,AT = numeric.transpose(A), svd = numeric.svd,transpose = numeric.transpose,leq = numeric.leq;
+    var muleq = numeric.muleq;
+    var norm = numeric.norminf, any = numeric.any,min = Math.min;
+    alpha = 1;
+    var p = Array(m), A0 = Array(n),e=numeric.rep([n],1), H;
+    var solve = numeric.solve, z = sub(b,dot(A,x)),count;
+    for(count=i0;count<maxit;++count) {
+        var i,j,d;
+        for(i=n-1;i!==-1;--i) A0[i] = div(A[i],z[i]);
+        var A1 = transpose(A0);
+        for(i=m-1;i!==-1;--i) p[i] = (x[i]+sum(A1[i]));
+        alpha = 0.25*Math.abs(dot(c,c)/dot(c,p));
+        g = add(c,mul(alpha,p));
+        H = dot(A1,A0);
+        for(i=m-1;i!==-1;--i) H[i][i] += 1;
+        H = mul(H,alpha);
+        d = solve(H,g,true);
+        var t0 = div(z,dot(A,d));
+        var t = 1.0;
+        for(i=n-1;i!==-1;--i) if(t0[i]<0) t = min(t,-0.999*t0[i]);
+        y = sub(x,mul(d,t));
+        z = sub(b,dot(A,y));
+        if(any(leq(z,0))) return { solution: x, message: "", iterations: count };
         x = y;
-        alpha *= 0.01;
+        if(alpha<tol) return { solution: y, message: "", iterations: count };
+        cb(0,x,0,g,H);
+        if(unbounded) return { solution: y, message: "Unbounded", iterations: count };
     }
+    return { solution: x, message: "maximum iteration count exceeded", iterations:count };
 };
 
 numeric.solveLP = function solveLP(c,A,b,Aeq,beq,tol,maxit) {
@@ -3127,7 +3148,7 @@ numeric.solveLP = function solveLP(c,A,b,Aeq,beq,tol,maxit) {
     var x = Array(c.length);
     for(i=P.length-1;i!==-1;--i) x[P[i]] = x1[i];
     for(i=Q.length-1;i!==-1;--i) x[Q[i]] = x2[i];
-    return { solution: x, message:S.message };
+    return { solution: x, message:S.message, iterations: S.iterations };
 }
 
 numeric.MPStoLP = function MPStoLP(MPS) {
