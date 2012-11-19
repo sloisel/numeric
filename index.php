@@ -15,7 +15,7 @@ require('../wordpress/wp-blog-header.php');
 The <a href="http://www.numericjs.com/">Numeric Javascript</a> library allows you to perform
 sophisticated numerical computations in pure javascript in the browser and elsewhere.<br><br>
 
-<b>From the <a href="/wordpress/">blog</a>...
+<b>From the <a href="/wordpress/">blog</a>...</b>
 <ul style="margin-top:0;">
 <?php query_posts('showposts=3'); ?>
 <?php while (have_posts()) : the_post(); ?>

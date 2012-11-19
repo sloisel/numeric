@@ -152,7 +152,7 @@ function invbench(b,k,lib,rep) {
 	var i,j,foo;
 	ks = sz.toString();
 	if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
-	else { foo = benchmarks[b][lib+2]; c0[lib][rep] = foo(sz); }
+	else { foo = benchmarks[b][lib+2]; if(k===0) foo(sz); c0[lib][rep] = foo(sz); }
 	rep++;
 	if(rep === 1) { rep = 0; lib++; }
 	if(lib+2 === benchmarks[b].length) {

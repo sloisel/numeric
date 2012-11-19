@@ -1209,7 +1209,7 @@ on f0 for smaller and smaller values of alpha. This is a basic ``interior point 
 We also handle infeasible problems:
 <pre>
 IN> numeric.solveLP([1,1],[[1,0],[0,1],[-1,-1]],[-1,-1,-1])
-OUT> { solution: NaN, message: "Infeasible", iterations: 6 }
+OUT> { solution: NaN, message: "Infeasible", iterations: 5 }
 </pre>
 
 Unbounded problems:
@@ -1226,7 +1226,7 @@ IN> numeric.solveLP([1,2,3],                      /* minimize [1,2,3]*x         
                     [[1,1,1]],                    /* matrix Aeq of equality constraint */
                     [3]                           /* vector beq of equality constraint */
                     );
-OUT> { solution: [3,4.167e-19,1.086e-18], message:"", iterations:11 }
+OUT> { solution:[3,1.685e-16,4.559e-19], message:"", iterations:12 }
 </pre>
 
 <!--
