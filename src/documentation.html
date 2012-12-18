@@ -1,3 +1,5 @@
+<!doctype html>
+<html>
 <head>
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -1252,6 +1254,18 @@ OUT> "solveLP tests pass"
 </pre>
 -->
 
+<!-- 
+Bug found by Michael J.
+<pre>
+IN> numeric.solveLP([1,2,3], /* minimize [1,2,3]*x */
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1],[-1,0,0],[0,-1,0],[0,0,-1]], /* matrix A of inequality constraint */
+    [1,1,1,0,0,0], /* RHS b of inequality constraint */
+    [[1,1,1]], /* matrix Aeq of equality constraint */
+    [3] /* vector beq of equality constraint */
+    );
+OUT> { solution:NaN, message:"Infeasible", iterations:10 }
+</pre>
+-->
 
 <h1>Solving ODEs</h1>
 

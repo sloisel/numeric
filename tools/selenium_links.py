@@ -19,6 +19,7 @@ def test(links,driver):
         try:
             link = driver.find_element_by_id(x[0])
             link.click()
+            time.sleep(3)
             foo = driver.page_source
             driver.back()
             assert(x[1] in foo)

@@ -3,7 +3,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.2.4";
+numeric.version = "1.2.5";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -3062,6 +3062,7 @@ numeric.__solveLP = function __solveLP(c,A,b,tol,maxit,x,flag) {
     var p = Array(m), A0 = Array(n),e=numeric.rep([n],1), H;
     var solve = numeric.solve, z = sub(b,dot(A,x)),count;
     var dotcc = dot(c,c);
+    var g;
     for(count=i0;count<maxit;++count) {
         var i,j,d;
         for(i=n-1;i!==-1;--i) A0[i] = div(A[i],z[i]);
@@ -3136,6 +3137,7 @@ numeric.solveLP = function solveLP(c,A,b,Aeq,beq,tol,maxit) {
     var c4 = sub(c2,dot(c1,dot(B.I,Aeq2)));
     var S = numeric._solveLP(c4,A4,b4,tol,maxit);
     var x2 = S.solution;
+    if(x2!==x2) return S;
     var x1 = dot(B.I,sub(beq,dot(Aeq2,x2)));
     var x = Array(c.length);
     for(i=P.length-1;i!==-1;--i) x[P[i]] = x1[i];
