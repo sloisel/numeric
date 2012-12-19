@@ -32,13 +32,13 @@ var _bar = _foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g);
 //.join('\n').replace(/<pre>/g,'').split('\nIN> ');
 _baz = [];
 
-var numfile = './lib/numeric-'+_ver+'.js';
+var _numfile = './lib/numeric-'+_ver+'.js';
 var numeric;
-if(typeof _fs === "undefined") load(numfile);
-else { numeric = require('../'+numfile); }
+if(typeof _fs === "undefined") load(_numfile);
+else { numeric = require('../'+_numfile); }
 if(typeof numeric === "undefined") { throw new Error("Could not load numeric.js"); }
-var unit_pass = 0, unit_fail = 0;
-var k1 = 0;
+var _unit_pass = 0, _unit_fail = 0;
+var _k1 = 0;
 var workshop = {};
 var _global = this;
 function runner(_bar) {
@@ -51,7 +51,7 @@ function runner(_bar) {
 	if(_j>0) { _baz[k0] = [_bar[_k].substring(0,_j),_bar[_k].substring(_j+5)]; k0++; }
     }
     for(_k=0;_k<k0;_k++) {
-	k1++;
+	_k1++;
 	_bar = '';
 	try {
 	    workshop.html = function(x) { _bar += x; }
@@ -61,11 +61,11 @@ function runner(_bar) {
 	_a = _foo.replace(/\s/g,'');
 	_b = _baz[_k][1].replace(/\s/g,'');
 	if(_a===_b) {
-	    _msg = k1+" PASS "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"==="+_b;
-	    unit_pass++;
+	    _msg = _k1+" PASS "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"==="+_b;
+	    _unit_pass++;
 	} else {
-	    _msg = k1+" FAIL "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"!=="+_b;
-	    unit_fail++;
+	    _msg = _k1+" FAIL "+_baz[_k][0].replace(/\s/g,'')+"==>"+_a+"!=="+_b;
+	    _unit_fail++;
 	}
 	console.log(_msg);
     }
@@ -75,4 +75,4 @@ var _j;
 for(_j=0;_j<_bar.length;_j++) {
     runner(_bar[_j].replace(/<pre>/g,'').split('\nIN> '));
 }
-console.log('unit2: '+k1+' tests, '+unit_pass+' pass and '+unit_fail+' fail.');
+console.log('unit2: '+_k1+' tests, '+_unit_pass+' pass and '+_unit_fail+' fail.');
