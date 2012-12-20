@@ -365,13 +365,6 @@ IN> numeric.all([0,0,false])
 OUT> false
 </pre>
 
-You can also create "pointwise" functions. This is how you create a vector sum function:
-
-<pre>
-IN> add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4])
-OUT> [4,6]
-</pre>
-
 You can create a diagonal matrix using <tt>numeric.diag()</tt>
 <pre>
 IN> numeric.diag([1,2,3])
