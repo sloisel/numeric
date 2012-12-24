@@ -6,7 +6,7 @@
 <title>Numeric Javascript</title>
 <body>
 <?php
-require("resources/header.html"); 
+require("resources/header.html");
 define('WP_USE_THEMES', false);
 require('../wordpress/wp-blog-header.php');
 ?>
@@ -57,7 +57,7 @@ The Workshop also includes plotting facilities using the
 Although Javascript does not reach the same performance as native programs, the Numeric Javascript
 library is carefully tuned to obtain the best possible performance for a Javascript program. You
 can compare the performance of Numeric, <a href="http://sylvester.jcoglan.com/">Sylvester</a> and
-<a href="http://code.google.com/closure/">Google Closure</a>'s 
+<a href="http://code.google.com/closure/">Google Closure</a>'s
 <a href="http://code.google.com/p/closure-library/source/browse/trunk/closure/goog/math/matrix.js">Matrix</a>
 object using our <a href="benchmark.html">Benchmark</a>.
 

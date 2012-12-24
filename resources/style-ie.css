@@ -1,14 +1,14 @@
 body {
-	font-family: 'Lato', sans-serif;
-	margin-top: 20px;
-	margin-left: 50px;
-	margin-right: 50px;
-	margin-bottom: 50px;
-	font-size: 16px;
-	height: 100%;
-	line-height: 150%;
+    font-family: 'Lato', sans-serif;
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    font-size: 16px;
+    height: 100%;
+    line-height: 150%;
 }
-pre { 
+pre {
     font-size:15px;
     line-height: 100%;
     margin-left: 10px;
@@ -19,7 +19,7 @@ pre {
     white-space: pre-wrap;
 }
 h1 {
-	font-size: 22px;
+    font-size: 22px;
     margin-top: 20px;
     margin-bottom: 20px;
     border-bottom: solid 1px #000000;
@@ -29,29 +29,29 @@ hr {
     margin-top: 0px;
 }
 div.nav {
-	min-width: 900px;
-	height: 150px;
-	padding-left: 10px;
+    min-width: 900px;
+    height: 150px;
+    padding-left: 10px;
 }
 div.nav {
-	min-width: 900px;
-	padding-right: 50px;
-	vertical-align: top;
-	font-size: 34px;
+    min-width: 900px;
+    padding-right: 50px;
+    vertical-align: top;
+    font-size: 34px;
 }
 tr.nav {
-	height:150px;
+    height:150px;
 }
 td.nav {
-	padding-left: 10px;
-	padding-right: 10px;
-	vertical-align: top;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: top;
 }
 td.navmain {
-	padding-left: 10px;
-	padding-right: 50px;
-	vertical-align: top;
-	font-size:34px;
+    padding-left: 10px;
+    padding-right: 50px;
+    vertical-align: top;
+    font-size:34px;
 }
 ul.nav
 {
@@ -116,20 +116,20 @@ text-decoration:underline;
 
 
 div.notsaved {
-	font-weight:bold;
-	text-align:center;
-	color: #ff0000;
+    font-weight:bold;
+    text-align:center;
+    color: #ff0000;
 }
 
 div.col1 {
-	float: left;
+    float: left;
 }
 div.button {
     float:right;
-	font-size: 12px;
-	width: 15px;
-	font-weight: bold;
-	vertical-align: top;
+    font-size: 12px;
+    width: 15px;
+    font-weight: bold;
+    vertical-align: top;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -138,10 +138,10 @@ div.button {
 }
 div.button2 {
     float:right;
-	width: 15px;
-	font-size: 10px;
-	font-weight: bold;
-	vertical-align: bottom;
+    width: 15px;
+    font-size: 10px;
+    font-weight: bold;
+    vertical-align: bottom;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -152,27 +152,27 @@ div.interactions { width:1000px; clear:both; }
 div.spacer { width:5px; }
 div.inner { width:1000px; clear: both; }
 div.input {
-	width:950px;
+    width:950px;
 }
 div.output {
-	width:950px;
-	font-family: monospace;
-	font-size: 14px;
-	color: #000000;
-	vertical-align: top;
-	white-space: pre-wrap;
-	padding-bottom:5px;
-	line-height: 100%;
+    width:950px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #000000;
+    vertical-align: top;
+    white-space: pre-wrap;
+    padding-bottom:5px;
+    line-height: 100%;
 }
 div.caret {
-	float:left;
-	padding-top: 8px;
-	width: 30px;
-	font-family: sans-serif;
-	color: #0000ff;
-	vertical-align:top;
-	text-align: right;
-	font-size: 8px;
+    float:left;
+    padding-top: 8px;
+    width: 30px;
+    font-family: sans-serif;
+    color: #0000ff;
+    vertical-align:top;
+    text-align: right;
+    font-size: 8px;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -181,14 +181,14 @@ div.caret {
 }
 div.out {
     float:left;
-	width: 30px;
-	padding-top: 4px;
-	padding-bottom: 4px;
-	font-family: sans-serif;
-	color: #000000;
-	vertical-align:top;
-	text-align: right;
-	font-size: 8px;
+    width: 30px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-family: sans-serif;
+    color: #000000;
+    vertical-align:top;
+    text-align: right;
+    font-size: 8px;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -197,12 +197,12 @@ div.out {
 }
 
 div.plot {
-	font-family: sans-serif;
-	font-size: 14px;
-	margin:10px;
-	width:600px;
-	height:400px;
-	line-height: 100%;
+    font-family: sans-serif;
+    font-size: 14px;
+    margin:10px;
+    width:600px;
+    height:400px;
+    line-height: 100%;
 }
 
 textarea.input {
@@ -216,11 +216,11 @@ textarea.input {
         padding:1px;
         border:2px solid #0000ff;
         background-color: #d0d0ff;
-		box-sizing: border-box;
-		width: 100%;
-		-webkit-box-sizing:border-box;
-		-moz-box-sizing: border-box;
-		-ms-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100%;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
 }
 textarea.runned {
         resize:none;
@@ -232,11 +232,11 @@ textarea.runned {
         margin-bottom:1px;
         padding:1px;
         border:2px solid #0000ff;
-		box-sizing: border-box;
-		width:100%;
-		-webkit-box-sizing:border-box;
-		-moz-box-sizing: border-box;
-		-ms-box-sizing: border-box;
+        box-sizing: border-box;
+        width:100%;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
 }
 a.button:link { text-decoration: none; color: #0000ff; }
 a.button:visited { text-decoration: none; color: #0000ff; }

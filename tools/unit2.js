@@ -1,9 +1,9 @@
-if(typeof console === "undefined") console = { 
-    log: function() { 
-        var k; 
-        for(k=0;k<arguments.length;k++) { 
-            if(k>0) { write(' '); } 
-            write(arguments[k]); } 
+if(typeof console === "undefined") console = {
+    log: function() {
+        var k;
+        for(k=0;k<arguments.length;k++) {
+            if(k>0) { write(' '); }
+            write(arguments[k]); }
         write('\n');
         if(typeof system !== "undefined") { system.stdout.flush(); }
     }

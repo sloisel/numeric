@@ -2,7 +2,7 @@
 set -e
 cd `dirname $0`
 cd ../..
-foo=`git status --porcelain` && 
+foo=`git status --porcelain` &&
 if [ "x" != "x$foo" ]; then
     echo "Cannot deploy while there are uncommited changes."
     exit

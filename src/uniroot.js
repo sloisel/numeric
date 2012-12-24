@@ -1,6 +1,6 @@
 /**
  * Searches the interval from <tt>lowerLimit</tt> to <tt>upperLimit</tt>
- * for a root (i.e., zero) of the function <tt>func</tt> with respect to 
+ * for a root (i.e., zero) of the function <tt>func</tt> with respect to
  * its first argument using Brent's method root-finding algorithm.
  *
  * @param {function} function for which the root is sought.
@@ -31,9 +31,9 @@ function uniroot ( func, lowerLimit, upperLimit, errorTol, maxIter ) {
   maxIter  = maxIter  || 1000;
 
   while ( maxIter-- > 0 ) {
-  
+
     prev_step = b - a;
-   
+
     if ( Math.abs(fc) < Math.abs(fb) ) {
       // Swap data for b to be the best approximation
       a = b, b = c, c = a;
@@ -71,11 +71,11 @@ function uniroot ( func, lowerLimit, upperLimit, errorTol, maxIter ) {
       }
 
       if ( p < ( 0.75 * cb * q - Math.abs( tol_act * q ) / 2 ) &&
-           p < Math.abs( prev_step * q / 2 ) ) { 
+           p < Math.abs( prev_step * q / 2 ) ) {
         // If (b + p / q) falls in [b,c] and isn't too large it is accepted
         new_step = p / q;
       }
- 
+
       // If p/q is too large then the bissection procedure can reduce [b,c] range to more extent
     }
 
@@ -104,7 +104,7 @@ function f4 (x) { test_counter++; return (x + 3) * Math.pow(x - 1, 2); }
   [f1, 2, 3],
   [f2, 2, 3],
   [f2, -1, 3],
-  [f3, -1, 3], 
+  [f3, -1, 3],
   [f4, -4, 4/3]
 ].forEach(function (args) {
   test_counter = 0;

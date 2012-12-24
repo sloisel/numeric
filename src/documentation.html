@@ -244,7 +244,7 @@ the function <tt>numeric.prettyPrint()</tt> will replace large arrays with the s
 <pre>
 IN> numeric.identity(100)
 OUT> ...Large Array...
-</pre> 
+</pre>
 By default, this happens with the Array's length is more than 50. This can be controlled by setting the
 variable <tt>numeric.largeArray</tt> to an appropriate value:
 <pre>
@@ -739,7 +739,7 @@ IN> A=[[ 22, 10,  2,  3,  7],
        [  2, -6,  6,  5,  1],
        [  4,  5,  0, -2,  2]];
     numeric.svd(A);
-OUT> {U: 
+OUT> {U:
 [[    -0.7071,    -0.1581,     0.1768,     0.2494,     0.4625],
  [    -0.5303,    -0.1581,    -0.3536,     0.1556,    -0.4984],
  [    -0.1768,     0.7906,    -0.1768,    -0.1546,     0.3967],
@@ -748,9 +748,9 @@ OUT> {U:
  [    -0.1768,    -0.1581,     0.5303,    -0.5726,   -0.05555],
  [ -7.109e-18,    -0.4743,    -0.1768,    -0.3142,     0.4959],
  [    -0.1768,     0.1581,  1.915e-15,     -0.592,    -0.2791]],
-S: 
+S:
 [      35.33,         20,       19.6,          0,          0],
-V: 
+V:
 [[    -0.8006,    -0.3162,     0.2887,    -0.4191,          0],
  [    -0.4804,     0.6325,  7.768e-15,     0.4405,     0.4185],
  [    -0.1601,    -0.3162,     -0.866,     -0.052,     0.3488],
@@ -780,17 +780,17 @@ OUT> true
 IN> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
 IN> numeric.eig([[1, 0, 0], [0, 0.7181, -0.6960], [0, 0.6960, 0.7181]]) // This was a bug found by bdmartin
-OUT> {lambda: 
-{x: 
+OUT> {lambda:
+{x:
 [          1,     0.7181,     0.7181],
-y: 
+y:
 [          0,      0.696,     -0.696]},
-E: 
-{x: 
+E:
+{x:
 [[          1,          0,          0],
  [          0,          0,     0.7071],
  [          0,    -0.7071,          0]],
-y: 
+y:
 [[          0,          0,          0],
  [          0,    -0.7071,          0],
  [          0,          0,     0.7071]]}}
@@ -887,8 +887,8 @@ IN> result = "Sparse LUP Stress Test OK";
       foo = numeric.ccsFull(numeric.ccsDot(LUP.L,LUP.U));
       PA = numeric.ccsFull(numeric.ccsGetBlock(A,LUP.P));
       res = numeric.norminf(numeric.sub(foo,PA));
-      if(!isFinite(res) || res>1e-6) { 
-        result = { 
+      if(!isFinite(res) || res>1e-6) {
+        result = {
           code: "Failed during 1000 sparse LUP",
           k:k,A:A,LUP:LUP,res:res
         };
@@ -948,19 +948,19 @@ numerical Laplacian for a domain.
 
 <pre>
 IN> g = numeric.cgrid(5)
-OUT> 
+OUT>
 [[-1,-1,-1,-1,-1],
  [-1, 0, 1, 2,-1],
  [-1, 3, 4, 5,-1],
  [-1, 6, 7, 8,-1],
  [-1,-1,-1,-1,-1]]
 IN> coordL = numeric.cdelsq(g)
-OUT> 
+OUT>
 [[ 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8],
  [ 1, 3, 0, 0, 2, 4, 1, 1, 5, 2, 0, 4, 6, 3, 1, 3, 5, 7, 4, 2, 4, 8, 5, 3, 7, 6, 4, 6, 8, 7, 5, 7, 8],
  [-1,-1, 4,-1,-1,-1, 4,-1,-1, 4,-1,-1,-1, 4,-1,-1,-1,-1, 4,-1,-1,-1, 4,-1,-1, 4,-1,-1,-1, 4,-1,-1, 4]]
 IN> L = numeric.sscatter(coordL); // Just to see what it looks like
-OUT> 
+OUT>
 [[          4,         -1,           ,         -1],
  [         -1,          4,         -1,           ,         -1],
  [           ,         -1,          4,           ,           ,         -1],
@@ -975,21 +975,21 @@ OUT> [0.6875,0.875,0.6875,0.875,1.125,0.875,0.6875,0.875,0.6875]
 IN> numeric.cdotMV(coordL,x)
 OUT> [1,1,1,1,1,1,1,1,1]
 IN> G = numeric.rep([5,5],0); for(i=0;i<5;i++) for(j=0;j<5;j++) if(g[i][j]>=0) G[i][j] = x[g[i][j]]; G
-OUT> 
+OUT>
 [[ 0     , 0     , 0     , 0     , 0     ],
  [ 0     , 0.6875, 0.875 , 0.6875, 0     ],
  [ 0     , 0.875 , 1.125 , 0.875 , 0     ],
  [ 0     , 0.6875, 0.875 , 0.6875, 0     ],
  [ 0     , 0     , 0     , 0     , 0     ]]
 IN> workshop.html('&lt;img src="'+numeric.imageURL(numeric.mul([G,G,G],200))+'" width=100 /&gt;');
-OUT> 
+OUT>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAIAAAACDbGyAAAAcElEQVQIHQARAO7/AAAAAAAAAAAAAAAAAAAAAAAAEADv/wAAAIqKiq+vr4mJiQAAAAAAEADv/wAAAK+vr+Hh4a+vrwAAAAAAEADv/wAAAIqKiq+vr4qKigAAAAABEADv/wAAAAAAAAAAAAAAAAAAAACRjRFNqL3leAAAAABJRU5ErkJggg==" width=100 />
 </pre>
 
 You can also work on an L-shaped or arbitrary-shape domain:
 <pre>
 IN> numeric.cgrid(6,'L')
-OUT> 
+OUT>
 [[-1,-1,-1,-1,-1,-1],
  [-1, 0, 1,-1,-1,-1],
  [-1, 2, 3,-1,-1,-1],
@@ -997,7 +997,7 @@ OUT>
  [-1, 8, 9,10,11,-1],
  [-1,-1,-1,-1,-1,-1]]
 IN> numeric.cgrid(5,function(i,j) { return i!==2 || j!==2; })
-OUT> 
+OUT>
 [[-1,-1,-1,-1,-1],
  [-1, 0, 1, 2,-1],
  [-1, 3,-1, 4,-1],
@@ -1079,84 +1079,84 @@ is a starting point for the optimization.
 Here are some demos from from Mor&eacute; et al., 1981:
 
 <pre>
-IN> sqr = function(x) { return x*x; }; 
+IN> sqr = function(x) { return x*x; };
     numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution
 OUT> [1,1]
-IN> f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; 
+IN> f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); };
     x0 = numeric.uncmin(f,[0.5,-2]).solution
 OUT> [11.41,-0.8968]
-IN> f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; 
+IN> f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); };
     x0 = numeric.uncmin(f,[0,1]).solution
 OUT> [1.098e-5,9.106]
-IN> f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; 
+IN> f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)};
     x0 = numeric.uncmin(f,[0,1]).solution
 OUT> [1e6,2e-6]
-IN> f = function(x) { 
+IN> f = function(x) {
        return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1]));
-    }; 
+    };
     x0 = numeric.uncmin(f,[1,1]).solution
 OUT> [3,0.5]
-IN> f = function(x) { 
-        var ret = 0,i; 
+IN> f = function(x) {
+        var ret = 0,i;
         for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1]));
-         return ret; 
+         return ret;
     };
     x0 = numeric.uncmin(f,[0.3,0.4]).solution
 OUT> [0.2578,0.2578]
-IN> y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; 
-    f = function(x) { 
-        var ret = 0,i; 
-        for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); 
-        return ret; 
-    }; 
+IN> y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39];
+    f = function(x) {
+        var ret = 0,i;
+        for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2])));
+        return ret;
+    };
     x0 = numeric.uncmin(f,[1,1,1]).solution
 OUT> [0.08241,1.133,2.344]
-IN> y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; 
-    f = function(x) { 
-        var ret = 0,i; 
-        for(i=1;i<=15;i++) 
-        ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); 
-        return ret; 
-    }; 
+IN> y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009];
+    f = function(x) {
+        var ret = 0,i;
+        for(i=1;i<=15;i++)
+        ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]);
+        return ret;
+    };
     x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000)
 OUT> [0.399,1,0]
-IN> f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; 
+IN> f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); };
     x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5)
 OUT> [0,0,0,0]
-IN> f = function(x) { 
+IN> f = function(x) {
         return (sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+
                 90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+
-                10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3])); }; 
+                10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3])); };
     x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution
 OUT> [1,1,1,1]
-IN> y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; 
-    u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; 
-    f = function(x) { 
-        var ret=0, i; 
-        for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); 
-        return ret; 
-    }; 
+IN> y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246];
+    u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625];
+    f = function(x) {
+        var ret=0, i;
+        for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3]));
+        return ret;
+    };
     x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution
 OUT> [     0.1928,     0.1913,     0.1231,     0.1361]
 IN> y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,
          0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,
-         0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; 
-    f = function(x) { 
-        var ret=0, i; 
-        for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); 
-        return ret; 
-    }; 
+         0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406];
+    f = function(x) {
+        var ret=0, i;
+        for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4])));
+        return ret;
+    };
     x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution
 OUT> [     0.3754,      1.936,     -1.465,    0.01287,    0.02212]
-IN> f = function(x) { 
-        var ret=0, i,ti,yi,exp=Math.exp; 
-        for(i=1;i<=13;++i) { 
-            ti = 0.1*i; 
-            yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); 
-            ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); 
-        } 
-        return ret; 
-    }; 
+IN> f = function(x) {
+        var ret=0, i,ti,yi,exp=Math.exp;
+        for(i=1;i<=13;++i) {
+            ti = 0.1*i;
+            yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti);
+            ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi);
+        }
+        return ret;
+    };
     x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution;
     f(x0)<1e-20;
 OUT> true
@@ -1166,8 +1166,8 @@ the gradient or step size is less than the optional parameter <tt>tol</tt>. The 
 gradient of <tt>f()</tt>. If it is not provided, a numerical gradient is used. The iteration stops when
 <tt>maxit</tt> iterations have been performed. The optional <tt>callback()</tt> parameter, if provided, is called at each step:
 <pre>
-IN> z = []; 
-    cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; 
+IN> z = [];
+    cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); };
     x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },
                         [1],1e-10,
                         function(x) { return [-2*Math.sin(2*x[0])]; },
@@ -1196,7 +1196,7 @@ Linear programming is available:
 IN> x = numeric.solveLP([1,1],                   /* minimize [1,1]*x                */
                         [[-1,0],[0,-1],[-1,-2]], /* matrix of inequalities          */
                         [0,0,-3]                 /* right-hand-side of inequalities */
-                        );       
+                        );
     numeric.trunc(x.solution,1e-12);
 OUT> [0,1.5]
 </pre>
@@ -1342,7 +1342,7 @@ OUT> [62.59,24.37]
 
 <h1>Seedrandom (David Bau)</h1>
 
-The object <tt>numeric.seedrandom</tt> is based on 
+The object <tt>numeric.seedrandom</tt> is based on
 <a href="http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html">David Bau's <tt>seedrandom.js</tt></a>.
 This small library can be used to create better pseudorandom numbers than <tt>Math.random()</tt> which can
 furthermore be "seeded".

@@ -91,13 +91,13 @@ var libs = ['inv(A) * b','solve(A,b)','solve(A,b,true)'];
 var datasets = [];
 var l;
 var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
-for(l=0;l<libs.length;l++) { 
-  datasets[l] = { 
-    data: [], 
-    label: libs[l], 
-    color: colors[l], 
-    points: { show: true }, 
-    lines: { show: true } 
+for(l=0;l<libs.length;l++) {
+  datasets[l] = {
+    data: [],
+    label: libs[l],
+    color: colors[l],
+    points: { show: true },
+    lines: { show: true }
     };
 }
 l=1;
@@ -149,18 +149,18 @@ function invbench(b,k,lib,rep) {
     if(!MSIE) {
       var t = document.getElementById('bench');
       var r = t.insertRow(-1);
-      if(k === 1) { 
+      if(k === 1) {
         r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
                       +'<td width=125px><b>Numeric</b></td>'
                         +'<td width=125px><b>Google Closure</b></td>'
                         +'<td width=125px><b>Sylvester</b></td>');
-        r = t.insertRow(-1); 
+        r = t.insertRow(-1);
       }
       r.innerHTML = foo;
     }
-    $.plot($("#placeholder"), datasets, 
-        { 
-          legend: {container: '#legend'}, 
+    $.plot($("#placeholder"), datasets,
+        {
+          legend: {container: '#legend'},
           xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
           yaxis:  {ticks:20}
         });
@@ -171,12 +171,12 @@ function invbench(b,k,lib,rep) {
     for(i=0;i<cps.length;i++) datasets[i].data.push(null);
     k=0; b++;
   }
-  if(b < benchmarks.length) { 
+  if(b < benchmarks.length) {
     setTimeout('invbench('+b.toString()
                       +','+k.toString()
                       +','+lib.toString()
                       +','+rep.toString()
-                      +')',MSIE?10:0); 
+                      +')',MSIE?10:0);
     } else {
         geometricmeans = numeric.exp(numeric.div(geometricmeans,counts));
         $('#meanscore')[0].innerHTML += numeric.prettyPrint(geometricmeans)+'MFLOPS';

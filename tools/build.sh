@@ -2,15 +2,15 @@
 home=`dirname $0`
 cd $home
 if [ -f buildpid.log ]; then
-	buildpid=`cat buildpid.log`
-	kill -9 $buildpid || true
-	rm -f buildpid.log
+    buildpid=`cat buildpid.log`
+    kill -9 $buildpid || true
+    rm -f buildpid.log
 fi
 echo $$ > buildpid.log
 if [ -f nodepid.log ]; then
-	nodepid=`cat nodepid.log`
-	kill -9 $nodepid || true
-	rm -f nodepid.log
+    nodepid=`cat nodepid.log`
+    kill -9 $nodepid || true
+    rm -f nodepid.log
 fi
 ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/'`
 echo "Version is $ver"
