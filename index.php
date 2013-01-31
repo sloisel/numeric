@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta name="google-site-verification" content="wRToy1IFW5JCMZF58VL7Y4Bo0-twB2EGpk1pmMrKsk8" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
@@ -22,7 +23,11 @@ sophisticated numerical computations in pure javascript in the browser and elsew
 <li><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title(); ?>"><?php the_title(); ?></a> <small>(<?php the_time('F j, Y'); ?>)</small>
 <?php endwhile;?>
 </ul>
+<a href="/wordpress/">More from the blog...</a>
 
+<?php
+if(file_exists('../wordpress/leaderboard.html')) require('../wordpress/leaderboard.html');
+?>
 <div style="float:right; text-align:center; margin-top:15px;">
 <a href="workshop.php"><img src="resources/workshop.png" width=400><br>
 Numeric Workshop</a>

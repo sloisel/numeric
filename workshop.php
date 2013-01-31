@@ -33,7 +33,7 @@ if(isset($_POST['savedata'])) {
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript: Workshop</title>
-<!--[if lte IE 9]>
+<!--[if lte IE 10]>
 <script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
 <![endif]-->
 <script src="tools/megalib.js"></script>
@@ -474,7 +474,7 @@ if(isset($_GET['link'])) {
     $foo = json_decode($restore,true) or die("json error");
     $incs = $foo['scripts'];
     if(is_null($incs)) {
-        $incs = array(1 => 'lib/numeric-1.2.4.js');
+        $incs = array(1 => 'lib/numeric-1.2.6.js');
     }
     echo <<<EOT
 workshop._restore = $restore;
@@ -484,13 +484,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [],
-	                 scripts: ["lib/numeric-1.2.4.js"] });
+	                 scripts: ["lib/numeric-1.2.6.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.2.4";
-workshop.updateVersion = "lib/numeric-1.2.4.js";
+workshop.version = "1.2.6";
+workshop.updateVersion = "lib/numeric-1.2.6.js";
 workshop.preload(workshop._restore);
 </script>
 
