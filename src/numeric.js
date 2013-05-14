@@ -120,7 +120,7 @@ numeric.parseFloat = function parseFloat_(d) {
 }
 
 numeric.parseCSV = function parseCSV(t) {
-    var foo = t.split('\n');
+    var foo = t.split(/\r?\n/);
     var j,k;
     var ret = [];
     var pat = /(([^'",]*)|('[^']*')|("[^"]*")),/g;
