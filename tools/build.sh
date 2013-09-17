@@ -15,6 +15,7 @@ fi
 ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/'`
 echo "Version is $ver"
 cat ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js > ../lib/numeric-$ver.js
+cat ../src/prelude.amd.js ../lib/numeric-$ver.js ../src/postlude.amd.js > ../lib/numeric-$ver.amd.js
 uglifyjs ../lib/numeric-$ver.js > ../lib/numeric-$ver.min.js
 cat jquery-1.7.1.min.js jquery.flot.min.js 'Crypto-JS v2.4.0/crypto/crypto-min.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
 echo "" | cat closurelib.js sylvester.js - ../lib/numeric-$ver.min.js jquery-1.7.1.min.js jquery.flot.min.js  > benchlib.js
