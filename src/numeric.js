@@ -31,9 +31,16 @@ numeric._myIndexOf = (function _myIndexOf(w) {
 });
 numeric.myIndexOf = (Array.prototype.indexOf)?Array.prototype.indexOf:numeric._myIndexOf;
 
-numeric.Function = Function;
 numeric.precision = 4;
 numeric.largeArray = 50;
+
+// Wrapper around `new Function` that closures in the `numeric` object.
+numeric.compile = function () {
+  var args = Array.prototype.slice.call(arguments);
+  var body = args.pop();
+  body = 'return function (' + args.join(',') + ') {' + body + ';}';
+  return (new Function(['numeric'], body))(numeric);
+}
 
 numeric.prettyPrint = function prettyPrint(x) {
     function fmtnum(x) {
@@ -329,7 +336,7 @@ numeric.dim = function dim(x) {
 }
 
 numeric.mapreduce = function mapreduce(body,init) {
-    return Function('x','accum','_s','_k',
+    return numeric.compile('x','accum','_s','_k',
             'if(typeof accum === "undefined") accum = '+init+';\n'+
             'if(typeof x === "number") { var xi = x; '+body+'; return accum; }\n'+
             'if(typeof _s === "undefined") _s = numeric.dim(x);\n'+
@@ -356,7 +363,7 @@ numeric.mapreduce = function mapreduce(body,init) {
             );
 }
 numeric.mapreduce2 = function mapreduce2(body,setup) {
-    return Function('x',
+    return numeric.compile('x',
             'var n = x.length;\n'+
             'var i,xi;\n'+setup+';\n'+
             'for(i=n-1;i!==-1;--i) { \n'+
@@ -557,7 +564,7 @@ numeric.pointwise = function pointwise(params,body,setup) {
             '}\n'+
             'return ret;'
             );
-    return Function.apply(null,fun);
+    return numeric.compile.apply(null,fun);
 }
 numeric.pointwise2 = function pointwise2(params,body,setup) {
     if(typeof setup === "undefined") { setup = ""; }
@@ -582,7 +589,7 @@ numeric.pointwise2 = function pointwise2(params,body,setup) {
             '}\n'+
             'return ret;'
             );
-    return Function.apply(null,fun);
+    return numeric.compile.apply(null,fun);
 }
 numeric._biforeach = (function _biforeach(x,y,s,k,f) {
     if(k === s.length-1) { f(x,y); return; }
@@ -693,7 +700,7 @@ numeric.mapreducers = {
             numeric[i+'VV'] = numeric.pointwise2(['x[i]','y[i]'],code('ret[i]','x[i]','y[i]'),setup);
             numeric[i+'SV'] = numeric.pointwise2(['x','y[i]'],code('ret[i]','x','y[i]'),setup);
             numeric[i+'VS'] = numeric.pointwise2(['x[i]','y'],code('ret[i]','x[i]','y'),setup);
-            numeric[i] = Function(
+            numeric[i] = numeric.compile(
                     'var n = arguments.length, i, x = arguments[0], y;\n'+
                     'var VV = numeric.'+i+'VV, VS = numeric.'+i+'VS, SV = numeric.'+i+'SV;\n'+
                     'var dim = numeric.dim;\n'+
@@ -708,7 +715,7 @@ numeric.mapreducers = {
             numeric[o] = numeric[i];
             numeric[i+'eqV'] = numeric.pointwise2(['ret[i]','x[i]'], codeeq('ret[i]','x[i]'),setup);
             numeric[i+'eqS'] = numeric.pointwise2(['ret[i]','x'], codeeq('ret[i]','x'),setup);
-            numeric[i+'eq'] = Function(
+            numeric[i+'eq'] = numeric.compile(
                     'var n = arguments.length, i, x = arguments[0], y;\n'+
                     'var V = numeric.'+i+'eqV, S = numeric.'+i+'eqS\n'+
                     'var s = numeric.dim(x);\n'+
@@ -735,7 +742,7 @@ numeric.mapreducers = {
                 if(Math.hasOwnProperty(o)) setup = 'var '+o+' = Math.'+o+';\n';
             }
             numeric[i+'eqV'] = numeric.pointwise2(['ret[i]'],'ret[i] = '+o+'(ret[i]);',setup);
-            numeric[i+'eq'] = Function('x',
+            numeric[i+'eq'] = numeric.compile('x',
                     'if(typeof x !== "object") return '+o+'x\n'+
                     'var i;\n'+
                     'var V = numeric.'+i+'eqV;\n'+
@@ -743,7 +750,7 @@ numeric.mapreducers = {
                     'numeric._foreach(x,s,0,V);\n'+
                     'return x;\n');
             numeric[i+'V'] = numeric.pointwise2(['x[i]'],'ret[i] = '+o+'(x[i]);',setup);
-            numeric[i] = Function('x',
+            numeric[i] = numeric.compile('x',
                     'if(typeof x !== "object") return '+o+'(x)\n'+
                     'var i;\n'+
                     'var V = numeric.'+i+'V;\n'+
@@ -759,7 +766,7 @@ numeric.mapreducers = {
         if(numeric.mapreducers.hasOwnProperty(i)) {
             o = numeric.mapreducers[i];
             numeric[i+'V'] = numeric.mapreduce2(o[0],o[1]);
-            numeric[i] = Function('x','s','k',
+            numeric[i] = numeric.compile('x','s','k',
                     o[1]+
                     'if(typeof x !== "object") {'+
                     '    xi = x;\n'+
@@ -1032,7 +1039,7 @@ numeric.Tbinop = function Tbinop(rr,rc,cr,cc,setup) {
             }
         }
     }
-    return Function(['y'],
+    return numeric.compile(['y'],
             'var x = this;\n'+
             'if(!(y instanceof numeric.T)) { y = new numeric.T(y); }\n'+
             setup+'\n'+
@@ -1098,7 +1105,7 @@ numeric.T.prototype.transjugate = function transjugate() {
 }
 numeric.Tunop = function Tunop(r,c,s) {
     if(typeof s !== "string") { s = ''; }
-    return Function(
+    return numeric.compile(
             'var x = this;\n'+
             s+'\n'+
             'if(x.y) {'+
@@ -1964,7 +1971,7 @@ numeric.ccsLUPSolve = function ccsLUPSolve(LUP,B) {
 
 numeric.ccsbinop = function ccsbinop(body,setup) {
     if(typeof setup === "undefined") setup='';
-    return Function('X','Y',
+    return numeric.compile('X','Y',
             'var Xi = X[0], Xj = X[1], Xv = X[2];\n'+
             'var Yi = Y[0], Yj = Y[1], Yv = Y[2];\n'+
             'var n = Xi.length-1,m = Math.max(numeric.sup(Xj),numeric.sup(Yj))+1;\n'+
@@ -2020,7 +2027,7 @@ numeric.ccsbinop = function ccsbinop(body,setup) {
         if(isFinite(eval('1'+numeric.ops2[k]+'0')) && isFinite(eval('0'+numeric.ops2[k]+'1'))) C = 'numeric.ccs'+k+'MM(X,Y)';
         else C = 'NaN';
         numeric['ccs'+k+'MM'] = numeric.ccsbinop('zk = xk '+numeric.ops2[k]+'yk;');
-        numeric['ccs'+k] = Function('X','Y',
+        numeric['ccs'+k] = numeric.compile('X','Y',
                 'if(typeof X === "number") return '+A+';\n'+
                 'if(typeof Y === "number") return '+B+';\n'+
                 'return '+C+';\n'
