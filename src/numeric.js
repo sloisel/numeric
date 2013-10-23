@@ -928,6 +928,12 @@ numeric.linspace = function linspace(a,b,n) {
     return ret;
 }
 
+numeric.logspace = function logspace(a,b,n) {
+    return numeric.linspace(a,b,n).map(
+        function(x) { return Math.pow(10,x); }
+    );
+}
+
 numeric.getBlock = function getBlock(x,from,to) {
     var s = numeric.dim(x);
     function foo(x,k) {
