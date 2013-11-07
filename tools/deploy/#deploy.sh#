@@ -8,7 +8,7 @@ if [ "x" != "x$foo" ]; then
     exit
 fi
 ver=`grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/'`
-npm publish ./lib/numeric-$ver.tar.gz
+npm publish ./lib/numeric-1.1.9.tar.gz
 git tag v$ver
 git push --tags
 chmod a-w lib/numeric-$ver*.js

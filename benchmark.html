@@ -1,50 +1,23 @@
+<!doctype html>
 <html>
 <head>
 <link rel="SHORTCUT ICON" href="favicon.ico">
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript: Benchmarks</title>
 </head>
 <body>
 <!--#include file="resources/header.html" -->
 
-We are now running a linear algebra performance benchmark in your browser! Please ensure that your seatbelt
-is fastened and your tray table is upright while we invert 100x100 matrices.<br><br>
+We are now running a linear algebra performance benchmark; the results are plotted below. As we move right within each
+test, the matrix size increases.<br><br>
 
-<b>Performance (<a href="http://en.wikipedia.org/wiki/FLOPS">MFLOPS</a>)</b>
-<div style="width:1000px;overflow:hidden;font-size:14px;">
+<b>Performance (<a href="http://en.wikipedia.org/wiki/FLOPS">MFLOPS</a>; higher is better).</b>
+<div style="width:1000px;overflow:hidden;font-size:14px;line-height:100%;">
 <div id="placeholder" style="width:700px;height:500px;float:left;"></div>
 <div id="legend" style="width:250px;height:100px;overflow:hidden;"></div>
 </div>
 <div id="meanscore">Geometric mean of scores: </div><br>
-
-<b>Higher is better:</b> For each benchmark and library, a function is called repeatedly for a certain amount of time.
-The number of function calls per seconds is converted into a FLOP rate. As we move right within each test, the matrix size increases.<br><br>
-
-<b>What tricks are used to increase performance in Numeric?</b>
-<ul>
-	<li>Replace inner loop <tt>for(j=0;j&lt;n;j++) A[i][j]</tt> by the equivalent <tt>Ai = A[i]; for(j=0;j&lt;n;j++) Ai[j]</tt> ("hoisting" the <tt>[i]</tt> out of the loop</tt>).
-	<li>Preallocate Arrays: <tt>A = new Array(n)</tt> instead of <tt>A = []</tt>.
-	<li>Use <tt>Array</tt> objects directly (abstractions slow you down). Getters and setters are bad.
-	<li>Use <tt>for(j=n-1;j&gt;=0;j--)</tt> if it is faster.
-	<li>Do not put anything in <tt>Array.prototype</tt>. If you modify <tt>Array.prototype</tt>, it slows down everything significantly.
-	<li>Big Matrix*Matrix product: transpose the second matrix and rearrange the loops to exploit locality.
-	<li>Unroll loops.
-	<li>Don't nest functions.
-	<li>Don't call functions, inline them manually. Except...
-	<li>...big functions can confuse the JIT. If a new code path is run in a function, the function can be deoptimized by the JIT.
-	<li>Avoid polymorphism.
-	<li>Localize references. For example: replace <tt>for(i=n-1;i>=0;i--) x[i] = Math.random();</tt> by <tt>rnd = Math.random; for(i=n-1;i>=0;i--) x[i] = rnd();</tt>. (Make sure <tt>rnd</tt> and <tt>x</tt> really are local variables!)
-	<li>Deep lexical scopes are bad. You can create a function without much of a lexical scope by using
-		<tt>new Function('...');</tt>.
-</ul>
-<br>
-
-<b>GC pauses?</b>
-If you reload the page, the benchmark will run again and will give slightly different results.
-This could be due to GC pauses or other background tasks, DOM updates, etc...
-To get an idea of the impact of this, load this page in two or more different tabs (not at the same time,
-one after the other) and switch between the tabs and see the differences in the performance chart.
-<br><br><br>
 
 <table id="bench"></table>
 
@@ -180,7 +153,7 @@ function invbench(b,k,lib,rep) {
 	var i,j,foo;
 	ks = sz.toString();
 	if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
-	else { foo = benchmarks[b][lib+2]; c0[lib][rep] = foo(sz); }
+	else { foo = benchmarks[b][lib+2]; if(k===0) foo(sz); c0[lib][rep] = foo(sz); }
 	rep++;
 	if(rep === 1) { rep = 0; lib++; }
 	if(lib+2 === benchmarks[b].length) {

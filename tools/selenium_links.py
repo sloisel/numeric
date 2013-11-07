@@ -19,6 +19,7 @@ def test(links,driver):
         try:
             link = driver.find_element_by_id(x[0])
             link.click()
+            time.sleep(3)
             foo = driver.page_source
             driver.back()
             assert(x[1] in foo)
@@ -41,7 +42,7 @@ else:
 if url == "":
     url = "http://127.0.0.1/staging/"
 
-mainlinks = [("linkhome","library for numerical computations"),
+mainlinks = [("linkhome","Numerical analysis in Javascript"),
              ("linkworkshop","IN"),
              ("linkdoc","vectors and matrices"),
              ("linklib","var numeric"),
@@ -53,6 +54,7 @@ try:
     print "Using",client
     driver.implicitly_wait(10)
     driver.get(url)
+    time.sleep(1);
     test(mainlinks,driver)
     driver.quit()
 except:

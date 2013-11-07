@@ -1,5 +1,8 @@
+<!doctype html>
+<html>
 <head>
 <link rel="SHORTCUT ICON" href="favicon.ico">
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <style>
 table { font-size:14px; }
@@ -46,6 +49,17 @@ OUT> 0.2694
 <tr><td><tt>bnot</tt><td>Binary negation ~x
 <tr><td><tt>bor</tt><td>Binary or x|y
 <tr><td><tt>bxor</tt><td>Binary xor x^y
+<tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
+<tr><td><tt>ccsDot</tt><td>Sparse matrix-matrix product
+<tr><td><tt>ccsFull</tt><td>Convert sparse to full
+<tr><td><tt>ccsGather</tt><td>Gather entries of sparse matrix
+<tr><td><tt>ccsGetBlock</tt><td>Get rows/columns of sparse matrix
+<tr><td><tt>ccsLUP</tt><td>Compute LUP decomposition of sparse matrix
+<tr><td><tt>ccsLUPSolve</tt><td>Solve Ax=b using LUP decomp
+<tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
+<tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
+<tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
+<tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
 <tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
 <tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
 <tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
@@ -61,6 +75,11 @@ OUT> 0.2694
 <tr><td><tt>diveq</tt><td>Pointwise x/=y
 <tr><td><tt>dopri</tt><td>Numerical integration of ODE using Dormand-Prince RK method. Returns an object Dopri.
 <tr><td><tt>Dopri.at</tt><td>Evaluate the ODE solution at a point
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
 <tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
@@ -72,11 +91,6 @@ OUT> 0.2694
 <tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
 <tr><td><tt>gt</tt><td>Pointwise x&gt;y
 <tr><td><tt>identity</tt><td>Identity matrix
-</table>
-<td valign="top" width="33%">
-<table>
-<tr><td><b>Function</b><td><b>Description</b>
-<tr><td colspan=2><hr>
 <tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
 <tr><td><tt>inv</tt><td>Matrix inverse
 <tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
@@ -88,6 +102,8 @@ OUT> 0.2694
 <tr><td><tt>lshift</tt><td>Pointwise x&lt;&lt;y
 <tr><td><tt>lshifteq</tt><td>Pointwise x&lt;&lt;=y
 <tr><td><tt>lt</tt><td>Pointwise x&lt;y
+<tr><td><tt>LU</tt><td>Dense LU decomposition
+<tr><td><tt>LUsolve</tt><td>Dense LU solve
 <tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
 <tr><td><tt>mod</tt><td>Pointwise x%y
 <tr><td><tt>modeq</tt><td>Pointwise x%=y
@@ -109,31 +125,22 @@ OUT> 0.2694
 <tr><td><tt>prettyPrint</tt><td>Pretty-prints x
 <tr><td><tt>random</tt><td>Create an Array of random numbers
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
+</table>
+<td valign="top" width="33%">
+<table>
+<tr><td><b>Function</b><td><b>Description</b>
+<tr><td colspan=2><hr>
 <tr><td><tt>round</tt><td>Pointwise Math.round(x)
 <tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
 <tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
 <tr><td><tt>rshift</tt><td>Pointwise x&gt;&gt;y
 <tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
 <tr><td><tt>same</tt><td>x and y are entrywise identical
-<tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
-<tr><td><tt>ccsDot</tt><td>Sparse matrix-matrix product
-<tr><td><tt>ccsFull</tt><td>Convert sparse to full
-<tr><td><tt>ccsGather</tt><td>Gather entries of sparse matrix
-<tr><td><tt>ccsGetBlock</tt><td>Get rows/columns of sparse matrix
-</table>
-<td valign="top" width="33%">
-<table>
-<tr><td><b>Function</b><td><b>Description</b>
-<tr><td colspan=2><hr>
-<tr><td><tt>ccsLUP</tt><td>Compute LUP decomposition of sparse matrix
-<tr><td><tt>ccsLUPSolve</tt><td>Solve Ax=b using LUP decomp
-<tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
-<tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
-<tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
-<tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
 <tr><td><tt>seedrandom</tt><td>The seedrandom module
 <tr><td><tt>setBlock</tt><td>Set a block of a matrix
 <tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
+<tr><td><tt>solve</tt><td>Solve Ax=b
+<tr><td><tt>solveLP</tt><td>Solve a linear programming problem
 <tr><td><tt>solveQP</tt><td>Solve a quadratic programming problem
 <tr><td><tt>spline</tt><td>Create a Spline object
 <tr><td><tt>Spline.at</tt><td>Evaluate the Spline at a point
@@ -167,7 +174,7 @@ OUT> 0.2694
 <tr><td><tt>xoreq</tt><td>Pointwise x^=y
 </table></table>
 
-
+<br>
 <h1>Numerical analysis in Javascript</h1>
 
 <a href="http://www.numericjs.com/">Numeric Javascript</a> is
@@ -193,16 +200,16 @@ plotting command.<br><br>
 The <tt>numeric</tt> library provides functions that implement most of the usual Javascript
 operators for vectors and matrices:
 <pre>
-IN> y = [10,1,2];
-OUT> [10,1,2]
-IN> numeric['+'](x,y)
+IN> x = [7,8,9];
+    y = [10,1,2];
+    numeric['+'](x,y)
 OUT> [17,9,11]
 IN> numeric['>'](x,y)
 OUT> [false,true,true]
 </pre>
 These operators can also be called with plain Javascript function names:
 <pre>
-IN> numeric.add(x,y)
+IN> numeric.add([7,8,9],[10,1,2])
 OUT> [17,9,11]
 </pre>
 You can also use these operators with three or more parameters:
@@ -254,6 +261,7 @@ OUT> [[1,0,0,0],
 In particular, if you want to print all Arrays regardless of size, set <tt>numeric.largeArray = Infinity</tt>.
 <br><br>
 
+
 <h1>Math Object functions</h1>
 
 The <tt>Math</tt> object functions have also been adapted to work on Arrays as follows:
@@ -290,6 +298,7 @@ OUT> [1,1.414]
 IN> numeric.tan([1,2])
 OUT> [1.557,-2.185]
 </pre>
+
 
 <h1>Utility functions</h1>
 
@@ -356,13 +365,6 @@ IN> numeric.all([0,0,false])
 OUT> false
 </pre>
 
-You can also create "pointwise" functions. This is how you create a vector sum function:
-
-<pre>
-IN> add = numeric.pointwise(['x[i]','y[i]'],'ret[i] = x[i]+y[i];'); add([1,2],[3,4])
-OUT> [4,6]
-</pre>
-
 You can create a diagonal matrix using <tt>numeric.diag()</tt>
 <pre>
 IN> numeric.diag([1,2,3])
@@ -394,6 +396,18 @@ OUT> [1,2,3,4,5]
 IN> numeric.linspace(1,3,5);
 OUT> [1,1.5,2,2.5,3]
 </pre>
+
+<!--
+<pre>
+IN> numeric.blockMatrix([[[[1,2],[3,4]],[[5,6],[7,8]]],
+                         [[[11,12],[13,14]],[[15,16],[17,18]]]])
+OUT> [[ 1, 2, 5, 6],
+      [ 3, 4, 7, 8],
+      [11,12,15,16],
+      [13,14,17,18]]
+</pre>
+-->
+
 
 <h1>Arithmetic operations</h1>
 
@@ -459,6 +473,7 @@ OUT> true
 </pre>
 -->
 
+
 <h1>Linear algebra</h1>
 
 Matrix products are implemented in the functions
@@ -491,6 +506,40 @@ OUT> 32
 IN> numeric.dot([[1,2,3],[4,5,6]],[7,8,9])
 OUT> [50,122]
 </pre>
+
+Solving the linear problem Ax=b (<a href="https://github.com/yuzeh">Dan Huang</a>):
+<pre>
+IN> numeric.solve([[1,2],[3,4]],[17,39])
+OUT> [5,6]
+</pre>
+The algorithm is based on the LU decomposition:
+<pre>
+IN> LU = numeric.LU([[1,2],[3,4]])
+OUT> {LU:[[3     ,4     ],
+          [0.3333,0.6667]],
+       P:[1,1]}
+IN> numeric.LUsolve(LU,[17,39])
+OUT> [5,6]
+</pre>
+<!--
+Stress testing
+<pre>
+IN> ns = [5,6,10,16,25,40,41];
+    for(j=0;j<ns.length;j++) {
+        n = ns[j];
+        for(k=0;k<10;++k) {
+            A = numeric.random([n,n]);
+            x = numeric.random([n]);
+            b = numeric.dot(A,x);
+            y = numeric.solve(A,b);
+            if(!(numeric.norminf(numeric.sub(x,y))<1e-10)) throw new Error(
+                "numeric.solve Stress Test:"+numeric.prettyPrint({j:j,k:k,A:A,x:x,b:b,y:y}));
+        }
+    }
+    "numeric.solve Stress Test OK";
+OUT> "numeric.solve Stress Test OK"
+</pre>
+-->
 
 The determinant:
 <pre>
@@ -541,6 +590,7 @@ OUT> [[3,4,5],
       [6,8,10]]
 </pre>
 
+
 <h1>Data manipulation</h1>
 There are also some data manipulation functions. You can parse dates:
 <pre>
@@ -569,6 +619,7 @@ You can also fetch a URL (a thin wrapper around XMLHttpRequest):
 IN> numeric.getURL('tools/helloworld.txt').responseText
 OUT> "Hello, world!"
 </pre>
+
 
 <h1>Complex linear algebra</h1>
 You can also manipulate complex numbers:
@@ -645,6 +696,7 @@ OUT> { x: [[2,2],
            [3,3]] }
 </pre>
 
+
 <h1>Eigenvalues</h1>
 Eigenvalues:
 <pre>
@@ -663,27 +715,25 @@ OUT> {x: [[ 1,  2,  5],
           [ 3,  5, -1],
           [ 7, -3,  5]],
       y: }
-IN> C.sub(A).norm2()<1e-13
-OUT> true
 </pre>
 Note that eigenvalues and eigenvectors are returned as complex numbers (type <tt>numeric.T</tt>). This is because
 eigenvalues are often complex even when the matrix is real.<br><br>
+
 
 <h1>Singular value decomposition (Shanti Rao)</h1>
 
 Shanti Rao kindly emailed me an implementation of the Golub and Reisch algorithm:
 
 <pre>
-IN> A = [[22,10,2,3,7],[14,7,10,0,8],[-1,13,-1,-11,3],[-3,-2,13,-2,4],[9,8,1,-2,4],[9,1,-7,5,-1],[2,-6,6,5,1],[4,5,0,-2,2]]
-OUT> [[ 22, 10,  2,  3,  7],
-      [ 14,  7, 10,  0,  8],
-      [ -1, 13, -1,-11,  3],
-      [ -3, -2, 13, -2,  4],
-      [  9,  8,  1, -2,  4],
-      [  9,  1, -7,  5, -1],
-      [  2, -6,  6,  5,  1],
-      [  4,  5,  0, -2,  2]]
-IN> numeric.svd(A)
+IN> A=[[ 22, 10,  2,  3,  7],
+       [ 14,  7, 10,  0,  8],
+       [ -1, 13, -1,-11,  3],
+       [ -3, -2, 13, -2,  4],
+       [  9,  8,  1, -2,  4],
+       [  9,  1, -7,  5, -1],
+       [  2, -6,  6,  5,  1],
+       [  4,  5,  0, -2,  2]];
+    numeric.svd(A);
 OUT> {U: 
 [[    -0.7071,    -0.1581,     0.1768,     0.2494,     0.4625],
  [    -0.5303,    -0.1581,    -0.3536,     0.1556,    -0.4984],
@@ -706,32 +756,42 @@ V:
 <!--
   Some further tests.
 <pre>
-IN> n = 31; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()<1e-12
+IN> n = 31; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 32; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 32; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 33; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 33; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 34; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 34; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 41; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> n = 35; A = numeric.random([n,n]); B = numeric.eig(A); !(B.E.dot(numeric.T.diag(B.lambda).dot(B.E.inv())).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 42; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 43; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> n = 44; A = numeric.random([n,n]); B = numeric.eig(A); B.E.dot(numeric.T.diag(B.lambda)).dot(B.E.inv()).sub(A).norm2()<1e-12
+IN> m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> m = 17; n = 12; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
+IN> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); !(U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()>1e-12)
 OUT> true
-IN> m = 21; n = 19; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
-IN> m = 33; n = 33; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
-IN> m = 59; n = 42; A = numeric.random([m,n]); B = numeric.svd(A); U = new numeric.T(B.U); V = new numeric.T(B.V); U.dot(numeric.T.diag(B.S)).dot(V.transpose()).sub(A).norm2()<1e-12
-OUT> true
+IN> numeric.eig([[1, 0, 0], [0, 0.7181, -0.6960], [0, 0.6960, 0.7181]]) // This was a bug found by bdmartin
+OUT> {lambda: 
+{x: 
+[          1,     0.7181,     0.7181],
+y: 
+[          0,      0.696,     -0.696]},
+E: 
+{x: 
+[[          1,          0,          0],
+ [          0,          0,     0.7071],
+ [          0,    -0.7071,          0]],
+y: 
+[[          0,          0,          0],
+ [          0,    -0.7071,          0],
+ [          0,          0,     0.7071]]}}
 </pre>
 -->
+
 
 <h1>Sparse linear algebra</h1>
 
@@ -780,7 +840,10 @@ OUT> [[0,3],[0,1,2],[9,3,2]]
 </pre>
 We provide an LU=PA decomposition:
 <pre>
-IN> LUP = numeric.ccsLUP(A);
+IN> A = [[0,5,10,15,20,25],
+         [0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4],
+         [3,7,6,2,1,5,10,3,6,2,8,3,5,7,9,10,5,1,1,3,8,3,8,2,9]];
+    LUP = numeric.ccsLUP(A);
 OUT> {L:[[0,5,9,12,14,15],
          [0,2,4,1,3,1,3,4,2,2,4,3,3,4,4],
          [1,0.1429,0.2857,0.8571,0.4286,1,-0.1282,-0.5641,-0.1026,1,0.8517,0.7965,1,-0.67,1]],
@@ -803,12 +866,10 @@ OUT> [[1,0,0,0,0],
       [0,0,1,0,0],
       [0,0,0,1,0],
       [0,0,0,0,1]]
-</pre>
-The LUP decomposition uses partial pivoting and has an optional thresholding argument:
-<pre>
 IN> numeric.ccsLUP(A,0.4).P;
 OUT> [0,2,1,3,4]
 </pre>
+The LUP decomposition uses partial pivoting and has an optional thresholding argument.
 With a threshold of 0.4, the pivots are [0,2,1,3,4] (only rows 1 and 2 have been exchanged) instead of the
 "full partial pivoting" order above which was [1,2,4,0,3]. Threshold=0 gives no pivoting
 and threshold=1 gives normal partial pivoting. Note that a small or zero threshold can result in numerical
@@ -856,6 +917,7 @@ IN> numeric.ccsGather(SX)
 OUT> [[0,0,1,1,2,2],[0,1,1,2,2,3],[1,2,3,4,5,6]]
 </pre>
 
+
 <h1>Coordinate matrices</h1>
 
 We also provide a banded matrix implementation using the coordinate encoding.<br><br>
@@ -873,6 +935,7 @@ IN> numeric.cLUsolve(lu,[5,-8,13])
 OUT> [3,1,7]
 </pre>
 Note that <tt>numeric.cLU()</tt> does not have any pivoting.
+
 
 <h1>Solving PDEs</h1>
 
@@ -938,22 +1001,23 @@ OUT>
  [-1,-1,-1,-1,-1]]
 </pre>
 
+
 <h1>Cubic splines</h1>
 
 You can do some (natural) cubic spline interpolation:
 <pre>
 IN> numeric.spline([1,2,3,4,5],[1,2,1,3,2]).at(numeric.linspace(1,5,10))
-OUT> [          1,      1.731,      2.039,      1.604,      1.019,      1.294,      2.364,      3.085,       2.82,          2]
+OUT> [ 1, 1.731, 2.039, 1.604, 1.019, 1.294, 2.364, 3.085, 2.82, 2]
 </pre>
 For clamped splines:
 <pre>
 IN> numeric.spline([1,2,3,4,5],[1,2,1,3,2],0,0).at(numeric.linspace(1,5,10))
-OUT> [          1,      1.435,       1.98,      1.669,      1.034,      1.316,      2.442,      3.017,      2.482,          2]
+OUT> [ 1, 1.435, 1.98, 1.669, 1.034, 1.316, 2.442, 3.017, 2.482, 2]
 </pre>
 For periodic splines:
 <pre>
 IN> numeric.spline([1,2,3,4],[0.8415,0.04718,-0.8887,0.8415],'periodic').at(numeric.linspace(1,4,10))
-OUT> [     0.8415,     0.9024,     0.5788,    0.04718,    -0.5106,    -0.8919,    -0.8887,    -0.3918,     0.3131,     0.8415]
+OUT> [ 0.8415, 0.9024, 0.5788, 0.04718, -0.5106, -0.8919, -0.8887, -0.3918, 0.3131, 0.8415]
 </pre>
 Vector splines:
 <pre>
@@ -971,19 +1035,18 @@ IN> xs = numeric.linspace(0,30,31); ys = numeric.sin(xs); s = numeric.spline(xs,
 OUT> [0, 3.142, 6.284, 9.425, 12.57, 15.71, 18.85, 21.99, 25.13, 28.27]
 </pre>
 
+
 <h1>Fast Fourier Transforms</h1>
-FFT on numeric.T objects:
+FFT and IFFT on numeric.T objects:
 <pre>
 IN> z = (new numeric.T([1,2,3,4,5],[6,7,8,9,10])).fft()
 OUT> {x:[15,-5.941,-3.312,-1.688, 0.941],
       y:[40, 0.941,-1.688,-3.312,-5.941]}
-</pre>
-Also inverse FFT:
-<pre>
 IN> z.ifft()
 OUT> {x:[1,2,3,4,5],
       y:[6,7,8,9,10]}
 </pre>
+
 
 <h1>Quadratic Programming (Alberto Santini)</h1>
 
@@ -1001,36 +1064,94 @@ OUT> { solution:              [0.4762,1.048,2.095],
        message:               "" }
 </pre>
 
+
 <h1>Unconstrained optimization</h1>
 
-We also include a simple unconstrained optimization routine. Here are some demos from from Mor&eacute; et al., 1981:
+To minimize a function f(x) we provide the function <tt>numeric.uncmin(f,x0)</tt> where x0
+is a starting point for the optimization.
+Here are some demos from from Mor&eacute; et al., 1981:
 
 <pre>
-IN> sqr = function(x) { return x*x; }; numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution
+IN> sqr = function(x) { return x*x; }; 
+    numeric.uncmin(function(x) { return sqr(10*(x[1]-x[0]*x[0])) + sqr(1-x[0]); },[-1.2,1]).solution
 OUT> [1,1]
-IN> f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; x0 = numeric.uncmin(f,[0.5,-2]).solution
+IN> f = function(x) { return sqr(-13+x[0]+((5-x[1])*x[1]-2)*x[1])+sqr(-29+x[0]+((x[1]+1)*x[1]-14)*x[1]); }; 
+    x0 = numeric.uncmin(f,[0.5,-2]).solution
 OUT> [11.41,-0.8968]
-IN> f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; x0 = numeric.uncmin(f,[0,1]).solution
+IN> f = function(x) { return sqr(1e4*x[0]*x[1]-1)+sqr(Math.exp(-x[0])+Math.exp(-x[1])-1.0001); }; 
+    x0 = numeric.uncmin(f,[0,1]).solution
 OUT> [1.098e-5,9.106]
-IN> f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; x0 = numeric.uncmin(f,[0,1]).solution
+IN> f = function(x) { return sqr(x[0]-1e6)+sqr(x[1]-2e-6)+sqr(x[0]*x[1]-2)}; 
+    x0 = numeric.uncmin(f,[0,1]).solution
 OUT> [1e6,2e-6]
-IN> f = function(x) { return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1])); }; x0 = numeric.uncmin(f,[1,1]).solution
+IN> f = function(x) { 
+       return sqr(1.5-x[0]*(1-x[1]))+sqr(2.25-x[0]*(1-x[1]*x[1]))+sqr(2.625-x[0]*(1-x[1]*x[1]*x[1]));
+    }; 
+    x0 = numeric.uncmin(f,[1,1]).solution
 OUT> [3,0.5]
-IN> f = function(x) { var ret = 0,i; for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1])); return ret; }; x0 = numeric.uncmin(f,[0.3,0.4]).solution
+IN> f = function(x) { 
+        var ret = 0,i; 
+        for(i=1;i<=10;i++) ret+=sqr(2+2*i-Math.exp(i*x[0])-Math.exp(i*x[1]));
+         return ret; 
+    };
+    x0 = numeric.uncmin(f,[0.3,0.4]).solution
 OUT> [0.2578,0.2578]
-IN> y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); return ret; }; x0 = numeric.uncmin(f,[1,1,1]).solution
+IN> y = [0.14,0.18,0.22,0.25,0.29,0.32,0.35,0.39,0.37,0.58,0.73,0.96,1.34,2.10,4.39]; 
+    f = function(x) { 
+        var ret = 0,i; 
+        for(i=1;i<=15;i++) ret+=sqr(y[i-1]-(x[0]+i/((16-i)*x[1]+Math.min(i,16-i)*x[2]))); 
+        return ret; 
+    }; 
+    x0 = numeric.uncmin(f,[1,1,1]).solution
 OUT> [0.08241,1.133,2.344]
-IN> y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; f = function(x) { var ret = 0,i; for(i=1;i<=15;i++) ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); return ret; }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000)
+IN> y = [0.0009,0.0044,0.0175,0.0540,0.1295,0.2420,0.3521,0.3989,0.3521,0.2420,0.1295,0.0540,0.0175,0.0044,0.0009]; 
+    f = function(x) { 
+        var ret = 0,i; 
+        for(i=1;i<=15;i++) 
+        ret+=sqr(x[0]*Math.exp(-x[1]*sqr((8-i)/2-x[2])/2)-y[i-1]); 
+        return ret; 
+    }; 
+    x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[1,1,1]).solution,1000)),1000)
 OUT> [0.399,1,0]
-IN> f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5)
+IN> f = function(x) { return sqr(x[0]+10*x[1])+5*sqr(x[2]-x[3])+sqr(sqr(x[1]-2*x[2]))+10*sqr(x[0]-x[3]); }; 
+    x0 = numeric.div(numeric.round(numeric.mul(numeric.uncmin(f,[3,-1,0,1]).solution,1e5)),1e5)
 OUT> [0,0,0,0]
-IN> f = function(x) { return sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3]); }; x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution
+IN> f = function(x) { 
+        return (sqr(10*(x[1]-x[0]*x[0]))+sqr(1-x[0])+
+                90*sqr(x[3]-x[2]*x[2])+sqr(1-x[2])+
+                10*sqr(x[1]+x[3]-2)+0.1*sqr(x[1]-x[3])); }; 
+    x0 = numeric.uncmin(f,[-3,-1,-3,-1]).solution
 OUT> [1,1,1,1]
-IN> y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; f = function(x) { var ret=0, i; for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); return ret; }; x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution
+IN> y = [0.1957,0.1947,0.1735,0.1600,0.0844,0.0627,0.0456,0.0342,0.0323,0.0235,0.0246]; 
+    u = [4,2,1,0.5,0.25,0.167,0.125,0.1,0.0833,0.0714,0.0625]; 
+    f = function(x) { 
+        var ret=0, i; 
+        for(i=0;i<11;++i) ret += sqr(y[i]-x[0]*(u[i]*u[i]+u[i]*x[1])/(u[i]*u[i]+u[i]*x[2]+x[3])); 
+        return ret; 
+    }; 
+    x0 = numeric.uncmin(f,[0.25,0.39,0.415,0.39]).solution
 OUT> [     0.1928,     0.1913,     0.1231,     0.1361]
-IN> y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; f = function(x) { var ret=0, i; for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); return ret; }; x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution
+IN> y = [0.844,0.908,0.932,0.936,0.925,0.908,0.881,0.850,0.818,0.784,0.751,0.718,
+         0.685,0.658,0.628,0.603,0.580,0.558,0.538,0.522,0.506,0.490,0.478,0.467,
+         0.457,0.448,0.438,0.431,0.424,0.420,0.414,0.411,0.406]; 
+    f = function(x) { 
+        var ret=0, i; 
+        for(i=0;i<33;++i) ret += sqr(y[i]-(x[0]+x[1]*Math.exp(-10*i*x[3])+x[2]*Math.exp(-10*i*x[4]))); 
+        return ret; 
+    }; 
+    x0 = numeric.uncmin(f,[0.5,1.5,-1,0.01,0.02]).solution
 OUT> [     0.3754,      1.936,     -1.465,    0.01287,    0.02212]
-IN> f = function(x) { var ret=0, i,ti,yi,exp=Math.exp; for(i=1;i<=13;++i) { ti = 0.1*i; yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); } return ret; }; x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution; f(x0)<1e-20;
+IN> f = function(x) { 
+        var ret=0, i,ti,yi,exp=Math.exp; 
+        for(i=1;i<=13;++i) { 
+            ti = 0.1*i; 
+            yi = exp(-ti)-5*exp(-10*ti)+3*exp(-4*ti); 
+            ret += sqr(x[2]*exp(-ti*x[0])-x[3]*exp(-ti*x[1])+x[5]*exp(-ti*x[4])-yi); 
+        } 
+        return ret; 
+    }; 
+    x0 = numeric.uncmin(f,[1,2,1,1,1,1],1e-14).solution;
+    f(x0)<1e-20;
 OUT> true
 </pre>
 There are optional parameters to <tt>numeric.uncmin(f,x0,tol,gradient,maxit,callback)</tt>. The iteration stops when
@@ -1038,7 +1159,12 @@ the gradient or step size is less than the optional parameter <tt>tol</tt>. The 
 gradient of <tt>f()</tt>. If it is not provided, a numerical gradient is used. The iteration stops when
 <tt>maxit</tt> iterations have been performed. The optional <tt>callback()</tt> parameter, if provided, is called at each step:
 <pre>
-IN> z = []; cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },[1],1e-10,function(x) { return [-2*Math.sin(2*x[0])]; },100,cb);
+IN> z = []; 
+    cb = function(i,x,f,g,H) { z.push({i:i, x:x, f:f, g:g, H:H }); }; 
+    x0 = numeric.uncmin(function(x) { return Math.cos(2*x[0]); },
+                        [1],1e-10,
+                        function(x) { return [-2*Math.sin(2*x[0])]; },
+                        100,cb);
 OUT> {solution:    [1.571],
       f:           -1,
       gradient:    [2.242e-11],
@@ -1054,6 +1180,84 @@ OUT> [{i:0, x:[1    ], f:-0.4161, g: [-1.819   ]  , H:[[1     ]] },
       {i:6, x:[1.571], f:-1     , g: [ 2.242e-11] , H:[[0.25  ]] }]
 </pre>
 
+
+<h1>Linear programming</h1>
+
+Linear programming is available:
+
+<pre>
+IN> x = numeric.solveLP([1,1],                   /* minimize [1,1]*x                */
+                        [[-1,0],[0,-1],[-1,-2]], /* matrix of inequalities          */
+                        [0,0,-3]                 /* right-hand-side of inequalities */
+                        );       
+    numeric.trunc(x.solution,1e-12);
+OUT> [0,1.5]
+</pre>
+
+The function <tt>numeric.solveLP(c,A,b)</tt> minimizes dot(c,x) subject to dot(A,x) <= b.
+The algorithm used is very basic. For alpha>0, define the ``barrier function''
+f0 = dot(c,x) - alpha*sum(log(b-A*x)). The function numeric.solveLP calls numeric.uncmin
+on f0 for smaller and smaller values of alpha. This is a basic ``interior point method''.
+
+We also handle infeasible problems:
+<pre>
+IN> numeric.solveLP([1,1],[[1,0],[0,1],[-1,-1]],[-1,-1,-1])
+OUT> { solution: NaN, message: "Infeasible", iterations: 5 }
+</pre>
+
+Unbounded problems:
+<pre>
+IN> numeric.solveLP([1,1],[[1,0],[0,1]],[0,0]).message;
+OUT> "Unbounded"
+</pre>
+
+With an equality constraint:
+<pre>
+IN> numeric.solveLP([1,2,3],                      /* minimize [1,2,3]*x                */
+                    [[-1,0,0],[0,-1,0],[0,0,-1]], /* matrix A of inequality constraint */
+                    [0,0,0],                      /* RHS b of inequality constraint    */
+                    [[1,1,1]],                    /* matrix Aeq of equality constraint */
+                    [3]                           /* vector beq of equality constraint */
+                    );
+OUT> { solution:[3,1.685e-16,4.559e-19], message:"", iterations:12 }
+</pre>
+
+<!--
+<pre>
+IN> n = 7; m = 3;
+    for(k=0;k<10;++k) {
+        A = numeric.random([n,n]);
+        x = numeric.rep([m],1).concat(numeric.rep([n-m],0));
+        b = numeric.dot(A,x);
+        J = numeric.diag(numeric.rep([n],-1));
+        B = numeric.blockMatrix([[A                   , J     ],
+                                 [numeric.neg(A)      , J     ],
+                                 [numeric.rep([n,n],0), J     ]]);
+        c = b.concat(numeric.neg(b)).concat(numeric.rep([n],0));
+        d = numeric.rep([n],0).concat(numeric.rep([n],1));
+        y = numeric.solveLP(d,B,c).solution;
+        y.length = n;
+        foo = numeric.norm2(numeric.sub(x,y));
+        if(foo>1e-10) throw new Error("solveLP test fails: "+numeric.prettyPrint({A:A,x:x}));
+    }
+    "solveLP tests pass"
+OUT> "solveLP tests pass"
+</pre>
+-->
+
+<!-- 
+Bug found by Michael J.
+<pre>
+IN> numeric.solveLP([1,2,3], /* minimize [1,2,3]*x */
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1],[-1,0,0],[0,-1,0],[0,0,-1]], /* matrix A of inequality constraint */
+    [1,1,1,0,0,0], /* RHS b of inequality constraint */
+    [[1,1,1]], /* matrix Aeq of equality constraint */
+    [3] /* vector beq of equality constraint */
+    );
+OUT> { solution:NaN, message:"Infeasible", iterations:10 }
+</pre>
+-->
+
 <h1>Solving ODEs</h1>
 
 The function <tt>numeric.dopri()</tt> is an implementation of the Dormand-Prince-Runge-Kutta integrator with
@@ -1067,18 +1271,17 @@ OUT> { x:    [     0,   0.1, 0.1522, 0.361, 0.5792, 0.7843, 0.9813,     1],
        iterations:8,
        events:,
        message:""}
+IN> sol.at([0.3,0.7])
+OUT> [1.35,2.014]
 </pre>
 The return value <tt>sol</tt> contains the x and y values of the solution.
 If you need to know the value of the solution between the given x values, use the function
 <tt>sol.at()</tt>, which uses the extra information contained in <tt>sol.ymid</tt> and <tt>sol.f</tt> to
-produce approximations between these points:
-<pre>
-IN> sol.at([0.3,0.7])
-OUT> [1.35,2.014]
-</pre>
+produce approximations between these points.
 The integrator is also able to handle vector equations. This is a harmonic oscillator:
 <pre>
-IN> numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; }).at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI])
+IN> sol = numeric.dopri(0,10,[3,0],function (x,y) { return [y[1],-y[0]]; });
+    sol.at([0,0.5*Math.PI,Math.PI,1.5*Math.PI,2*Math.PI])
 OUT> [[         3,         0],
       [ -9.534e-8,        -3],
       [        -3,  2.768e-7],
@@ -1110,7 +1313,10 @@ of the integration interval.<br><br>
 
 Events can also be vector-valued:
 <pre>
-IN> sol = numeric.dopri(0,2,1,function(x,y) { return y; },undefined,50,function(x,y) { return [y-1.5,Math.sin(y-1.5)]; });
+IN> sol = numeric.dopri(0,2,1,
+                        function(x,y) { return y; },
+                        undefined,50,
+                        function(x,y) { return [y-1.5,Math.sin(y-1.5)]; });
 OUT> { x:          [    0,   0.2, 0.4055],
        y:          [    1, 1.221,    1.5],
        f:          [    1, 1.221,    1.5],
@@ -1136,6 +1342,7 @@ OUT> [62.59,24.37]
 </pre>
 -->
 
+
 <h1>Seedrandom (David Bau)</h1>
 
 The object <tt>numeric.seedrandom</tt> is based on 
@@ -1154,15 +1361,6 @@ For performance reasons, <tt>numeric.random()</tt> uses the default <tt>Math.ran
 the seedrandom version, just do <tt>Math.random = numeric.seedrandom.random</tt>. Note that this may slightly
 decrease the performance of all <tt>Math</tt> operations.
 
-<h1>Ax = b (<a href="https://github.com/yuzeh">Dan Huang</a>)</h1>
-<pre>
-IN> A = numeric.random([5, 5]);
-    b = numeric.random([5]);
-    x = numeric.dot(numeric.inv(A), b);
-    y = numeric.solve(A, b);
-    numeric.norm2(numeric.sub(x,y)) < 1e-12
-OUT> true
-</pre>
 
 <br><br><br>
 

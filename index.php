@@ -1,22 +1,38 @@
 <html>
 <head>
+<meta name="google-site-verification" content="wRToy1IFW5JCMZF58VL7Y4Bo0-twB2EGpk1pmMrKsk8" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript</title>
 <body>
- <!--#include file="resources/header.html" -->
- 
-<a href="http://www.numericjs.com/">Numeric Javascript</a>
-is a library for numerical computations in Javascript. You can write Javascript
-programs that manipulate matrices, solve linear problems, find eigenvalues and
-solve optimization problems in the browser using <a href="workshop.php">Numeric Workshop</a>
-or in your own web pages by downloading numeric.js. You can also use
-Numeric Javascript outside the browser in any Javascript environment.
+<?php
+require("resources/header.html"); 
+define('WP_USE_THEMES', false);
+require('../wordpress/wp-blog-header.php');
+?>
+<div style="margin-left: 100px; margin-right: 100px;">
+<h1>Numerical analysis in Javascript</h1>
+The <a href="http://www.numericjs.com/">Numeric Javascript</a> library allows you to perform
+sophisticated numerical computations in pure javascript in the browser and elsewhere.<br><br>
 
+<b>From the <a href="/wordpress/">blog</a>...</b>
+<ul style="margin-top:0;">
+<?php query_posts('showposts=3'); ?>
+<?php while (have_posts()) : the_post(); ?>
+<li><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title(); ?>"><?php the_title(); ?></a> <small>(<?php the_time('F j, Y'); ?>)</small>
+<?php endwhile;?>
+</ul>
+<a href="/wordpress/">More from the blog...</a>
+
+<?php
+if(file_exists('../wordpress/leaderboard.html')) require('../wordpress/leaderboard.html');
+?>
 <div style="float:right; text-align:center; margin-top:15px;">
 <a href="workshop.php"><img src="resources/workshop.png" width=400><br>
 Numeric Workshop</a>
 </div>
+
 
 <h1>Examples</h1>
 
@@ -30,6 +46,7 @@ Each of these examples runs in the <a href="workshop.php">Workshop</a>.
     <li> <a href="workshop.php?link=10db8ddaa8499c109058efe8aabd7b418e62b2ec5e0cfa368b9832f83b5b4166">PDE and sparse linear algebra</a>
 </ul>
 
+
 <h1>Workshop</h1>
 
 The <a href="workshop.php">Workshop</a> is a Javascript console that can be used to experiment with
@@ -38,6 +55,7 @@ shared simply by sharing a permanent link to the Worksheet.<br><br>
 
 The Workshop also includes plotting facilities using the
 <a href="http://code.google.com/p/flot/">Flot</a> plotting library.
+
 
 <h1>Performance</h1>
 
@@ -48,18 +66,18 @@ can compare the performance of Numeric, <a href="http://sylvester.jcoglan.com/">
 <a href="http://code.google.com/p/closure-library/source/browse/trunk/closure/goog/math/matrix.js">Matrix</a>
 object using our <a href="benchmark.html">Benchmark</a>.
 
+
 <h1>Correctness</h1>
 
 Numeric Javascript contains a set of unit tests that are automatically run in several browsers. You can
 view the <a href="report.html">report</a> that is automatically generated.
 
-<h1>Development</h1>
-
-We have a public <a href="https://github.com/sloisel/numeric/">github</a> repository.
 
 <h1>Community</h1>
 
 Join the discussion on our <a href="http://groups.google.com/group/numericjs">Google Group</a>.
+We have a public <a href="https://github.com/sloisel/numeric/">github</a> repository.
+
 
 <h1>About the Author</h1>
 
@@ -75,3 +93,4 @@ howpublished = {\url{http://www.numericjs.com/}} }
 </pre>
 
 <br><br><br>
+</div>

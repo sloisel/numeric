@@ -22,6 +22,7 @@ if(isset($_POST['savedata'])) {
 ?>
 
 
+<!doctype html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -29,19 +30,85 @@ if(isset($_POST['savedata'])) {
 <meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
 <meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
-<!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="resources/style-ie.css">
-<![endif]-->
-<!--[if !IE]><!-->
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
-<!--<![endif]-->
 <title>Numeric Javascript: Workshop</title>
-<!--[if lte IE 9]>
+<!--[if lte IE 10]>
 <script language="javascript" type="text/javascript" src="tools/excanvas.min.js"></script>
 <![endif]-->
 <script src="tools/megalib.js"></script>
+    <style>
+        div.master {
+            margin: 0px;
+            padding: 0px;
+            border: 0px;
+        }
+        div.inout {
+            margin: 0px;
+            padding: 0px;
+            border: 0px;
+            font-family: sans-serif;
+            font-size: 8px;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+        div.input,div.output {
+            margin-left: 30px; 
+            margin-right: 15px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            position: relative;            
+            margin: 0px;
+            padding: 0px;
+            border: 0px;
+        }
+        div.input {
+            margin-top:5px;
+        }
+        a.button {
+            color: blue;
+            font-family: sans-serif;
+            font-size: 16px;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+            text-decoration: none;
+        }
+        textarea.in0, textarea.in1, div.out {
+            font-family: monospace;
+            font-size: 14px;
+            color: #000000;
+            white-space: pre-wrap;
+            width: 100%;
+        }
+        textarea.in0, textarea.in1 {
+            resize: none;
+            overflow: hidden;
+        }
+        textarea.in0, textarea.in1 {
+            margin: 0px 0px 0px 0px;
+            border: 2px #0000ff solid;
+            padding: 0px;
+        }
+        div.out {
+            margin: 0px;
+            padding: 0px;
+            border: 2px black none;
+            line-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        textarea.in0 {
+            background-color: #b0b0ff;
+        }
+    </style>
 <body onload="workshop.restore2();">
-<?php include "resources/header.html" ?>
+<?php $label = ": Workshop"; include "resources/header.html"; ?>
 
 
 <form name="myform" action="workshop.php" method="post">
@@ -59,13 +126,15 @@ if(isset($_POST['savedata'])) {
 <input type="hidden" name="savedata" value="">
 </form>
 
-<div class="interactions">
-	<div class="inner" id = "output_0">
-		<div class="out"></div>
-		<div class="output"></div>
-		<div class="button2"><a href="#" onclick="workshop.mkdiv(0);" class="button">&#x21A9;</a></div>
-	</div>
-</div>
+    <div id="master_0" class="master">
+        <div class="output" id="output_0" style="margin-left: 30px; margin-right: 15px; position: relative;">
+        <div class="inout" style="position: absolute; left: -30px; top: 5px;">
+        
+        </div>
+        <a href="#" onclick="workshop.mkdiv(0);" class="button" style="position: absolute; right: -15px; bottom: -10px;">&#x21A9;</a>
+        <div class="out" id="out_0"></div>
+        </div>
+    </div>
 
 <script>
 "use strict";
@@ -213,6 +282,7 @@ w.onmessage = function(ev) {
 			}());
 		clear[x.k] = false;
 	}
+	if(y.innerHTML === '') { y.innerHTML = ' '; clear[x.k] = true; }
 }
 function mkdiv(i) {
 	divcount++;
@@ -220,24 +290,28 @@ function mkdiv(i) {
 	divorder.splice(foo+1,0,divcount);
 	savedata.inputs.splice(foo+1,0,'');
 	savedata.outputs.splice(foo+1,0,[]);
-	$('#output_'+i.toString()).after(
-	'<div class="inner" id = "input_'+divcount.toString()+'">'+
-		'<div class="caret">IN></div>'+
-		'<div class="input"><textarea rows=1 id = "text_'+divcount.toString()+'" class="input" onkeydown="workshop.mykeydown(event,'+divcount.toString()+');"></textarea></div>'+
-		'<div class="button"><a href="#" onclick="workshop.rmdiv('+divcount.toString()+')" class="button">&#x2716;</a></div>'+
-	'</div>'+
-	'<div class="inner" id = "output_'+divcount.toString()+'">'+
-		'<div class="out">OUT></div>'+
-		'<div id = "out_'+divcount.toString()+'" class="output"></div>'+
-		'<div class="button2"><a href="#" onclick="workshop.mkdiv('+divcount.toString()+');" class="button">&#x21A9;</a></div>'+
-	'</div>'
-	);
+	$('#master_'+i.toString()).after(
+	    '<div id="master_'+divcount.toString()+'" class="master">'+
+	    '<div class="input">'+
+        '<div class="inout" style="position: absolute; left: -30px; top: 2px;">'+
+        'IN>'+
+        '</div>'+
+        '<a href="#" onclick="workshop.rmdiv('+divcount.toString()+')" class="button" style="position: absolute; right: -15px; top: 0px;">&#x2716;</a>'+
+        '<textarea rows=1 class="in0" spellcheck="false" id="text_'+divcount.toString()+'" onkeydown="workshop.mykeydown(event,'+divcount.toString()+');"></textarea>'+
+        '</div>'+
+        '<div class="output" id="output_'+divcount.toString()+'">'+
+        '<div class="inout" style="position: absolute; left: -30px; top: 2px;">'+
+        'OUT>'+
+        '</div>'+
+        '<a href="#" onclick="workshop.mkdiv('+divcount.toString()+');" class="button" style="position: absolute; right: -15px; bottom: -10px;">&#x21A9;</a>'+
+        '<div class="out" id="out_'+divcount.toString()+'"> </div>'+
+        '</div></div>'
+    );
 }
 function rmdiv(i) {
 	var foo = _indexOf(divorder,i);
 	divorder.splice(foo,1);
-	$('#input_'+i.toString()).remove();
-	$('#output_'+i.toString()).remove();
+	$('#master_'+i.toString()).remove();
 	savedata.inputs.splice(foo,1);
 	savedata.outputs.splice(foo,1);
 }
@@ -252,7 +326,7 @@ function go(k) {
     	mkdiv(k);
     	foo = divorder[n+1];
     }
-    input.className = "runned";
+    input.className = "in1";
     cache[k] = input.value;
 	myfocus($('#text_'+foo.toString())[0]);
 	clear[k] = true;
@@ -264,8 +338,8 @@ function go(k) {
 function inputChanged(k){
 	var i = _indexOf(divorder,k);
 	var input = $('#text_'+k.toString())[0];
-	if(input.value === cache[k]) input.className = "runned";
-	else { input.className = "input"; cache[k] = null; }
+	if(input.value === cache[k]) input.className = "in1";
+	else { input.className = "in0"; cache[k] = null; }
 	savedata.inputs[i] = input.value;
 	saveit();
 }
@@ -292,6 +366,7 @@ function restore2(foo) {
 		f0 = (function(in0) { return function() { resize(in0); }; }(input));
 		setTimeout(f0,0);
 		output = $('#out_'+i.toString())[0];
+		output.innerHTML = '';
 		if(typeof foo.outputs[i] === "undefined") { continue; }
 		for(j=0;j<foo.outputs[i].length;j++) {
 			if(typeof foo.outputs[i][j] === "string") {
@@ -307,6 +382,7 @@ function restore2(foo) {
 				}(i,j));
 			}
 		}
+		if(output.innerHTML === '') { output.innerHTML = ' '; clear[i] = true; }
 	}
 	savedata = foo;
 	workshop.savedata = savedata;
@@ -398,7 +474,7 @@ if(isset($_GET['link'])) {
 	$foo = json_decode($restore,true) or die("json error");
 	$incs = $foo['scripts'];
 	if(is_null($incs)) {
-		$incs = array(1 => 'lib/numeric-1.1.6.js');
+		$incs = array(1 => 'lib/numeric-1.2.6.js');
 	}
 	echo <<<EOT
 workshop._restore = $restore;
@@ -408,13 +484,13 @@ EOT;
 workshop._restore = ((typeof localStorage.savedata === "string")?
 	                (JSON.parse(localStorage.savedata)):
 	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.1.6.js"] });
+	                 scripts: ["lib/numeric-1.2.6.js"] });
 EOT;
 }
 ?>
 
-workshop.version = "1.1.6";
-workshop.updateVersion = "lib/numeric-1.1.6.js";
+workshop.version = "1.2.6";
+workshop.updateVersion = "lib/numeric-1.2.6.js";
 workshop.preload(workshop._restore);
 </script>
 
