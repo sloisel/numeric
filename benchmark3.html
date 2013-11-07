@@ -85,7 +85,7 @@ var benchmarks = [
   ],
   [
   'Solve Ax=b, A is Banded Laplacian', [4, 6, 9, 14, 21, 32, 48, 72],
-  function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.ccsLUPSolve(numeric.ccsLUP(A), b); }); },
+  function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.cLUsolve(numeric.cLU(A), b); }); },
   function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.cg(A, b); }); },
   function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.bicgstab(A, b); }); },  
   ],

@@ -61,7 +61,7 @@ numeric.bicgstab = function bicgstab(A, b, maxIters, residue) {
             }
 			
             v = mv(A, p);
-            var alpha = rDotr / dot(rhat, v);
+            alpha = rDotr / dot(rhat, v);
 			s = axpy(-alpha, v, r);
 			
 			t = mv(A, s);	
@@ -70,7 +70,7 @@ numeric.bicgstab = function bicgstab(A, b, maxIters, residue) {
             x = axpy(w, s, axpy(alpha, p, x));
             r = axpy(-w, t, s);
 
-            var beta = dot(rhat, r) / rDotr * (alpha/w);
+            beta = dot(rhat, r) / rDotr * (alpha/w);
             p = axpy(beta, axpy(-w, v, p), r);
 
             iters++;
