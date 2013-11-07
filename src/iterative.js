@@ -1,3 +1,25 @@
+// CCS matrix mul dense vector
+numeric.ccsMV = numeric.ccsMV || function ccsMV(A, x) {
+	var Ai = A[0], Aj = A[1], Av = A[2];
+	var sA = numeric.ccsDim(A);
+	var m = sA[0], n = sA[1];
+	var L = x.length;
+	var ret = numeric.rep([L],0);
+	if( n !== L ) throw 'Matrix dimension does not match input vector.';
+	var i, j, k, j0, j1;
+	var ri, val;
+	for(k=0;k!==n;k++) {
+		j0 = Ai[k];
+		j1 = Ai[k+1];
+		for(j=j0;j<j1;j++) {
+			ri = Aj[j];
+			val = Av[j];
+			ret[ri] += x[k] * val;
+		}
+	}
+	return ret;
+}
+
 numeric.bicgstab = function bicgstab(A, b, maxIters, residue) {
 	var maxIters = maxIters || 1024;
 	var residue = residue || 1e-6;
@@ -26,23 +48,23 @@ numeric.bicgstab = function bicgstab(A, b, maxIters, residue) {
         var rho = 1, alpha = 1, w = 1;
 		var p = mul(b, 1);
 		var v = numeric.rep([rows], 0);
-		var s;
+		var s, t, alpha, beta;
 		
 		var bnorm = dot(b, b);
 		
         while( !converged && iters < maxIters ) {
             var rDotr = dot(rhat, r);
 			
-            if( (rDotr / bnorm) <= residue ) {
+            if( Math.abs(rDotr / bnorm) <= residue ) {
                 converged = true;
                 break;
             }
 			
-            var v = mv(A, p);
+            v = mv(A, p);
             var alpha = rDotr / dot(rhat, v);
 			s = axpy(-alpha, v, r);
 			
-			var t = mv(A, s);	
+			t = mv(A, s);	
 			w = dot(t, s) / dot(t, t);
 
             x = axpy(w, s, axpy(alpha, p, x));
@@ -105,26 +127,26 @@ numeric.cg = function cg(A, b, maxIters, residue) {
         var p = mul(b, 1);
 		
 		var bnorm = dot(b, b);
-		
-        while( !converged && iters < maxIters ) {
-            var rDotr = dot(r, r);
-			
-            if( (rDotr / bnorm) <= residue ) {
+		var rho = bnorm;
+		var flag = 1;
+		var Ap, pAp, alpha, beta, rho_new;
+        while( !converged && iters < maxIters ) {		
+            if( Math.abs(rho / bnorm) <= residue ) {
                 converged = true;
                 break;
-            }			
+            }
 			
-            var Ap = mv(A, p);
-            var pAp = dot(p, Ap);
-            var alpha = rDotr / pAp;
+            Ap = mv(A, p);
+            pAp = dot(p, Ap);
+            alpha = rho / pAp;
 
             x = axpy(alpha, p, x);
             r = axpy(-alpha, Ap, r);
 
-            var rDotr_new = dot(r, r);
-            var beta = rDotr_new / rDotr;
+            rho_new = dot(r, r);
+            beta = rho_new / rho;
             p = axpy(beta, p, r);
-
+			rho = rho_new;
             iters++;
         }
 
