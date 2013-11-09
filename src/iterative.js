@@ -173,3 +173,208 @@ numeric.cg = function cg(A, b, maxIters, residue) {
 	}
 	}	
 };
+
+numeric.sor = function sor(A, b, relax, maxIters, residue) {
+	var maxIters = maxIters || 1024;
+	var residue = residue || 1e-6;
+	var relax = relax || 1.0;		// no relaxation by default, fall back to Gauss-Seidel
+	
+	var sor_full = function(A, b) {
+		// initialization
+        var iters = 0;
+        var converged = false;
+        var rows = b.length;
+		
+		var sA = numeric.dim(A);
+		var n = sA[0], m = sA[1];
+		if( n != rows ) {
+			throw 'Matrix dimension does not match input vector.';
+		}
+		
+		// initialize x
+        var x = numeric.rep([rows], 0);
+		var dot = numeric.dot;
+		var bnorm = dot(b, b);
+		var rowsum = 0;
+		var i, j;
+		var Ai;
+		var rowdiff;
+		var res = numeric.rep([rows], 0), r2;
+		
+		while(!converged && iters < maxIters) {
+			for(i=0;i<n;i++) {
+				Ai = A[i];
+				rowsum = 0;
+				for(j=0;j<i;j++) {
+					rowsum += Ai[j] * x[j];
+				}
+				
+				for(j=i+1;j<m;j++) {
+					rowsum += Ai[j] * x[j];					
+				}
+				
+				rowdiff = b[i] - rowsum;
+				res[i] += (rowdiff - x[i] * Ai[i]);
+				x[i] = (1-relax) * x[i] + relax / Ai[i] * rowdiff;
+			}
+			
+			iters++;
+			// check convergence
+			r2 = dot(res, res);
+			converged = ((r2 / bnorm) < residue);
+		}
+		
+		if( converged )
+			console.log('converged in ' + iters + ' iterations');
+		else
+			console.log('not converged in ' + iters + ' iterations');
+			
+		return x;
+	}
+	
+	var sor_ccs = function(A, b) {
+		// initialization
+        var iters = 0;
+        var converged = false;
+        var rows = b.length;
+		
+		var Ai = A[0], Aj = A[1], Av = A[2];
+		var sA = numeric.ccsDim(A);
+		var m = sA[0], n = sA[1];
+		
+		if( m !== rows )
+			throw 'Matrix dimension does not match input vector.';
+		
+		var rep = numeric.rep;
+		var dot = numeric.dot;
+		var rowsum = rep([rows], 0);
+		var r = rep([rows], 0);
+		var i, j, k, j0, j1;
+		var bnorm = dot(b, b);
+
+		// initialize x
+        var x = rep([rows], 0);
+		
+		// find out diagonal
+		var Aii = rep([rows], 0);
+		for(k=0;k!==n;k++) {
+			j0 = Ai[k];
+			j1 = Ai[k+1];
+			for(j=j0;j<j1;j++) {
+				ri = Aj[j];
+				if( ri == k ) {
+					Aii[k] = Av[j];
+					break;
+				}
+			}
+		}
+			
+		while( !converged && iters < maxIters ) {
+			// collect row sum
+			for(k=0;k!==n;k++) {
+				j0 = Ai[k];
+				j1 = Ai[k+1];
+				for(j=j0;j<j1;j++) {
+					ri = Aj[j];
+					val = Av[j];
+					rowsum[ri] += x[k] * val;
+				}
+			}
+			
+			// subtract diagonal elements from row sum and update x
+			for(i=0;i<m;i++) {
+				r[i] = b[i] - rowsum[i];
+				x[i] = (1-relax) * x[i] + relax / Aii[i] * (r[i] + x[i] * Aii[i]);
+				rowsum[i] = 0;
+			}
+		
+			iters++;			
+			r2 = dot(r, r);
+			converged = (r2/bnorm <= residue);
+		}
+		
+		if( converged )
+			console.log('converged in ' + iters + ' iterations');
+		else
+			console.log('not converged in ' + iters + ' iterations');
+			
+		return x;
+	}
+	
+	var sor_crs = function(A, b) {
+		// initialization
+        var iters = 0;
+        var converged = false;
+        var rows = b.length;
+		
+		var Ai = A[0], Aj = A[1], Av = A[2];
+		var nelems = Ai.length;
+		var n = numeric.sup(Aj) + 1;
+		var m = numeric.sup(Ai) + 1;
+		if( m !== rows )
+			throw 'Matrix dimension does not match input vector.';
+		
+		var rep = numeric.rep;
+		var dot = numeric.dot;
+		var rowsum = rep([rows], 0);
+		var r = rep([rows], 0);
+		var i, j, k;
+		var bnorm = dot(b, b);
+
+		// initialize x
+        var x = rep([rows], 0);
+		
+		// find out diagonal
+		var Aii = rep([rows], 0);
+		for(k=0;k!==nelems;k++) {
+			i = Ai[k];
+			j = Aj[k];
+			if( i == j ) {
+				Aii[i] = Av[k];
+			}
+		}
+			
+		while( !converged && iters < maxIters ) {
+			// collect row sum
+			for(k=0;k!==nelems;k++) {
+				i = Ai[k];
+				j = Aj[k];
+				rowsum[i] += Av[k] * x[j];
+			}
+			
+			// subtract diagonal elements from row sum and update x
+			for(i=0;i<m;i++) {
+				r[i] = b[i] - rowsum[i];
+				x[i] = (1-relax) * x[i] + relax / Aii[i] * (r[i] + x[i] * Aii[i]);
+				rowsum[i] = 0;
+			}
+		
+			iters++;			
+			r2 = dot(r, r);
+			converged = (r2/bnorm <= residue);
+		}
+		
+		if( converged )
+			console.log('converged in ' + iters + ' iterations');
+		else
+			console.log('not converged in ' + iters + ' iterations');
+			
+		return x;
+	}
+
+	switch(A.format) {
+	case 'full': {	
+		return sor_full(A, b);
+	}
+	case 'ccs': {
+		return sor_ccs(A, b);
+	}
+	case 'crs': {
+		return sor_crs(A, b);
+	}
+	default: {
+		throw 'Not supported matrix format';
+	}
+	}	
+
+}
