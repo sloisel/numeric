@@ -598,61 +598,61 @@ numeric.pointwiseVV = function pointwiseVV(params,body,setup,ret) {
     return Function.apply(null,fun);
 }
 
-numeric._biforeacheqV = (function _biforeacheqV(x,y,sx,sy,k,f) {
+numeric._biforeacheqV = function _biforeacheqV(x,y,sx,sy,k,f) {
     if(k === sx.length-1) { f(x,y); return; }
     var i,n=sx[k],m=sy[k];
     if (m === 1) { for(i=n-1;i>=0;i--) { _biforeacheqV(x[i],y[0],sx,sy,k+1,f); }}
     else         { for(i=n-1;i>=0;i--) { _biforeacheqV(x[i],y[i],sx,sy,k+1,f); }}
-});
+};
 
-numeric._biforeacheqS = (function _biforeacheqS(x,y,s,k,f) {
+numeric._biforeacheqS = function _biforeacheqS(x,y,s,k,f) {
     if(k === s.length-1) { f(x,y); return; }
     var i,n=s[k];
     for(i=n-1;i>=0;i--) { _biforeacheqS(x[i],y,s,k+1,f); }
-});
+};
 
-numeric._biforeachVS = (function _biforeachVS(x,y,s,k,f) {
+numeric._biforeachVS = function _biforeachVS(x,y,s,k,f) {
     if(k === s.length-1) { return f(x,y); }
     var i,n=s[k],ret=Array(n);
     for(i=n-1;i>=0;--i) { ret[i] = _biforeachVS(x[i],y,s,k+1,f); }
     return ret;
-});
+};
 
-numeric._biforeachSV = (function _biforeachSV(x,y,s,k,f) {
+numeric._biforeachSV = function _biforeachSV(x,y,s,k,f) {
     if(k === s.length-1) { return f(x,y); }
     var i,n=s[k],ret=Array(n);
     for(i=n-1;i>=0;--i) { ret[i] = _biforeachSV(x,y[i],s,k+1,f); }
     return ret;
-});
+};
 
-numeric._biforeacheqVV = (function _biforeacheqVV(x,y,sx,sy,k,f) {
+numeric._biforeacheqVV = function _biforeacheqVV(x,y,sx,sy,k,f) {
     if(k === sx.length-1) { f(x,y); return; }
     var i,n=sx[k],m=sy[k];
     if (m === 1) { for(i=n-1;i>=0;i--) { _biforeacheqVV(x[i],y[0],sx,sy,k+1,f); }}
     else         { for(i=n-1;i>=0;i--) { _biforeacheqVV(x[i],y[i],sx,sy,k+1,f); }}
-});
+};
 
-numeric._biforeachVV = (function _biforeachVV(x,y,sx,sy,k,f) {
+numeric._biforeachVV = function _biforeachVV(x,y,sx,sy,k,f) {
     if(k === sx.length-1) { return f(x,y); }
     var i,n=sx[k],m=sy[k],ret=(n===1)?Array(m):Array(n);
     if      (n === 1) { for(i=m-1;i>=0;--i) { ret[i] = _biforeachVV(x[0],y[i],sx,sy,k+1,f); }}
     else if (m === 1) { for(i=n-1;i>=0;--i) { ret[i] = _biforeachVV(x[i],y[0],sx,sy,k+1,f); }}
     else              { for(i=n-1;i>=0;--i) { ret[i] = _biforeachVV(x[i],y[i],sx,sy,k+1,f); }}
     return ret;
-});
+};
 
-numeric._foreacheq = (function _foreacheq(x,s,k,f) {
+numeric._foreacheq = function _foreacheq(x,s,k,f) {
     if(k === s.length-1) { f(x); return; }
     var i,n=s[k];
     for(i=n-1;i>=0;i--) { _foreacheq(x[i],s,k+1,f); }
-});
+};
 
-numeric._foreach = (function _foreach(x,s,k,f) {
+numeric._foreach = function _foreach(x,s,k,f) {
     if(k === s.length-1) { return f(x); }
     var i,n=s[k],ret=Array(n);
     for(i=n-1;i>=0;i--) { ret[i] = _foreach(x[i],s,k+1,f); }
     return ret;
-});
+};
 
 numeric.ops2 = {
         add: '+',
