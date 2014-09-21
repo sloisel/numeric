@@ -568,8 +568,7 @@ numeric.pointwiseVS = function pointwiseVS(params,body,setup,ret) {
         'var _n='+params[0]+'.length;\n'+
         'var i'+(ret?'':', ret = Array(_n)')+';\n'+setup+';\n'+
         'for(i=_n-1;i!==-1;--i) {'+body+'}\n'+
-        'return ret;'
-        ]);
+        'return ret;']);
     return Function.apply(null,fun);
 }
 
@@ -579,8 +578,7 @@ numeric.pointwiseSV = function pointwiseSV(params,body,setup,ret) {
         'var _n='+params[1]+'.length;\n'+
         'var i'+(ret?'':', ret = Array(_n)')+';\n'+setup+';\n'+
         'for(i=_n-1;i!==-1;--i) {'+body+'}\n'+
-        'return ret;'
-        ]);
+        'return ret;']);
     return Function.apply(null,fun);
 }
 
@@ -593,8 +591,7 @@ numeric.pointwiseVV = function pointwiseVV(params,body,setup,ret) {
         (ret?'':('if(_n === 1) { for(j=_m-1;j!==-1;--j) {i=0;k=j;'+body+'} } else \n'))+
                  'if(_m === 1) { for(i=_n-1;i!==-1;--i) {j=0;k=i;'+body+'} }\n'+
                  'else         { for(i=_n-1;i!==-1;--i) {j=i;k=i;'+body+'} }\n'+
-        'return ret;'
-        ]);
+        'return ret;']);
     return Function.apply(null,fun);
 }
 
@@ -748,8 +745,8 @@ numeric.mapreducers = {
                     '  else '+codeeq('x','y')+'\n'+
                     '}\nreturn x;\n');
             numeric[o] = numeric[i];
-            numeric[i+'eqV'] = numeric.pointwiseVV(['ret','x'], codeeq('ret[i]','x[j]'),setup,true);
-            numeric[i+'eqS'] = numeric.pointwiseVS(['ret','x'], codeeq('ret[i]','x'   ),setup,true);
+            numeric[i+'eqV'] = numeric.pointwiseVV(['ret','x'],codeeq('ret[i]','x[j]'),setup,true);
+            numeric[i+'eqS'] = numeric.pointwiseVS(['ret','x'],codeeq('ret[i]','x'   ),setup,true);
             numeric[i+'eq'] = Function(
                     'var n = arguments.length, i, x = arguments[0], y;\n'+
                     'var V = numeric.'+i+'eqV, S = numeric.'+i+'eqS\n'+
@@ -852,7 +849,6 @@ numeric._slice = function _slice(x,s) {
 }
 
 numeric.slice = function slice(x,s,k) {
-    
     if(typeof k === 'undefined') { k=0; }
     if(typeof s !== 'object') { return numeric.slice(x,[s],0); }
     if(k === s.length-1) { return numeric._slice(x,s[k]); }
@@ -872,14 +868,55 @@ numeric.slice = function slice(x,s,k) {
     }   
 }
 
+numeric._sliceeq = function _sliceeq(x,y,s) {
+    if(typeof s === 'number') { x[s<0?x.length+s:s] = y; }
+    if(typeof s === 'string') {
+        var i,j,n=x.length,r=numeric.parseSlice(x, s);
+        for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step,j++) {
+            x[i] = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
+        }
+    }
+}
+
+numeric.sliceeq = function sliceeq(x,y,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s !== 'object') { numeric.sliceeq(x,y,[s],0); }
+    if(k === s.length-1) { numeric._sliceeq(x,y,s[k]); }
+    
+    if(typeof s[k] === 'number') {
+        numeric.sliceeq(x[s[k]<0?x.length+s[k]:s[k]],y,s,k+1);
+    }
+    
+    if(typeof s[k] === 'string') {
+        var i,j,yi,r=numeric.parseSlice(x, s[k]);
+        for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step,j++) {
+            yi = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
+            numeric.sliceeq(x[i],yi,s,k+1);
+        }
+    }
+}
+
 numeric.flatten = function flatten(x,s,k) {
     if(typeof x !== 'object') { return x; }
     if(typeof k === 'undefined') { k=0; }
     if(typeof s === 'undefined') { s=numeric.dim(x); }
     if(k === s.length-1) { return x; }
     var i,n=x.length,ret=[];
-    for(i=n-1;i!==-1;--i) { ret += numeric.flatten(x[i],s,k+1); }
+    for(i=0;i<n;++i) { ret = ret.concat(numeric.flatten(x[i],s,k+1)); }
     return ret;
+}
+
+numeric._reshape = function _reshape(x,s,k) {
+    if(k === s.length-1) { return x.splice(0, s[k]); }
+    var i,n=s[k],ret=Array(s[k]);
+    for(i=0;i<n;++i) { ret[i] = numeric._reshape(x,s,k+1); }
+    return ret;
+}
+
+numeric.reshape = function reshape(x,s,k) {
+    return numeric._reshape(numeric.flatten(x),s,0)
 }
 
 numeric.truncVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = round(x[i]/y[i])*y[i];','var round = Math.round;');

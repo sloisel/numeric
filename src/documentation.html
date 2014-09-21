@@ -85,6 +85,7 @@ OUT> 0.2694
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
 <tr><td><tt>eq</tt><td>Pointwise comparison x === y
 <tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
+<tr><td><tt>flatten</tt><td>Flatten an Array into a single dimension
 <tr><td><tt>floor</tt><td>Poinwise Math.floor(x)
 <tr><td><tt>geq</tt><td>Pointwise x&gt;=y
 <tr><td><tt>getBlock</tt><td>Extract a block from a matrix
@@ -126,6 +127,7 @@ OUT> 0.2694
 <tr><td><tt>prod</tt><td>Take the product all the entries of x
 <tr><td><tt>random</tt><td>Create an Array of random numbers
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
+<tr><td><tt>reshape</tt><td>Reshape an Array to given dimensions
 </table>
 <td valign="top" width="33%">
 <table>
@@ -140,6 +142,8 @@ OUT> 0.2694
 <tr><td><tt>seedrandom</tt><td>The seedrandom module
 <tr><td><tt>setBlock</tt><td>Set a block of a matrix
 <tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
+<tr><td><tt>slice</tt><td>Return some range or indices of an Array
+<tr><td><tt>sliceeq</tt><td>Assign values into some range or indices of an Array
 <tr><td><tt>solve</tt><td>Solve Ax=b
 <tr><td><tt>solveLP</tt><td>Solve a linear programming problem
 <tr><td><tt>solveQP</tt><td>Solve a quadratic programming problem
@@ -474,11 +478,9 @@ OUT> true
 </pre>
 -->
 
-<!-- TODO: flatten, reshape etc -->
-
 <h1>Slicing</h1>
 
-The <tt>slice</tt> command allows for accessing numeric arrays in more advanced ways. 
+The <tt>slice</tt> command allows for accessing numeric Arrays in more advanced ways. 
 In its most basic functionality you can pass in a list of indices to access on
 each dimension.
 
@@ -491,7 +493,7 @@ OUT> [3,4]
 
 But rather than an integer you can also pass in it a <em>slice</em> string. This is
 a string consisting of three number separated by colons <tt>start:stop:step</tt> 
-which tell the command to access the array starting from some element index, stopping 
+which tell the command to access the Array starting from some element index, stopping 
 at some element index, and performing some incrementing step size.
 
 <pre>
@@ -503,7 +505,7 @@ OUT> [1,1,26]
 
 The slice string is flexible. You can leave out the <tt>step</tt> section, or
 omit actual numbers for the starting and stopping values, and defaults using the
-start or end of the array are assumed.
+start or end of the Array are assumed.
 
 <pre>
 IN> numeric.slice([1,5,1,7,26], [1+':'+3])
@@ -519,7 +521,7 @@ OUT> [2,4,6]
 </pre>
 
 Negative numbers can also be used as indices. These are assumed to be offsets from
-the final element in the array. So <tt>-1</tt> can be used to mean the final element,
+the final element in the Array. So <tt>-1</tt> can be used to mean the final element,
 <tt>-2</tt> the second to last, etc.
 
 <pre>
@@ -532,7 +534,7 @@ OUT> [7,6,5,4]
 </pre>
 
 The string <tt>'|'</tt> can be used to insert a new axis of a single element into 
-an array. This is particularly useful when used in conjunction with <em>broadcasting</em>.
+an Array. This is particularly useful when used in conjunction with <em>broadcasting</em>.
 
 <pre>
 IN> numeric.slice([0,1,2,3,4,5,6,7,8,9], ['|'])
@@ -547,14 +549,26 @@ IN> numeric.dim(numeric.slice([0,1,2,3,4,5,6,7,8,9], [':','|']))
 OUT> [10,1]
 </pre>
 
+As well as extracting data you can also set data using the <tt>sliceeq</tt> function.
+If you have previously extracted some data using a slice this can be useful for inserting
+it back into an Array.
+
+<pre>
+IN> v = [1,2,3,4]; numeric.sliceeq(v,[0,0],[':'+2]); v
+OUT> [0,0,3,4]
+IN> v = [[1,2],[3,4]]; numeric.sliceeq(v,10,[':',1]); v
+OUT> [[1,10],[3,10]]
+</pre>
+
+
 <h1>Broadcasting</h1>
 
-When performing pointwise operations between two arrays it is sometimes possible
+When performing pointwise operations between two Arrays it is sometimes possible
 to calculate a result when the dimensions don't exactly match. This behaviour is 
-called <em>broadcast</em>. It works as follows. Given an array with a dimension 
+called <em>broadcast</em>. It works as follows. Given an Array with a dimension 
 of size 1, the single value in this dimension will be used as the operand for all 
-calculations for that axis. You can think of this value being <em>stretched</em> 
-or <em>repeated</em> so that it is matched against every element in the other array.
+calculations along that axis. You can think of this value being <em>stretched</em> 
+or <em>repeated</em> so that it is matched against every element in the other Array.
 
 <pre>
 IN> numeric.mul([[1,2],[3,4],[5,6]], [[10,11]])
@@ -584,6 +598,28 @@ OUT> [[4,  5, 6],
       [12,15,18]]
 </pre>
 
+Unlike <a href="http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">Numpy's 
+broadcasting mechanics</a> for performance, unless a scalar is used, numeric does not 
+automatically align shapes on the right hand side. It is the user's responsibility to add 
+all the new axis which are required before broadcasting can work.
+
+<h1>Reshaping</h1>
+
+Arrays can be reshaped to different dimensions using the <tt>reshape</tt> function,
+or they can be flattened into a single Array using the <tt>flatten</tt> function.
+
+<pre>
+IN> numeric.flatten([[1,2],[3,4],[5,6]])
+OUT> [1,2,3,4,5,6]
+IN> numeric.reshape([1,2,3,4],[2,2])
+OUT> [[1,2],[3,4]]
+IN> numeric.dim([[1,2],[3,4],[5,6]])
+OUT> [3,2]
+IN> numeric.reshape([[1,2],[3,4],[5,6]],[2,3])
+OUT> [[1,2,3],[4,5,6]]
+IN> numeric.dim([[1,2,3],[4,5,6]])
+OUT> [2,3]
+</pre>
 
 <h1>Linear algebra</h1>
 
