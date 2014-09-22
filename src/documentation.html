@@ -41,12 +41,15 @@ OUT> 0.2694
 <tr><td><tt>and</tt><td>Pointwise x &amp;&amp; y
 <tr><td><tt>andeq</tt><td>Pointwise x &amp;= y
 <tr><td><tt>any</tt><td>One or more of the components of x are true
+<tr><td><tt>argmin</tt><td>Return the index of the minimum value in an Array
+<tr><td><tt>argmax</tt><td>Return the index of the maximum value in an Array
 <tr><td><tt>asin</tt><td>Arc-sine
 <tr><td><tt>atan</tt><td>Arc-tangeant
 <tr><td><tt>atan2</tt><td>Arc-tangeant (two parameters)
 <tr><td><tt>band</tt><td>Pointwise x &amp; y
 <tr><td><tt>bench</tt><td>Benchmarking routine
 <tr><td><tt>bnot</tt><td>Binary negation ~x
+<tr><td><tt>bool</tt><td>Convert Array to boolean values
 <tr><td><tt>bor</tt><td>Binary or x|y
 <tr><td><tt>bxor</tt><td>Binary xor x^y
 <tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
@@ -60,6 +63,7 @@ OUT> 0.2694
 <tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
 <tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
 <tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
+<tr><td><tt>clip</tt><td>Clip an Arrays values to within some minimum and maximum
 <tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
 <tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
 <tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
@@ -67,6 +71,7 @@ OUT> 0.2694
 <tr><td><tt>ceil</tt><td>Pointwise Math.ceil(x)
 <tr><td><tt>cgrid</tt><td>Coordinate grid for cdelsq
 <tr><td><tt>clone</tt><td>Deep copy of Array
+<tr><td><tt>concat</tt></td>Join two Arrays together on a given axis
 <tr><td><tt>cos</tt><td>Pointwise Math.cos(x)
 <tr><td><tt>det</tt><td>Determinant
 <tr><td><tt>diag</tt><td>Create diagonal matrix
@@ -81,6 +86,7 @@ OUT> 0.2694
 <tr><td><b>Function</b><td><b>Description</b>
 <tr><td colspan=2><hr>
 <tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
+<tr><td><tt>dstack</tt></td>Join a list of Arrays together on their third innermost axis
 <tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
 <tr><td><tt>eq</tt><td>Pointwise comparison x === y
@@ -91,6 +97,7 @@ OUT> 0.2694
 <tr><td><tt>getBlock</tt><td>Extract a block from a matrix
 <tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
 <tr><td><tt>gt</tt><td>Pointwise x&gt;y
+<tr><td><tt>hstack</tt></td>Join a list of Arrays together on their innermost axis
 <tr><td><tt>identity</tt><td>Identity matrix
 <tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
 <tr><td><tt>inv</tt><td>Matrix inverse
@@ -106,6 +113,9 @@ OUT> 0.2694
 <tr><td><tt>LU</tt><td>Dense LU decomposition
 <tr><td><tt>LUsolve</tt><td>Dense LU solve
 <tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
+<tr><td><tt>mean</tt><td>The mean value of an Array
+<tr><td><tt>variance</tt><td>The variance of an Array
+<tr><td><tt>std</tt><td>The standard deviation of an Array
 <tr><td><tt>mod</tt><td>Pointwise x%y
 <tr><td><tt>modeq</tt><td>Pointwise x%=y
 <tr><td><tt>mul</tt><td>Pointwise x*y
@@ -126,6 +136,7 @@ OUT> 0.2694
 <tr><td><tt>prettyPrint</tt><td>Pretty-prints x
 <tr><td><tt>prod</tt><td>Take the product all the entries of x
 <tr><td><tt>random</tt><td>Create an Array of random numbers
+<tr><td><tt>range</tt><td>Create an Array from a range
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
 <tr><td><tt>reshape</tt><td>Reshape an Array to given dimensions
 </table>
@@ -140,6 +151,7 @@ OUT> 0.2694
 <tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
 <tr><td><tt>same</tt><td>x and y are entrywise identical
 <tr><td><tt>seedrandom</tt><td>The seedrandom module
+<tr><td><tt>setDiag</tt><td>Set the diagonal of a matrix
 <tr><td><tt>setBlock</tt><td>Set a block of a matrix
 <tr><td><tt>sin</tt><td>Pointwise Math.sin(x)
 <tr><td><tt>slice</tt><td>Return some range or indices of an Array
@@ -152,9 +164,12 @@ OUT> 0.2694
 <tr><td><tt>Spline.diff</tt><td>Differentiate the Spline
 <tr><td><tt>Spline.roots</tt><td>Find all the roots of the Spline
 <tr><td><tt>sqrt</tt><td>Pointwise Math.sqrt(x)
+<tr><td><tt>stack</tt></td>Join a list of Arrays together on a given axis
 <tr><td><tt>sub</tt><td>Pointwise x-y
 <tr><td><tt>subeq</tt><td>Pointwise x-=y
 <tr><td><tt>sum</tt><td>Sum all the entries of x
+<tr><td><tt>sup</tt><td>Return the largest value in an Array
+<tr><td><tt>inf</tt><td>Return the smallest value in an Array
 <tr><td><tt>svd</tt><td>Singular value decomposition
 <tr><td><tt>t</tt><td>Create a tensor type T (may be complex-valued)
 <tr><td><tt>T.&lt;numericfun&gt;</tt><td>Supported &lt;numericfun&gt; are: abs, add, cos, diag, div, dot, exp, getBlock, getDiag, inv, log, mul, neg, norm2, setBlock, sin, sub, transpose
@@ -175,6 +190,8 @@ OUT> 0.2694
 <tr><td><tt>transpose</tt><td>Matrix transpose
 <tr><td><tt>uncmin</tt><td>Unconstrained optimization
 <tr><td><tt>version</tt><td>Version string for the numeric library
+<tr><td><tt>vstack</tt></td>Join a list of Arrays together on their second innermost axis
+<tr><td><tt>when</tt></td>Given three Arrays take elements from either the second, or third array, given the boolean value of the elements of the first.
 <tr><td><tt>xor</tt><td>Pointwise x^y
 <tr><td><tt>xoreq</tt><td>Pointwise x^=y
 </table></table>
@@ -270,6 +287,7 @@ In particular, if you want to print all Arrays regardless of size, set <tt>numer
 <h1>Math Object functions</h1>
 
 The <tt>Math</tt> object functions have also been adapted to work on Arrays as follows:
+
 <pre>
 IN> numeric.exp([1,2]);
 OUT> [2.718,7.389]
@@ -302,6 +320,8 @@ IN> numeric.sqrt([1,2])
 OUT> [1,1.414]
 IN> numeric.tan([1,2])
 OUT> [1.557,-2.185]
+IN> numeric.bool([1,4,0,-2])
+OUT> [true,true,false,true]
 </pre>
 
 
@@ -317,6 +337,7 @@ OUT> [2,3]
 </pre>
 
 You can perform a deep comparison of Arrays using <tt>numeric.same()</tt>:
+
 <pre>
 IN> numeric.same([1,2],[1,2])
 OUT> true
@@ -333,12 +354,22 @@ OUT> false
 </pre>
 
 You can create a multidimensional Array from a given value using <tt>numeric.rep()</tt>
+
 <pre>
 IN> numeric.rep([3],5)
 OUT> [5,5,5]
 IN> numeric.rep([2,3],0)
 OUT> [[0,0,0],
       [0,0,0]]
+</pre>
+
+You can use the conditional ternary operator in a pointwise way with the <tt>numeric.when()</tt> function.
+
+<pre>
+IN> a = [5,2,3]; b = [1,7,3];
+    c = [1,1,1]; d = [2,2,2];
+    numeric.when(numeric.lt(a,b),c,d);
+OUT> [2,1,2]
 </pre>
 
 You can loop over Arrays as you normally would. However, in order to quickly generate optimized
@@ -355,6 +386,7 @@ OUT> 21
 
 The functions <tt>numeric.any()</tt> and <tt>numeric.all()</tt> allow you to check whether any or all entries
 of an Array are boolean true values.
+
 <pre>
 IN> numeric.any([false,true])
 OUT> true
@@ -370,7 +402,38 @@ IN> numeric.all([0,0,false])
 OUT> false
 </pre>
 
+The functions <tt>numeric.inf()</tt> and <tt>numeric.sup()</tt> allow you to get the smallest and largest values
+in an Array. You can also use the <tt>numeric.argmax()</tt> and <tt>numeric.argmin()</tt> functions to get the 
+indices of these values.
+
+<pre>
+IN> numeric.inf([5.2,6.1,2.8,1.3])
+OUT> 1.3
+IN> numeric.sup([5.2,6.1,2.8,1.3])
+OUT> 6.1
+IN> numeric.argmax([5.2,6.1,2.8,1.3])
+OUT> 1
+IN> numeric.argmin([5.2,6.1,2.8,1.3])
+OUT> 3
+</pre>
+
+These mapreduce functions can all be given an optional argument specifying the axis upon which to do the reduction.
+If a negative index is given it will be used as an offset from the innermost axis.
+
+<pre>
+IN> numeric.sum([[1,2],[3,4],[5,6]], 0)
+OUT> [9,12]
+IN> numeric.sum([[1,2],[3,4],[5,6]], 1)
+OUT> [3,7,11]
+IN> numeric.sum(
+  [[[1,2],[3,4]],
+   [[5,6],[7,8]]], -1)
+OUT> [[ 3, 7],
+      [11,15]]
+</pre>
+
 You can create a diagonal matrix using <tt>numeric.diag()</tt>
+
 <pre>
 IN> numeric.diag([1,2,3])
 OUT> [[1,0,0],
@@ -400,6 +463,17 @@ IN> numeric.linspace(1,5);
 OUT> [1,2,3,4,5]
 IN> numeric.linspace(1,3,5);
 OUT> [1,1.5,2,2.5,3]
+</pre>
+
+Or via some range specifier:
+
+<pre>
+IN> numeric.range(0, 5);
+OUT> [0,1,2,3,4]
+IN> numeric.range(1, 3);
+OUT> [1,2]
+IN> numeric.range(-1, 6, 2);
+OUT> [-1, 1, 3, 5]
 </pre>
 
 <!--
@@ -603,10 +677,44 @@ broadcasting mechanics</a> for performance, unless a scalar is used, numeric doe
 automatically align shapes on the right hand side. It is the user's responsibility to add 
 all the new axis which are required before broadcasting can work.
 
-<h1>Reshaping</h1>
+<h1>Joining &amp; Reshaping</h1>
 
-Arrays can be reshaped to different dimensions using the <tt>reshape</tt> function,
-or they can be flattened into a single Array using the <tt>flatten</tt> function.
+Arrays can be joined together using the <tt>numeric.concat()</tt> function. It takes as input
+two arrays and the axis upon which to join them.
+
+<pre>
+IN> numeric.concat([1,2],[3,4], 0)
+OUT> [1,2,3,4]
+IN> numeric.concat([[1,2],[3,4]], [[5,6],[7,8]], 0)
+OUT> [[1,2],[3,4],[5,6],[7,8]]
+IN> numeric.concat([[1,2],[3,4]], [[5,6],[7,8]], 1)
+OUT> [[1,2,5,6],[3,4,7,8]]
+</pre>
+
+If you want to join multiple Arrays you can use the <tt>numeric.stack()</tt> function which
+takes a list of Arrays as input. Because concatenating on the innermost, second innermost
+and third innermost axes are such common operations functions for these are provided as 
+<tt>numeric.hstack()</tt>, <tt>numeric.vstack()</tt> and <tt>numeric.dstack()</tt>.
+
+<pre>
+IN> numeric.stack([[1,2],[3,4],[5,6]], 0)
+OUT> [1,2,3,4,5,6]
+IN> a = [[1,2],[3,4]];
+    b = [[5,6],[7,8]];
+    numeric.hstack([a,b])
+OUT> [[1,2,5,6],
+      [3,4,7,8]]
+IN> a = [[1,2],[3,4]];
+    b = [[5,6],[7,8]];
+    numeric.vstack([a,b])
+OUT> [[1,2],
+      [3,4],
+      [5,6],
+      [7,8]]
+</pre>
+
+Arrays can be reshaped to different dimensions using the <tt>numeric.reshape()</tt> function,
+or they can be flattened into a single Array using the <tt>numeric.flatten()</tt> function.
 
 <pre>
 IN> numeric.flatten([[1,2],[3,4],[5,6]])
