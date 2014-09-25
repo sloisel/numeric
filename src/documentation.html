@@ -639,25 +639,27 @@ OUT> [[1,10],[3,10]]
 
 When performing pointwise operations between two Arrays it is sometimes possible
 to calculate a result when the dimensions don't exactly match. This behaviour is 
-called <em>broadcast</em>. It works as follows. Given an Array with a dimension 
-of size 1, the single value in this dimension will be used as the operand for all 
-calculations along that axis. You can think of this value being <em>stretched</em> 
-or <em>repeated</em> so that it is matched against every element in the other Array.
+called <em>broadcast</em>. It works as follows. First each Array is wrapped in 
+new Arrays of a single element until both are the same size. Then on any dimension 
+with just a single element, the single element in this dimension will be used as the 
+operand for all calculations along that axis. You can think of this value being 
+<em>stretched</em> or <em>repeated</em> so that it is matched against every element 
+in the other Array.
 
 <pre>
-IN> numeric.mul([[1,2],[3,4],[5,6]], [[10,11]])
+IN> numeric.mul([[1,2],[3,4],[5,6]], [10,11])
 OUT> [[10,22],[30,44],[50,66]]
 IN> numeric.mul([[1,2],[3,4],[5,6]], [[10],[11],[22]])
 OUT> [[10,20],[33,44],[110,132]]
-IN> numeric.add(numeric.identity(3), [[1,1,1]])
+IN> numeric.add(numeric.identity(3), [1,1,1])
 OUT> [[2,1,1],
       [1,2,1],
       [1,1,2]]
-IN> numeric.add(numeric.rep([3,5], 0), [[1,2,3,4,5]])
+IN> numeric.add(numeric.rep([3,5], 0), [1,2,3,4,5])
 OUT> [[1,2,3,4,5],
       [1,2,3,4,5],
       [1,2,3,4,5]]
-IN> numeric.add(numeric.rep([2,2,2], 0), [[[1],[2]]])
+IN> numeric.add(numeric.rep([2,2,2], 0), [[1],[2]])
 OUT> [[[1,1],[2,2]],
       [[1,1],[2,2]]]
 </pre>
@@ -728,6 +730,52 @@ OUT> [[1,2,3],[4,5,6]]
 IN> numeric.dim([[1,2,3],[4,5,6]])
 OUT> [2,3]
 </pre>
+
+<h1>Masking</h1>
+
+Boolean Arrays can be used to <em>mask</em> off certain values in an Array. This is done
+with the <tt>numeric.mask()</tt> and <tt>numeric.maskeq()</tt> functions. These masked 
+off values can either be returned using <tt>numeric.mask()</tt> or set using <tt>numeric.maskeq()</tt>. 
+Because masking doesn't ensure the shape of the Array will remain valid, the values are always
+returned or set via a flattened array.
+
+<pre>
+IN> a = [[1,5,3,4],[5,9,2,3]];
+    numeric.mask(a, numeric.lt(a,5));
+OUT> [1,3,4,2,3]
+IN> a = [[1,5,3,4],[5,9,2,3]];
+    numeric.mask(a, numeric.gt(a,4));
+OUT> [5,5,9]
+</pre>
+
+You can set the values in an Array with a mask using <tt>numeric.maskeq()</tt>.
+This is useful in conjunction with <tt>numeric.mask()</tt> function because it allows
+different operations to be performed for different parts of an Array given some 
+condition. For example we can use it to multiply by 10 all the numbers in an Array 
+that are less than 5.
+
+<pre>
+IN> a = [[1,5,3,4],[5,9,2,3]];
+    m = numeric.lt(a,5);
+    b = numeric.mask(a, m);
+    numeric.maskeq(a,m,numeric.mul(b,10)); a;
+OUT> [[10,5,30,40],[5,9,20,30]]
+</pre>
+
+<h1>Array Indexing</h1>
+
+Arrays can be used as indices to other Arrays. This is similar to specifying multiple
+indices at once.
+
+<pre>
+IN> numeric.index([[1,2],[3,4],[5,6]],[0,2])
+OUT> [[1,2],[5,6]]
+IN> numeric.index([[1,2],[3,4],[5,6]],[[0],[1],[1]])
+OUT> [[1],[4],[6]]
+</pre>
+
+
+
 
 <h1>Linear algebra</h1>
 

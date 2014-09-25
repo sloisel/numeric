@@ -536,6 +536,8 @@ numeric.setDiag = function(A, x) {
 
 numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)); }
 
+numeric.broadcast = function expand(x, sx, sy) { for(var i=0;i<sy.length-sx.length;i++) { x = [x]; }; return x; }
+
 numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
     
     if (params.length === 1) {
@@ -564,7 +566,10 @@ numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
                 'for(i=1;i!==n;++i) {\n'+
                 '  y = arguments[i];\n'+
                 '  if     (typeof x === "object"\n'+
-                '  &&      typeof y === "object") { x = numeric._biforeachVV(x,y,dim(x),dim(y),0,'+vv+'); }\n'+
+                '  &&      typeof y === "object") {\n'+
+                '   x = numeric.broadcast(x, dim(x), dim(y));\n'+
+                '   y = numeric.broadcast(y, dim(y), dim(x));\n'+
+                '   x = numeric._biforeachVV(x,y,dim(x),dim(y),0,'+vv+'); }\n'+
                 '  else if(typeof x === "object") { x = numeric._biforeachVS(x,y,dim(x),0,'+vs+'); }\n'+
                 '  else if(typeof y === "object") { x = numeric._biforeachSV(x,y,dim(y),0,'+sv+'); }\n'+
                 '  else { x = '+ss+'(x, y); }\n'+
@@ -928,6 +933,72 @@ numeric.sliceeq = function sliceeq(x,y,s,k) {
             numeric.sliceeq(x[i],yi,s,k+1);
         }
     }
+}
+
+numeric._mask = function _mask(x,m,s,k) {
+    var i,n=s[k],ret=[];
+    for(i=0;i<n;i++) { if(m[i]) { ret.push(x[i]); } }
+    return ret;
+}
+
+numeric.mask = function mask(x,m,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(m); }
+    if (k === s.length-1) { return numeric._mask(x,m,s,k); }
+    var i,n=s[k],ret=[];
+    for(i=0;i<n;i++) { ret=ret.concat(mask(x[i],m[i],s,k+1)); }
+    return ret;
+}
+
+numeric._maskeq = function _maskeq(x,m,y,s,k,l) {
+    var i,n=s[k];
+    for(i=0;i<n;i++) { if(m[i]) { x[i] = y[l]; l++; } }
+    return l;
+}
+
+numeric.maskeq = function maskeq(x,m,y,s,k,l) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof l === 'undefined') { l=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(m); }
+    if (k === s.length-1) { return numeric._maskeq(x,m,y,s,k,l); }
+    var i,n=s[k];
+    for(i=0;i<n;i++) { l=maskeq(x[i],m[i],y,s,k+1,l); }
+    return l;
+}
+
+numeric._index = function _index(x,y,s,k) {
+    var i,n=s[k],ret=Array(n);
+    for(i=n-1;i>=0;--i) {
+        ret[i] = x[y[i]];
+        if (typeof ret[i] === 'object') { ret[i] = ret[i].slice(); }
+    }
+    return ret;
+}
+
+numeric.index = function index(x,y,s,k) {
+    if(typeof y !== 'object') { return x[y]; }
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(y); }
+    if (k === s.length-1) { return numeric._index(x,y,s,k); }
+    var i,n=x.length,ret=Array(n);
+    for(i=n-1;i>=0;--i) { ret[i]=numeric.index(x[i],y[i],s,k+1); }
+    return ret;
+}
+
+numeric._indexeq = function _indexeq(x,y,z,s,k) {
+    var i,n=s[k];
+    for(i=n-1;i>=0;--i) {
+        x[y[i]] = z[i];
+        if (typeof x[y[i]] === 'object') { x[y[i]] = x[y[i]].slice(); }
+    }
+}
+
+numeric.indexeq = function indexeq(x,y,z,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(y); }
+    if (k === s.length-1) { numeric._indexeq(x,y,z,s,k); }
+    var i,n=x.length;
+    for(i=n-1;i>=0;--i) { numeric.indexeq(x[i],y[i],z[i],s,k+1); }
 }
 
 numeric.truncSS = Function('x','y','return Math.round(x/y)*y');
