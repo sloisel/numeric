@@ -396,6 +396,9 @@ numeric.rep = function rep(s,v,k) {
     return ret;
 }
 
+numeric.zeros = function zeros(s) { return numeric.rep(s,0); }
+numeric.ones = function ones(s) { return numeric.rep(s,1); }
+
 numeric.dotMMsmall = function dotMMsmall(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
     p = x.length; q = y.length; r = y[0].length;
@@ -538,15 +541,15 @@ numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)
 
 numeric.broadcast = function expand(x, sx, sy) { for(var i=0;i<sy.length-sx.length;i++) { x = [x]; }; return x; }
 
-numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
+numeric.polymorphic = function polymorphic(params, ss, vv) {
     
     if (params.length === 1) {
         if (params[0] === 'ret') {
-            return Function('x', 'numeric._foreacheq(x,numeric.dim(x),0,'+vv+');\n')
+            return Function('x', 'numeric.foreacheq(x,numeric.dim(x),0,'+vv+');\n')
         } else {
             return Function('x',
                 'if(typeof x !== "object") { return '+ss+'(x); }\n'+
-                'else { return numeric._foreach(x,numeric.dim(x),0,'+vv+'); }\n')
+                'else { return numeric.foreach(x,numeric.dim(x),0,'+vv+'); }\n')
         }
     }
     
@@ -556,8 +559,8 @@ numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
                 'var i,n=arguments.length,x=arguments[0],y,dim=numeric.dim;\n'+
                 'for(i=1;i!==n;++i) {\n'+
                 '  y = arguments[i];\n'+
-                '  if(typeof y === "object") { numeric._biforeacheqV(x,y,dim(x),dim(y),0,'+vv+'); }\n'+
-                '  else { numeric._biforeacheqS(x,y,dim(x),0,'+ss+'); }\n'+
+                '  y = numeric.broadcast(y, dim(y), dim(x));\n'+
+                '  numeric.biforeacheq(x,y,dim(x),dim(y),0,'+vv+');\n'+
                 '}\n'+
                 'return x;');
         } else {
@@ -566,12 +569,10 @@ numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
                 'for(i=1;i!==n;++i) {\n'+
                 '  y = arguments[i];\n'+
                 '  if     (typeof x === "object"\n'+
-                '  &&      typeof y === "object") {\n'+
+                '  ||      typeof y === "object") {\n'+
                 '   x = numeric.broadcast(x, dim(x), dim(y));\n'+
                 '   y = numeric.broadcast(y, dim(y), dim(x));\n'+
-                '   x = numeric._biforeachVV(x,y,dim(x),dim(y),0,'+vv+'); }\n'+
-                '  else if(typeof x === "object") { x = numeric._biforeachVS(x,y,dim(x),0,'+vs+'); }\n'+
-                '  else if(typeof y === "object") { x = numeric._biforeachSV(x,y,dim(y),0,'+sv+'); }\n'+
+                '   x = numeric.biforeach(x,y,dim(x),dim(y),0,'+vv+'); }\n'+
                 '  else { x = '+ss+'(x, y); }\n'+
                 '}\n'+
                 'return x;');
@@ -581,119 +582,92 @@ numeric.polymorphic = function polymorphic(params, ss, vv, vs, sv) {
     return fun;
 }
 
-numeric.pointwise = function pointwise(params, body, setup) {
-    var avec=/\[[ijk]\]$/, hret=/^ret/, type;
-    if (avec.test(params[0]) 
-    &&  avec.test(params[1])) { type='VV'; }
-    else if (avec.test(params[0])) { type='VS'; }
-    else if (avec.test(params[1])) { type='SV'; }
-    var ret = (hret.test(params[0])
-            || hret.test(params[1])
-            || hret.test(params[2]));
-    var nparams = [];
-    for (var i=0; i<params.length; i++) {
-        nparams.push(avec.test(params[i])?
-            params[i].substring(0,params[i].length-3):params[i]);
-    }
-    if (type==='VV') { return numeric.pointwiseVV(nparams,body,setup,ret); }
-    if (type==='SV') { return numeric.pointwiseSV(nparams,body,setup,ret); }
-    if (type==='VS') { return numeric.pointwiseVS(nparams,body,setup,ret); }
-}
-
-numeric.pointwiseVS = function pointwiseVS(params,body,setup,ret) {
+numeric.biscalarfunc = function biscalarfunc(body,setup) {
     if(typeof setup === "undefined") { setup = ''; }
-    var fun = params.concat([
-        'var _n='+params[0]+'.length;\n'+
-        'var i'+(ret?'':', ret = Array(_n)')+';\n'+setup+';\n'+
-        'for(i=_n-1;i!==-1;--i) {'+body+'}\n'+
-        'return ret;']);
-    return Function.apply(null,fun);
+    return Function('x', 'y',
+        'var i=0,j=0,k=0;'+setup+';\n'+
+        'x=[x];y=[y];z=Array(1);'+body+';\n'+
+        'return z[0];')
 }
 
-numeric.pointwiseSV = function pointwiseSV(params,body,setup,ret) {
+numeric.scalarfunc = function scalarfunc(body,setup) {
     if(typeof setup === "undefined") { setup = ''; }
-    var fun = params.concat([
-        'var _n='+params[1]+'.length;\n'+
-        'var i'+(ret?'':', ret = Array(_n)')+';\n'+setup+';\n'+
-        'for(i=_n-1;i!==-1;--i) {'+body+'}\n'+
-        'return ret;']);
-    return Function.apply(null,fun);
+    return Function('x',
+        'var i=0,k=0;'+setup+';\n'+
+        'x=[x];z=Array(1);'+body+';\n'+
+        'return z[0];');
 }
 
-numeric.pointwiseVV = function pointwiseVV(params,body,setup,ret) {
+numeric.biscalarfunceq = function biscalarfunceq(body,setup) {
+    return Function('x','y','throw new Error("numeric: cannot perform in place operation on scalar");');
+}
+
+numeric.scalarfunceq = function scalarfunceq(body,setup) {
+    return Function('x','y','throw new Error("numeric: cannot perform in place operation on scalar");');
+}
+
+numeric.binaryfunc = function binaryfunc(body,setup) {
     if(typeof setup === "undefined") { setup = ''; }
-    var fun = params.concat([
-        'var _n='+params[0]+'.length;\n'+
-        'var _m='+params[1]+'.length;\n'+
-        'var i,j,k'+(ret?'':',ret=_n===1?Array(_m):Array(_n)')+';\n'+setup+';\n'+
-        (ret?'':('if(_n === 1) { for(j=_m-1;j!==-1;--j) {i=0;k=j;'+body+'} } else \n'))+
-                 'if(_m === 1) { for(i=_n-1;i!==-1;--i) {j=0;k=i;'+body+'} }\n'+
-                 'else         { for(i=_n-1;i!==-1;--i) {j=i;k=i;'+body+'} }\n'+
-        'return ret;']);
-    return Function.apply(null,fun);
+    return Function('x','y','_n','_m',
+        'var i,j,k,z=_n===1?Array(_m):Array(_n);\n'+setup+';\n'+
+        'if(_n === 1) { for(j=_m-1;j>=0;--j) {i=0;k=j;'+body+'} } else \n'+
+        'if(_m === 1) { for(i=_n-1;i>=0;--i) {j=0;k=i;'+body+'} } else \n'+
+        '             { for(i=_n-1;i>=0;--i) {j=i;k=i;'+body+'} }\n'+
+        'return z;');
 }
 
-numeric._biforeacheqV = function _biforeacheqV(x,y,sx,sy,k,f) {
-    if(k === sx.length-1) { f(x,y); return; }
+numeric.binaryfunceq = function binaryfunc(body,setup) {
+    if(typeof setup === "undefined") { setup = ''; }
+    return Function('x','y','_n','_m',
+        'var i,j,k;\n'+setup+';\n'+
+        'if(_m === 1) { for(i=_n-1;i>=0;--i) {j=0;k=i;'+body+'} } else \n'+
+        '             { for(i=_n-1;i>=0;--i) {j=i;k=i;'+body+'} }\n');
+}
+
+numeric.unaryfunc = function unaryfunc(body,setup) {
+    if(typeof setup === "undefined") { setup = ''; }
+    return Function('x','_n',
+        'var i,k,z=Array(_n);\n'+setup+';\n'+
+        'for(i=_n-1;i>=0;--i) {k=i;'+body+'}'+
+        'return z;');
+}
+
+numeric.unaryfunceq = function unaryfunc(body,setup) {
+    if(typeof setup === "undefined") { setup = ''; }
+    return Function('x','_n',
+        'var i,k;\n'+setup+';\n'+
+        'for(i=_n-1;i>=0;--i) {k=i;'+body+'}');
+}
+
+numeric.biforeacheq = function biforeacheq(x,y,sx,sy,k,f) {
+    if(k === sx.length-1) { f(x,y,sx[k],sy[k]); return; }
     var i,n=sx[k],m=sy[k];
-    if (m === 1) { for(i=n-1;i>=0;i--) { _biforeacheqV(x[i],y[0],sx,sy,k+1,f); }}
-    else         { for(i=n-1;i>=0;i--) { _biforeacheqV(x[i],y[i],sx,sy,k+1,f); }}
+    if (m === 1) { for(i=n-1;i>=0;i--) { biforeacheq(x[i],y[0],sx,sy,k+1,f); }}
+    else         { for(i=n-1;i>=0;i--) { biforeacheq(x[i],y[i],sx,sy,k+1,f); }}
 };
 
-numeric._biforeacheqS = function _biforeacheqS(x,y,s,k,f) {
-    if(k === s.length-1) { f(x,y); return; }
-    for(var i=s[k]-1;i>=0;i--) { _biforeacheqS(x[i],y,s,k+1,f); }
+numeric.biforeach = function biforeach(x,y,sx,sy,k,f) {
+    if(k === sx.length-1) { return f(x,y,sx[k],sy[k]); }
+    var i,n=sx[k],m=sy[k],z=(n===1)?Array(m):Array(n);
+    if      (n === 1) { for(i=m-1;i>=0;--i) { z[i] = biforeach(x[0],y[i],sx,sy,k+1,f); }}
+    else if (m === 1) { for(i=n-1;i>=0;--i) { z[i] = biforeach(x[i],y[0],sx,sy,k+1,f); }}
+    else              { for(i=n-1;i>=0;--i) { z[i] = biforeach(x[i],y[i],sx,sy,k+1,f); }}
+    return z;
 };
 
-numeric._biforeachVS = function _biforeachVS(x,y,s,k,f) {
-    if(k === s.length-1) { return f(x,y); }
-    var i,n=s[k],ret=Array(n);
-    for(i=n-1;i>=0;--i) { ret[i] = _biforeachVS(x[i],y,s,k+1,f); }
-    return ret;
+numeric.foreacheq = function foreacheq(x,s,k,f) {
+    if(k === s.length-1) { f(x,s[k]); return; }
+    for(var i=s[k]-1;i>=0;i--) { foreacheq(x[i],s,k+1,f); }
 };
 
-numeric._biforeachSV = function _biforeachSV(x,y,s,k,f) {
-    if(k === s.length-1) { return f(x,y); }
-    var i,n=s[k],ret=Array(n);
-    for(i=n-1;i>=0;--i) { ret[i] = _biforeachSV(x,y[i],s,k+1,f); }
-    return ret;
+numeric.foreach = function foreach(x,s,k,f) {
+    if(k === s.length-1) { return f(x,s[k]); }
+    var i,n=s[k],z=Array(n);
+    for(i=n-1;i>=0;i--) { z[i] = foreach(x[i],s,k+1,f); }
+    return z;
 };
 
-numeric._biforeacheqVV = function _biforeacheqVV(x,y,sx,sy,k,f) {
-    if(k === sx.length-1) { f(x,y); return; }
-    var i,n=sx[k],m=sy[k];
-    if (m === 1) { for(i=n-1;i>=0;i--) { _biforeacheqVV(x[i],y[0],sx,sy,k+1,f); }}
-    else         { for(i=n-1;i>=0;i--) { _biforeacheqVV(x[i],y[i],sx,sy,k+1,f); }}
-};
-
-numeric._biforeachVV = function _biforeachVV(x,y,sx,sy,k,f) {
-    if(k === sx.length-1) { return f(x,y); }
-    var i,n=sx[k],m=sy[k],ret=(n===1)?Array(m):Array(n);
-    if      (n === 1) { for(i=m-1;i>=0;--i) { ret[i] = _biforeachVV(x[0],y[i],sx,sy,k+1,f); }}
-    else if (m === 1) { for(i=n-1;i>=0;--i) { ret[i] = _biforeachVV(x[i],y[0],sx,sy,k+1,f); }}
-    else              { for(i=n-1;i>=0;--i) { ret[i] = _biforeachVV(x[i],y[i],sx,sy,k+1,f); }}
-    return ret;
-};
-
-numeric._foreacheq = function _foreacheq(x,s,k,f) {
-    if(k === s.length-1) { f(x); return; }
-    for(var i=s[k]-1;i>=0;i--) { _foreacheq(x[i],s,k+1,f); }
-};
-
-numeric._foreach = function _foreach(x,s,k,f) {
-    if(k === s.length-1) { return f(x); }
-    var i,n=s[k],ret=Array(n);
-    for(i=n-1;i>=0;i--) { ret[i] = _foreach(x[i],s,k+1,f); }
-    return ret;
-};
-
-numeric.mapreduce = function mapreduce(body,init) {
-    return numeric.mapreduceV(
-        body.replace('accum', 'ret').replace('xi','x[i]'),
-        'var ret='+init);
-}
-
-numeric.mapreduceV = function mapreduceV(body,setup) {
+numeric.reducefunc = function reducefunc(body,setup) {
     return Function('x','a','s','k',
         'if(typeof a === "undefined") { return arguments.callee(numeric.flatten(x),0); }\n'+
         'if(typeof s === "undefined") { s = numeric.dim(x); }\n'+
@@ -702,11 +676,11 @@ numeric.mapreduceV = function mapreduceV(body,setup) {
         'if (a === k) {\n'+
         '    s=s.slice().splice(k+1);'+setup+';\n'+
         '    for(i=n-1;i>=0;--i) { '+body+' }\n'+
-        '    return ret;\n'+
+        '    return z;\n'+
         '}\n'+
-        'var i,n=s[k],ret=Array(n);\n'+
-        'for (i=n-1;i>=0;--i) { ret[i]=arguments.callee(x[i],a,s,k+1); }\n'+
-        'return ret;');
+        'var i,n=s[k],z=Array(n);\n'+
+        'for (i=n-1;i>=0;--i) { z[i]=arguments.callee(x[i],a,s,k+1); }\n'+
+        'return z;');
 }
 
 numeric.ops2 = {
@@ -755,17 +729,15 @@ numeric.ops1 = {
                     codeeq = function(x,y) { return x+' = '+x+' '+o+' '+y; };                    
                 }
             }
-            numeric[i+'SS'] = Function('x', 'y', setup+';\n'+code('x', 'x', 'y')+';\nreturn x;\n')
-            numeric[i+'VV'] = numeric.pointwiseVV(['x','y'],code('ret[k]','x[i]','y[j]'),setup,false);
-            numeric[i+'SV'] = numeric.pointwiseSV(['x','y'],code('ret[i]','x',   'y[i]'),setup,false);
-            numeric[i+'VS'] = numeric.pointwiseVS(['x','y'],code('ret[i]','x[i]','y'   ),setup,false);
-            numeric[i]      = numeric.polymorphic(['x','y'],'numeric.'+i+'SS', 'numeric.'+i+'VV', 
-                                                            'numeric.'+i+'VS', 'numeric.'+i+'SV')
-                
+
+            numeric[i+'S'] = Function('x', 'y', setup+';\n'+code('x', 'x', 'y')+';\nreturn x;\n')
+            numeric[i+'V'] = numeric.binaryfunc(code('z[k]','x[i]','y[j]'),setup);
+            numeric[i]     = numeric.polymorphic(['x','y'],'numeric.'+i+'S', 'numeric.'+i+'V')
             numeric[o] = numeric[i];
-            numeric[i+'eqS'] = numeric.pointwiseVS(['ret','x'],codeeq('ret[i]','x'   ),setup,true);
-            numeric[i+'eqV'] = numeric.pointwiseVV(['ret','x'],codeeq('ret[i]','x[j]'),setup,true);
-            numeric[i+'eq']  = numeric.polymorphic(['ret','x'],'numeric.'+i+'eqS','numeric.'+i+'eqV')
+            
+            numeric[i+'eqV'] = numeric.binaryfunceq(codeeq('x[k]','y[j]'),setup);
+            numeric[i+'eq']  = numeric.polymorphic(['x','y'],'','numeric.'+i+'eqV')
+            numeric[o+'='] = numeric[i+'eq']
         }
     }
     for(i=0;i<numeric.mathfuns2.length;++i) {
@@ -785,10 +757,10 @@ numeric.ops1 = {
             }
 
             numeric[i+'S']   = Function('x', setup+';\n'+'return '+o+'(x);')
-            numeric[i+'V']   = numeric.pointwiseVS(['x'],'ret[i] = '+o+'(x[i]);',setup,false);
+            numeric[i+'V']   = numeric.unaryfunc('z[k] = '+o+'(x[i]);',setup);
             numeric[i]       = numeric.polymorphic(['x'], 'numeric.'+i+'S', 'numeric.'+i+'V');
-            numeric[i+'eqV'] = numeric.pointwiseVS(['ret'],'ret[i] = '+o+'(ret[i]);',setup,true);
-            numeric[i+'eq']  = numeric.polymorphic(['ret'], '', 'numeric.'+i+'eqV');
+            numeric[i+'eqV'] = numeric.unaryfunceq('x[k] = '+o+'(x[i]);',setup);
+            numeric[i+'eq']  = numeric.polymorphic(['x'], '', 'numeric.'+i+'eqV');
         }
     }
     for(i=0;i<numeric.mathfuns.length;++i) {
@@ -806,41 +778,41 @@ numeric.clip = function clip(x, min, max) {
     return numeric.min(numeric.max(x, min), max);
 }
 
-numeric.mapreducers = {
-        any: ['ret = or(ret, bool(x[i]));',
-            'var ret=numeric.rep(s,false), or=numeric.or, bool=numeric.bool;'],
-        all: ['ret=and(ret,bool(x[i]));',
-            'var ret=numeric.rep(s,true), and=numeric.and, bool=numeric.bool;'],
-        sum: ['ret=add(ret,x[i]);',
-            'var ret=numeric.rep(s,0), add=numeric.add;'],
-        prod: ['ret=mul(ret,x[i]);',
-            'var ret=numeric.rep(s,1); mul=numeric.mul;'],
-        norm2Squared: ['ret=add(ret,pow(x[i],2));',
-            'var ret=numeric.rep(s,0), add=numeric.add, pow=numeric.pow;'],
-        norminf: ['ret=max(ret,abs(x[i]));',
-            'var ret=numeric.rep(s,0), max=numeric.max, abs=numeric.abs;'],
-        norm1: ['ret=add(ret,abs(x[i]))',
-            'var ret=numeric.rep(s,0), add=numeric.add, abs=numeric.abs;'],
-        sup: ['ret=max(ret,x[i]);',
-            'var ret=numeric.rep(s,-Infinity), max=numeric.max;'],
-        inf: ['ret=min(ret,x[i]);',
-            'var ret=numeric.rep(s,Infinity), min=numeric.min;'],
-        mean: ['ret=add(ret,div(x[i],n));',
-            'var ret=numeric.rep(s,0), add=numeric.add, div=numeric.div;'],
-        argmin: ['ret=when(lt(x[i],val),i,ret),val=min(x[i],val);',
-            'var ret=numeric.rep(s,0), val=numeric.rep(s,Infinity),'+
+numeric.reducers = {
+        any: ['z = or(z, bool(x[i]));',
+            'var z=numeric.rep(s,false), or=numeric.or, bool=numeric.bool;'],
+        all: ['z=and(z,bool(x[i]));',
+            'var z=numeric.rep(s,true), and=numeric.and, bool=numeric.bool;'],
+        sum: ['z=add(z,x[i]);',
+            'var z=numeric.rep(s,0), add=numeric.add;'],
+        prod: ['z=mul(z,x[i]);',
+            'var z=numeric.rep(s,1); mul=numeric.mul;'],
+        norm2Squared: ['z=add(z,pow(x[i],2));',
+            'var z=numeric.rep(s,0), add=numeric.add, pow=numeric.pow;'],
+        norminf: ['z=max(z,abs(x[i]));',
+            'var z=numeric.rep(s,0), max=numeric.max, abs=numeric.abs;'],
+        norm1: ['z=add(z,abs(x[i]))',
+            'var z=numeric.rep(s,0), add=numeric.add, abs=numeric.abs;'],
+        sup: ['z=max(z,x[i]);',
+            'var z=numeric.rep(s,-Infinity), max=numeric.max;'],
+        inf: ['z=min(z,x[i]);',
+            'var z=numeric.rep(s,Infinity), min=numeric.min;'],
+        mean: ['z=add(z,div(x[i],n));',
+            'var z=numeric.rep(s,0), add=numeric.add, div=numeric.div;'],
+        argmin: ['z=when(lt(x[i],v),i,z),v=min(x[i],v);',
+            'var z=numeric.rep(s,0), v=numeric.rep(s,Infinity),'+
             'lt=numeric.lt, when=numeric.when, min=numeric.min'],
-        argmax: ['ret=when(gt(x[i],val),i,ret),val=max(x[i],val);',
-            'var ret=numeric.rep(s,0), val=numeric.rep(s,-Infinity),'+
+        argmax: ['z=when(gt(x[i],v),i,z),v=max(x[i],v);',
+            'var z=numeric.rep(s,0), v=numeric.rep(s,-Infinity),'+
             'gt=numeric.gt, when=numeric.when, max=numeric.max']
 };
 
 (function () {
     var i,o;
-    for(i in numeric.mapreducers) {
-        if(numeric.mapreducers.hasOwnProperty(i)) {
-            o = numeric.mapreducers[i];
-            numeric[i] = numeric.mapreduceV(o[0],o[1]);
+    for(i in numeric.reducers) {
+        if(numeric.reducers.hasOwnProperty(i)) {
+            o = numeric.reducers[i];
+            numeric[i] = numeric.reducefunc(o[0],o[1]);
         }
     }
 }());
@@ -1002,10 +974,8 @@ numeric.indexeq = function indexeq(x,y,z,s,k) {
 }
 
 numeric.truncSS = Function('x','y','return Math.round(x/y)*y');
-numeric.truncVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = round(x[i]/y[i])*y[i];','var round = Math.round;');
-numeric.truncVS = numeric.pointwise(['x[i]','y'],'ret[i] = round(x[i]/y)*y;','var round = Math.round;');
-numeric.truncSV = numeric.pointwise(['x','y[i]'],'ret[i] = round(x/y[i])*y[i];','var round = Math.round;');
-numeric.trunc   = numeric.polymorphic(['x','y'], 'numeric.truncSS', 'numeric.truncVV', 'numeric.truncVS', 'numeric.truncSV')
+numeric.truncVV = numeric.binaryfunc('z[k] = round(x[i]/y[j])*y[j];','var round = Math.round;',false);
+numeric.trunc   = numeric.polymorphic(['x','y'], 'numeric.truncSS', 'numeric.truncVV')
 
 numeric.inv = function inv(x) {
     var s = numeric.dim(x), abs = Math.abs, m = s[0], n = s[1];

@@ -374,14 +374,16 @@ OUT> [2,1,2]
 
 You can loop over Arrays as you normally would. However, in order to quickly generate optimized
 loops, the <tt>numeric</tt> library provides a few efficient loop-generation mechanisms. For example, the
-<tt>numeric.mapreduce()</tt> function can be used to make a function that computes the sum of all the
+<tt>numeric.reducefunc()</tt> function can be used to make a function that computes the sum of all the
 entries of an Array.
 
 <pre>
-IN> sum = numeric.mapreduce('accum += xi','0'); sum([1,2,3])
+IN> sum = numeric.reducefunc('z = numeric.add(z, x[i])','z = numeric.rep(s, 0);'); sum([1,2,3])
 OUT> 6
 IN> sum([[1,2,3],[4,5,6]])
 OUT> 21
+IN> sum([[1,2,3],[4,5,6]],0)
+OUT> [5,7,9]
 </pre>
 
 The functions <tt>numeric.any()</tt> and <tt>numeric.all()</tt> allow you to check whether any or all entries
@@ -490,16 +492,12 @@ OUT> [[ 1, 2, 5, 6],
 
 <h1>Arithmetic operations</h1>
 
-The standard arithmetic operations have been vectorized:
+The standard arithmetic operations have been vectorized and are polymorphic:
 <pre>
-IN> numeric.addVV([1,2],[3,4])
+IN> numeric.add([1,2],[3,4])
 OUT> [4,6]
-IN> numeric.addVS([1,2],3)
+IN> numeric.add([1,2],3)
 OUT> [4,5]
-</pre>
-
-There are also polymorphic functions:
-<pre>
 IN> numeric.add(1,[2,3])
 OUT> [3,4]
 IN> numeric.add([1,2,3],[4,5,6])
@@ -520,7 +518,7 @@ The in-place operators (such as +=) are also available:
 <pre>
 IN> v = [1,2,3,4]; numeric.addeq(v,3); v
 OUT> [4,5,6,7]
-IN> numeric.subeq([1,2,3],[5,3,1])
+IN> v = [1,2,3]; numeric.subeq(v,[5,3,1]); v
 OUT> [-4,-1,2]
 </pre>
 
