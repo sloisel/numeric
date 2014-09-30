@@ -886,7 +886,7 @@ numeric.slice = function slice(x,s,k) {
     }   
 }
 
-numeric._sliceeq = function _sliceeq(x,y,s) {
+numeric._sliceeq = function _sliceeq(x,s,y) {
     if(typeof s === 'number') { x[s<0?x.length+s:s] = y; }
     if(typeof s === 'string') {
         var i,j,n=x.length,r=numeric.parseSlice(x, s);
@@ -897,13 +897,13 @@ numeric._sliceeq = function _sliceeq(x,y,s) {
     }
 }
 
-numeric.sliceeq = function sliceeq(x,y,s,k) {
+numeric.sliceeq = function sliceeq(x,s,y,k) {
     if(typeof k === 'undefined') { k=0; }
-    if(typeof s !== 'object') { numeric.sliceeq(x,y,[s],0); }
-    if(k === s.length-1) { numeric._sliceeq(x,y,s[k]); }
+    if(typeof s !== 'object') { numeric.sliceeq(x,[s],y,0); }
+    if(k === s.length-1) { numeric._sliceeq(x,s[k],y); }
     
     if(typeof s[k] === 'number') {
-        numeric.sliceeq(x[s[k]<0?x.length+s[k]:s[k]],y,s,k+1);
+        numeric.sliceeq(x[s[k]<0?x.length+s[k]:s[k]],s,y,k+1);
     }
     
     if(typeof s[k] === 'string') {
@@ -911,14 +911,14 @@ numeric.sliceeq = function sliceeq(x,y,s,k) {
         if(s[k] === '...') {
             var i,n=numeric.dim(x).length-s.length+1; s=s.splice(1)
             for(var i=0;i<n;i++) { s=[':'].concat(s); }
-            numeric.sliceeq(x,y,s,0); return;
+            numeric.sliceeq(x,s,y,0); return;
         }
     
         var i,j,yi,r=numeric.parseSlice(x, s[k]);
         for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
             && (i>=0) && (i<x.length); i+=r.step,j++) {
             yi = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
-            numeric.sliceeq(x[i],yi,s,k+1);
+            numeric.sliceeq(x[i],s,yi,k+1);
         }
     }
 }
