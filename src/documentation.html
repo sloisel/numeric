@@ -41,8 +41,8 @@ OUT> 0.2694
 <tr><td><tt>and</tt><td>Pointwise x &amp;&amp; y
 <tr><td><tt>andeq</tt><td>Pointwise x &amp;= y
 <tr><td><tt>any</tt><td>One or more of the components of x are true
-<tr><td><tt>argmin</tt><td>Return the index of the minimum value in an Array
-<tr><td><tt>argmax</tt><td>Return the index of the maximum value in an Array
+<tr><td><tt>argmin</tt><td>The index of the minimum value in an Array
+<tr><td><tt>argmax</tt><td>The index of the maximum value in an Array
 <tr><td><tt>asin</tt><td>Arc-sine
 <tr><td><tt>atan</tt><td>Arc-tangeant
 <tr><td><tt>atan2</tt><td>Arc-tangeant (two parameters)
@@ -62,8 +62,8 @@ OUT> 0.2694
 <tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
 <tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
 <tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
-<tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
-<tr><td><tt>clip</tt><td>Clip an Arrays values to within some minimum and maximum
+<tr><td><tt>ccs&lt;op&gt;</tt><td>Supported ops include: add/div/mul/geq/etc...
+<tr><td><tt>clip</tt><td>Clip to within some minimum and maximum
 <tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
 <tr><td><tt>cLUsolve</tt><td>Coordinate matrix LU solve
 <tr><td><tt>cdelsq</tt><td>Coordinate matrix Laplacian
@@ -71,7 +71,7 @@ OUT> 0.2694
 <tr><td><tt>ceil</tt><td>Pointwise Math.ceil(x)
 <tr><td><tt>cgrid</tt><td>Coordinate grid for cdelsq
 <tr><td><tt>clone</tt><td>Deep copy of Array
-<tr><td><tt>concat</tt></td>Join two Arrays together on a given axis
+<tr><td><tt>concat</tt><td>Join two Arrays together on a given axis
 <tr><td><tt>cos</tt><td>Pointwise Math.cos(x)
 <tr><td><tt>det</tt><td>Determinant
 <tr><td><tt>diag</tt><td>Create diagonal matrix
@@ -80,26 +80,29 @@ OUT> 0.2694
 <tr><td><tt>diveq</tt><td>Pointwise x/=y
 <tr><td><tt>dopri</tt><td>Numerical integration of ODE using Dormand-Prince RK method. Returns an object Dopri.
 <tr><td><tt>Dopri.at</tt><td>Evaluate the ODE solution at a point
+<tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
+<tr><td><tt>dstack</tt><td>Concatenate Arrays on their third innermost axis
+<tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
+<tr><td><tt>epsilon</tt><td>2.220446049250313e-16
+<tr><td><tt>eq</tt><td>Pointwise comparison x === y
+<tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
+<tr><td><tt>flatten</tt><td>Flatten Array to a single dimension
+<tr><td><tt>floor</tt><td>Poinwise Math.floor(x)
 </table>
 <td valign="top" width="33%">
 <table>
 <tr><td><b>Function</b><td><b>Description</b>
 <tr><td colspan=2><hr>
-<tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
-<tr><td><tt>dstack</tt></td>Join a list of Arrays together on their third innermost axis
-<tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
-<tr><td><tt>epsilon</tt><td>2.220446049250313e-16
-<tr><td><tt>eq</tt><td>Pointwise comparison x === y
-<tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
-<tr><td><tt>flatten</tt><td>Flatten an Array into a single dimension
-<tr><td><tt>floor</tt><td>Poinwise Math.floor(x)
 <tr><td><tt>geq</tt><td>Pointwise x&gt;=y
 <tr><td><tt>getBlock</tt><td>Extract a block from a matrix
 <tr><td><tt>getDiag</tt><td>Get the diagonal of a matrix
+<tr><td><tt>setDiag</tt><td>Set the diagonal of a matrix
 <tr><td><tt>gt</tt><td>Pointwise x&gt;y
-<tr><td><tt>hstack</tt></td>Join a list of Arrays together on their innermost axis
+<tr><td><tt>hstack</tt><td>Concatenate Arrays on their innermost axis
 <tr><td><tt>identity</tt><td>Identity matrix
 <tr><td><tt>imageURL</tt><td>Encode a matrix as an image URL
+<tr><td><tt>index</tt><td>Return the values in an Array given by an array of integer indices
+<tr><td><tt>indexeq</tt><td>Set the values in an Array given by an array of integer indices
 <tr><td><tt>inv</tt><td>Matrix inverse
 <tr><td><tt>isFinite</tt><td>Pointwise isFinite(x)
 <tr><td><tt>isNaN</tt><td>Pointwise isNaN(x)
@@ -113,9 +116,9 @@ OUT> 0.2694
 <tr><td><tt>LU</tt><td>Dense LU decomposition
 <tr><td><tt>LUsolve</tt><td>Dense LU solve
 <tr><td><tt>mapreduce</tt><td>Make a pointwise map-reduce function
+<tr><td><tt>mask</tt><td>Return the values in an Array when some condition is true
+<tr><td><tt>maskeq</tt><td>Set the values in an Array when some condition is true
 <tr><td><tt>mean</tt><td>The mean value of an Array
-<tr><td><tt>variance</tt><td>The variance of an Array
-<tr><td><tt>std</tt><td>The standard deviation of an Array
 <tr><td><tt>mod</tt><td>Pointwise x%y
 <tr><td><tt>modeq</tt><td>Pointwise x%=y
 <tr><td><tt>mul</tt><td>Pointwise x*y
@@ -125,6 +128,7 @@ OUT> 0.2694
 <tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of x
 <tr><td><tt>norminf</tt><td>Largest modulus entry of x
 <tr><td><tt>not</tt><td>Pointwise logical negation !x
+<tr><td><tt>ones</tt><td>Create an Array of ones in a certain shape
 <tr><td><tt>or</tt><td>Pointwise logical or x||y
 <tr><td><tt>oreq</tt><td>Pointwise x|=y
 <tr><td><tt>parseCSV</tt><td>Parse a CSV file into an Array
@@ -139,14 +143,14 @@ OUT> 0.2694
 <tr><td><tt>range</tt><td>Create an Array from a range
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
 <tr><td><tt>reshape</tt><td>Reshape an Array to given dimensions
+<tr><td><tt>round</tt><td>Pointwise Math.round(x)
+<tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
+<tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
 </table>
 <td valign="top" width="33%">
 <table>
 <tr><td><b>Function</b><td><b>Description</b>
 <tr><td colspan=2><hr>
-<tr><td><tt>round</tt><td>Pointwise Math.round(x)
-<tr><td><tt>rrshift</tt><td>Pointwise x&gt;&gt;&gt;y
-<tr><td><tt>rrshifteq</tt><td>Pointwise x&gt;&gt;&gt;=y
 <tr><td><tt>rshift</tt><td>Pointwise x&gt;&gt;y
 <tr><td><tt>rshifteq</tt><td>Pointwise x&gt;&gt;=y
 <tr><td><tt>same</tt><td>x and y are entrywise identical
@@ -164,7 +168,8 @@ OUT> 0.2694
 <tr><td><tt>Spline.diff</tt><td>Differentiate the Spline
 <tr><td><tt>Spline.roots</tt><td>Find all the roots of the Spline
 <tr><td><tt>sqrt</tt><td>Pointwise Math.sqrt(x)
-<tr><td><tt>stack</tt></td>Join a list of Arrays together on a given axis
+<tr><td><tt>stack</tt><td>Join a list of Arrays together on a given axis
+<tr><td><tt>std</tt><td>The standard deviation of an Array
 <tr><td><tt>sub</tt><td>Pointwise x-y
 <tr><td><tt>subeq</tt><td>Pointwise x-=y
 <tr><td><tt>sum</tt><td>Sum all the entries of x
@@ -190,10 +195,12 @@ OUT> 0.2694
 <tr><td><tt>transpose</tt><td>Matrix transpose
 <tr><td><tt>uncmin</tt><td>Unconstrained optimization
 <tr><td><tt>version</tt><td>Version string for the numeric library
-<tr><td><tt>vstack</tt></td>Join a list of Arrays together on their second innermost axis
-<tr><td><tt>when</tt></td>Given three Arrays take elements from either the second, or third array, given the boolean value of the elements of the first.
+<tr><td><tt>variance</tt><td>The variance of an Array
+<tr><td><tt>vstack</tt><td>Concatenate Arrays on their second innermost axis
+<tr><td><tt>when</tt><td>Pointwise x?y:z
 <tr><td><tt>xor</tt><td>Pointwise x^y
 <tr><td><tt>xoreq</tt><td>Pointwise x^=y
+<tr><td><tt>zeros</tt><td>Create an Array of zeros in a certain shape
 </table></table>
 
 <br>
@@ -363,7 +370,7 @@ OUT> [[0,0,0],
       [0,0,0]]
 </pre>
 
-You can use the conditional ternary operator in a pointwise way with the <tt>numeric.when()</tt> function.
+You can use the conditional ternary operator <tt>&lt;cond&gt; ? &lt;then&gt; : &lt;else&gt;</tt> in a pointwise way with the <tt>numeric.when()</tt> function.
 
 <pre>
 IN> a = [5,2,3]; b = [1,7,3];
@@ -374,16 +381,38 @@ OUT> [2,1,2]
 
 You can loop over Arrays as you normally would. However, in order to quickly generate optimized
 loops, the <tt>numeric</tt> library provides a few efficient loop-generation mechanisms. For example, the
-<tt>numeric.reducefunc()</tt> function can be used to make a function that computes the sum of all the
+<tt>numeric.mapreduce()</tt> function can be used to make a function that computes the sum of all the
 entries of an Array.
 
 <pre>
-IN> sum = numeric.reducefunc('z = numeric.add(z, x[i])','z = numeric.rep(s, 0);'); sum([1,2,3])
+IN> sum = numeric.mapreduce('z = numeric.add(z, x[i])','z = numeric.zeros(s);'); sum([1,2,3])
 OUT> 6
 IN> sum([[1,2,3],[4,5,6]])
 OUT> 21
 IN> sum([[1,2,3],[4,5,6]],0)
 OUT> [5,7,9]
+</pre>
+
+The best way to create new pointwise functions is to compose the existing ones, but if for any reason this 
+wont work you can use <tt>numeric</tt> to generate efficient pointwise functions that act like the built-ins.
+This ensures they will be fast, and allows them to be combined, composed, and broadcast in the same way.
+
+To do this you need to specify some function string acting on the variables <tt>x</tt>, <tt>y</tt>, <tt>z</tt>,
+and the corresponding indices <tt>i</tt>, <tt>j</tt>, <tt>k</tt>. Where <tt>x</tt> and <tt>y</tt> are
+the inputs, and <tt>z</tt> is the output. For in-place functions <tt>x</tt> should be assigned to rather than <tt>z</tt>.
+
+Next a <em>setup</em> function string can be given to be performed before looping.
+
+Finally the type of the pointwise function should be given. This can be either <tt>'binary'</tt>, <tt>'binary-inplace'</tt>,
+<tt>'unary'</tt>, or <tt>'unary-inplace'</tt>.
+
+<pre>
+IN> adddouble = numeric.pointwise('z[k] = 2 * (x[i] + y[j])','','binary'); adddouble([1,2,3],[4,5,6])
+OUT> [10,14,18]
+IN> adddouble(5, [10,11,12])
+OUT> [30,32,34]
+IN> justdouble = numeric.pointwise('x[i] = 2 * x[i]','','unary-inplace'); v = [1,2,3]; justdouble(v); v;
+OUT> [2,4,6]
 </pre>
 
 The functions <tt>numeric.any()</tt> and <tt>numeric.all()</tt> allow you to check whether any or all entries
@@ -419,7 +448,7 @@ IN> numeric.argmin([5.2,6.1,2.8,1.3])
 OUT> 3
 </pre>
 
-These mapreduce functions can all be given an optional argument specifying the axis upon which to do the reduction.
+These reducer functions can all be given an optional argument specifying the axis upon which to do the reduction.
 If a negative index is given it will be used as an offset from the innermost axis.
 
 <pre>
@@ -552,9 +581,8 @@ OUT> true
 
 <h1>Slicing</h1>
 
-The <tt>slice</tt> command allows for accessing numeric Arrays in more advanced ways. 
-In its most basic functionality you can pass in a list of indices to access on
-each dimension.
+The <tt>slice</tt> command allows for accessing parts of numeric Arrays in more advanced ways. 
+In its most basic functionality you can pass in a list of indices for each dimension.
 
 <pre>
 IN> numeric.slice([[1,2],[3,4],[5,6]], [2,0])
@@ -577,7 +605,8 @@ OUT> [1,1,26]
 
 The slice string is flexible. You can leave out the <tt>step</tt> section, or
 omit actual numbers for the starting and stopping values, and defaults using the
-start or end of the Array are assumed.
+start or end of the Array are assumed. Typically the string <tt>':'</tt> is used
+to specify that every element the axis be retrieved.
 
 <pre>
 IN> numeric.slice([1,5,1,7,26], [1+':'+3])
@@ -619,6 +648,19 @@ IN> numeric.dim(numeric.slice([0,1,2,3,4,5,6,7,8,9], ['|',':']))
 OUT> [1,10]
 IN> numeric.dim(numeric.slice([0,1,2,3,4,5,6,7,8,9], [':','|']))
 OUT> [10,1]
+</pre>
+
+The string <tt>'...'</tt> can be used as an argument for the first axis to specify
+an access pattern from the right hand side. It corresponds to specifying <tt>':'</tt>
+for all axes such that the pattern has the same dimensions as the data.
+
+<pre>
+IN> numeric.slice([[0,1,2],[3,4,5],[6,7,8]], ['...',1])
+OUT> [1,4,7]
+IN> numeric.slice([[[0,1],[2,3],[4,5],[6,7],[8,9]]], ['...',1])
+OUT> [[1,3,5,7,9]]
+IN> numeric.slice([[[0,1,2],[3,4,5],[6,7,8]]], ['...',1+':'])
+OUT> [[[1,2],[4,5],[7,8]]]
 </pre>
 
 As well as extracting data you can also set data using the <tt>sliceeq</tt> function.
@@ -672,10 +714,8 @@ OUT> [[4,  5, 6],
       [12,15,18]]
 </pre>
 
-Unlike <a href="http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">Numpy's 
-broadcasting mechanics</a> for performance, unless a scalar is used, numeric does not 
-automatically align shapes on the right hand side. It is the user's responsibility to add 
-all the new axis which are required before broadcasting can work.
+For more info see <a href="http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">Numpy's 
+broadcasting mechanics</a> which <tt>numeric</tt> attempts to emulate.
 
 <h1>Joining &amp; Reshaping</h1>
 
@@ -729,7 +769,7 @@ IN> numeric.dim([[1,2,3],[4,5,6]])
 OUT> [2,3]
 </pre>
 
-<h1>Masking</h1>
+<h1>Masking &amp; Indexing</h1>
 
 Boolean Arrays can be used to <em>mask</em> off certain values in an Array. This is done
 with the <tt>numeric.mask()</tt> and <tt>numeric.maskeq()</tt> functions. These masked 
@@ -760,10 +800,9 @@ IN> a = [[1,5,3,4],[5,9,2,3]];
 OUT> [[10,5,30,40],[5,9,20,30]]
 </pre>
 
-<h1>Array Indexing</h1>
-
-Arrays can be used as indices to other Arrays. This is similar to specifying multiple
-indices at once.
+Arrays can also be used as indices to other Arrays. This is similar to specifying 
+multiple indices at once. It allows you to take or filter out specific elements
+from an Array. To do this use the <tt>numeric.index()</tt> function.
 
 <pre>
 IN> numeric.index([[1,2],[3,4],[5,6]],[0,2])
@@ -772,8 +811,14 @@ IN> numeric.index([[1,2],[3,4],[5,6]],[[0],[1],[1]])
 OUT> [[1],[4],[6]]
 </pre>
 
+To set values at specific indices you can use the <tt>numeric.indexeq()</tt> function.
+This takes as input an Array, an Array of indices, and an Array of values, and sets
+the contents of the Array in-place.
 
-
+<pre>
+IN> x = [[1,2],[3,4],[5,6]]; numeric.indexeq(x, [0,2], [[0,0],[2,2]]); x;
+OUT> [[0,0],[3,4],[2,2]]
+</pre>
 
 <h1>Linear algebra</h1>
 
