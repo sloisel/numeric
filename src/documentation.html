@@ -102,13 +102,14 @@ OUT> 0.2694
 <tr><td><tt>prod</tt><td>The product of an Array
 <tr><td><tt>inf</tt><td>The smallest value of an Array
 <tr><td><tt>sup</tt><td>The largest value of an Array
-<tr><td><tt>argmin</tt><td>The index of the smallest value of an Array
-<tr><td><tt>argmax</tt><td>The index of the largest value of an Array
+<tr><td><tt>arginf</tt><td>The index of the smallest value of an Array
+<tr><td><tt>argsup</tt><td>The index of the largest value of an Array
 <tr><td><tt>all</tt><td>When all the components of an Array are true
 <tr><td><tt>any</tt><td>When any of the components of an Array are true
 <tr><td><tt>mean</tt><td>The mean of an Array
 <tr><td><tt>variance</tt><td>The variance of an Array
 <tr><td><tt>std</tt><td>The standard deviation of an Array
+<tr><td><tt>norm1</tt><td>Sum of the magnitudes of the entries of an Array
 <tr><td><tt>norm2</tt><td>Square root of the sum of the square of the entries of an Array
 <tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of an Array
 <tr><td><tt>norminf</tt><td>Largest modulus entry of an Array
@@ -433,7 +434,7 @@ OUT> false
 </pre>
 
 The functions <tt>numeric.inf()</tt> and <tt>numeric.sup()</tt> allow you to get the smallest and largest values
-in an Array. You can also use the <tt>numeric.argmax()</tt> and <tt>numeric.argmin()</tt> functions to get the 
+in an Array. You can also use the <tt>numeric.argsup()</tt> and <tt>numeric.arginf()</tt> functions to get the 
 indices of these values.
 
 <pre>
@@ -441,9 +442,9 @@ IN> numeric.inf([5.2,6.1,2.8,1.3])
 OUT> 1.3
 IN> numeric.sup([5.2,6.1,2.8,1.3])
 OUT> 6.1
-IN> numeric.argmax([5.2,6.1,2.8,1.3])
+IN> numeric.argsup([5.2,6.1,2.8,1.3])
 OUT> 1
-IN> numeric.argmin([5.2,6.1,2.8,1.3])
+IN> numeric.arginf([5.2,6.1,2.8,1.3])
 OUT> 3
 </pre>
 

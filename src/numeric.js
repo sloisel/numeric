@@ -792,22 +792,22 @@ numeric.reducers = {
             'var z=numeric.zeros(s), add=numeric.add;'],
         prod: ['z=mul(z,x[i]);',
             'var z=numeric.ones(s); mul=numeric.mul;'],
-        norm2Squared: ['z=add(z,pow(x[i],2));',
-            'var z=numeric.zeros(s), add=numeric.add, pow=numeric.pow;'],
-        norminf: ['z=max(z,abs(x[i]));',
-            'var z=numeric.zeros(s), max=numeric.max, abs=numeric.abs;'],
+        mean: ['z=add(z,div(x[i],n));',
+            'var z=numeric.zeros(s), add=numeric.add, div=numeric.div;'],
         norm1: ['z=add(z,abs(x[i]))',
             'var z=numeric.zeros(s), add=numeric.add, abs=numeric.abs;'],
+        norminf: ['z=max(z,abs(x[i]));',
+            'var z=numeric.zeros(s), max=numeric.max, abs=numeric.abs;'],
+        norm2Squared: ['z=add(z,pow(x[i],2));',
+            'var z=numeric.zeros(s), add=numeric.add, pow=numeric.pow;'],
         sup: ['z=max(z,x[i]);',
             'var z=numeric.rep(s,-Infinity), max=numeric.max;'],
         inf: ['z=min(z,x[i]);',
             'var z=numeric.rep(s,Infinity), min=numeric.min;'],
-        mean: ['z=add(z,div(x[i],n));',
-            'var z=numeric.zeros(s), add=numeric.add, div=numeric.div;'],
-        argmin: ['z=when(lt(x[i],v),i,z),v=min(x[i],v);',
+        arginf: ['z=when(lt(x[i],v),i,z),v=min(x[i],v);',
             'var z=numeric.zeros(s), v=numeric.rep(s,Infinity),'+
             'lt=numeric.lt, when=numeric.when, min=numeric.min'],
-        argmax: ['z=when(gt(x[i],v),i,z),v=max(x[i],v);',
+        argsup: ['z=when(gt(x[i],v),i,z),v=max(x[i],v);',
             'var z=numeric.zeros(s), v=numeric.rep(s,-Infinity),'+
             'gt=numeric.gt, when=numeric.when, max=numeric.max']
 };
@@ -832,7 +832,7 @@ numeric.std = function std(x, a) {
     return numeric.sqrt(numeric.variance(x, a));
 }
 
-numeric.parseSlice = function parseSlice(x,s) {
+numeric._parseSlice = function _parseSlice(x,s) {
     var m= /^(-?\d+)?:(-?\d+)?(:(-?\d+))?$/.exec(s)
     var sp=(typeof m[4] !== 'undefined')?parseInt(m[4]):1;
     var r = {
@@ -850,7 +850,7 @@ numeric._slice = function _slice(x,s) {
     if(s === ':') { return  x; }
     if(typeof s === 'number') { return x[s<0?x.length+s:s]; }
     if(typeof s === 'string') {
-        var i,r=numeric.parseSlice(x, s),z=[];
+        var i,r=numeric._parseSlice(x, s),z=[];
         for(i=r.start; ((r.step<0)?(i>r.stop):(i<r.stop))
             && (i>=0) && (i<x.length); i+=r.step) {
             z.push(x[i]);
@@ -877,7 +877,7 @@ numeric.slice = function slice(x,s,k) {
             return numeric.slice(x,s,0);
         }
     
-        var i,r=numeric.parseSlice(x, s[k]),z=[];
+        var i,r=numeric._parseSlice(x, s[k]),z=[];
         for(i=r.start; ((r.step<0)?(i>r.stop):(i<r.stop))
             && (i>=0) && (i<x.length); i+=r.step) {
             z.push(numeric.slice(x[i],s,k+1));
@@ -889,7 +889,7 @@ numeric.slice = function slice(x,s,k) {
 numeric._sliceeq = function _sliceeq(x,s,y) {
     if(typeof s === 'number') { x[s<0?x.length+s:s] = y; }
     if(typeof s === 'string') {
-        var i,j,n=x.length,r=numeric.parseSlice(x, s);
+        var i,j,n=x.length,r=numeric._parseSlice(x, s);
         for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
             && (i>=0) && (i<x.length); i+=r.step,j++) {
             x[i] = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
@@ -914,7 +914,7 @@ numeric.sliceeq = function sliceeq(x,s,y,k) {
             numeric.sliceeq(x,s,y,0); return;
         }
     
-        var i,j,yi,r=numeric.parseSlice(x, s[k]);
+        var i,j,yi,r=numeric._parseSlice(x, s[k]);
         for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
             && (i>=0) && (i<x.length); i+=r.step,j++) {
             yi = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
