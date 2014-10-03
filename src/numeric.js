@@ -792,7 +792,7 @@ numeric.reducers = {
             'var z=numeric.zeros(s), add=numeric.add;'],
         prod: ['z=mul(z,x[i]);',
             'var z=numeric.ones(s); mul=numeric.mul;'],
-        mean: ['z=add(z,div(x[i],n));',
+        mean: ['z=add(z,div(x[i],_n));',
             'var z=numeric.zeros(s), add=numeric.add, div=numeric.div;'],
         norm1: ['z=add(z,abs(x[i]))',
             'var z=numeric.zeros(s), add=numeric.add, abs=numeric.abs;'],
