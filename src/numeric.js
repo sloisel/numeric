@@ -783,6 +783,10 @@ numeric.clip = function clip(x, min, max) {
     return numeric.min(numeric.max(x, min), max);
 }
 
+numeric.saturate = function saturate(x) {
+    return numeric.clip(x, 0, 1);
+}
+
 numeric.reducers = {
         any: ['z = or(z, bool(x[i]));',
             'var z=numeric.rep(s,false), or=numeric.or, bool=numeric.bool;'],
@@ -966,24 +970,26 @@ numeric.index = function index(x,y,s,k) {
     if(typeof s === 'undefined') { s=numeric.dim(y); }
     if (k === s.length-1) { return numeric._index(x,y,s,k); }
     var i,n=s[k],z=Array(n);
-    for(i=n-1;i>=0;--i) { z[i]=numeric.index(x[i],y[i],s,k+1); }
+    for(i=n-1;i>=0;--i) { z[i]=numeric.index(x,y[i],s,k+1); }
     return z;
 }
 
-numeric._indexeq = function _indexeq(x,y,z,sx,sy,k) {
-    var i,n=sx[k],m=sy[k];
-    if (m === 0) { for(i=n-1;i>=0;--i) { x[y[0]] = numeric.clone(z[0]); } }
-    else         { for(i=m-1;i>=0;--i) { x[y[i]] = numeric.clone(z[i]); } }
+numeric._indexeq = function _indexeq(x,y,z,sy,sz,k) {
+    var i,n=sy[k],m=sz[k];
+    if (n === 0) { for(i=m-1;i>=0;--i) { x[y[0]] = numeric.clone(z[i]); } }
+    if (m === 0) { for(i=n-1;i>=0;--i) { x[y[i]] = numeric.clone(z[0]); } }
+    else         { for(i=n-1;i>=0;--i) { x[y[i]] = numeric.clone(z[i]); } }
 }
 
-numeric.indexeq = function indexeq(x,y,z,sx,sy,k) {
+numeric.indexeq = function indexeq(x,y,z,sy,sz,k) {
     if(typeof k === 'undefined')  { k=0; }
-    if(typeof sx === 'undefined') { sx=numeric.dim(x); }
     if(typeof sy === 'undefined') { sy=numeric.dim(y); }
-    if (k === sy.length-1) { numeric._indexeq(x,y,z,sx,sy,k); }
-    var i,n=sx[k],m=sy[k];
-    if (m === 0) { for(i=n-1;i>=0;--i) { numeric.indexeq(x[i],y[0],z[0],sx,sy,k+1); } }
-    else         { for(i=m-1;i>=0;--i) { numeric.indexeq(x[i],y[i],z[i],sx,sy,k+1); } }
+    if(typeof sz === 'undefined') { sz=numeric.dim(z); }
+    if (k === sy.length-1) { numeric._indexeq(x,y,z,sy,sz,k); }
+    var i,n=sy[k],m=sz[k];
+    if (n === 0) { for(i=m-1;i>=0;--i) { numeric.indexeq(x,y[0],z[i],sy,sz,k+1); } }
+    if (m === 0) { for(i=n-1;i>=0;--i) { numeric.indexeq(x,y[i],z[0],sy,sz,k+1); } }
+    else         { for(i=n-1;i>=0;--i) { numeric.indexeq(x,y[i],z[i],sy,sz,k+1); } }
 }
 
 numeric.trunc = numeric.pointwise('z[k] = round(x[i]/y[j])*y[j];','var round = Math.round;','binary');
@@ -1125,7 +1131,8 @@ numeric.linspace = function linspace(a,b,n) {
 }
 
 numeric.range = function range(start,stop,step) {
-    step=(typeof step === 'undefined')?1:step;
+    if (typeof step === 'undefined') { step = 1; }
+    if (typeof stop === 'undefined') { stop = start; start = 0; }
     if (step > 0 && (stop < start)) { return []; }
     if (step < 0 && (stop > start)) { return []; }
     var i,z=[];
@@ -1592,6 +1599,8 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
 }
 
 numeric.epsilon = 2.220446049250313e-16;
+numeric.pi = 3.141592653589793238462643383279502884197169399375105820;
+numeric.e = 2.71828182845904523536028747135266249775724709369995;
 
 numeric.QRFrancis = function(H,maxiter) {
     if(typeof maxiter === "undefined") { maxiter = 10000; }
@@ -2885,7 +2894,7 @@ numeric.T.prototype.fft = function fft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (-3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (-numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
@@ -2910,7 +2919,7 @@ numeric.T.prototype.ifft = function ifft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];

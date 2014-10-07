@@ -88,6 +88,7 @@ OUT> 0.2694
 <tr><td><tt>bxor</tt><td>Pointwise binary xor <tt>x^y</tt>
 <tr><td><tt>when</tt><td>Pointwise conditional operator <tt>x?y:z</tt>
 <tr><td><tt>clip</tt><td>Pointwise clip to some range
+<tr><td><tt>saturate</tt><td>Pointwise clip to the range [0,1]
 <tr><td><tt>same</tt><td>Deep comparison of <tt>x</tt> and <tt>y</tt>
 <tr><td><tt>clone</tt><td>Deep copy of Array
 <tr><td><tt>pointwise</tt><td>Construct a new pointwise function
@@ -227,6 +228,8 @@ OUT> 0.2694
 <tr><td><tt>version</tt><td>Version string for the numeric library
 <tr><td><tt>bench</tt><td>Benchmarking routine
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
+<tr><td><tt>pi</tt><td>3.14159265358979...
+<tr><td><tt>e</tt><td>2.71828182845904...
 <tr><td><tt>prettyPrint</tt><td>Pretty-prints x
 <tr><td><tt>precision</tt><td>Number of digits to prettyPrint
 <tr><td><tt>largeArray</tt><td>Don't prettyPrint Arrays larger than this
@@ -543,6 +546,8 @@ OUT> [1,1.5,2,2.5,3]
 Or via some range specifier:
 
 <pre>
+IN> numeric.range(7);
+OUT> [0,1,2,3,4,5,6]
 IN> numeric.range(0, 5);
 OUT> [0,1,2,3,4]
 IN> numeric.range(1, 3);
@@ -867,7 +872,7 @@ To do this the <tt>numeric.index()</tt> function is used.
 IN> numeric.index([[1,2],[3,4],[5,6]],[0,2])
 OUT> [[1,2],[5,6]]
 IN> numeric.index([[1,2],[3,4],[5,6]],[[0],[1],[1]])
-OUT> [[1],[4],[6]]
+OUT> [[[1,2]],[[3,4]],[[3,4]]]
 </pre>
 
 To set values at specific indices you can use the <tt>numeric.indexeq()</tt> function.
