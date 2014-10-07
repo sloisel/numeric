@@ -1460,6 +1460,8 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
 
 // precision
 numeric.epsilon = 2.220446049250313e-16;
+numeric.pi = 3.141592653589793238462643383279502884197169399375105820;
+numeric.e = 2.71828182845904523536028747135266249775724709369995;
 
 // qr 
 numeric.QRFrancis = function(H, maxiter) {
@@ -2963,7 +2965,7 @@ numeric.T.prototype.fft = function fft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (-3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (-numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
@@ -2989,7 +2991,7 @@ numeric.T.prototype.ifft = function ifft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
