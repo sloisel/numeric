@@ -129,29 +129,30 @@ numeric.parseCSV = function parseCSV(t) {
     var stripper = function(n) { return n.substr(0,n.length-1); }
     var count = 0;
     for(k=0;k<foo.length;k++) {
-      var bar = (foo[k]+",").match(pat),baz;
-      if(bar.length>0) {
-          ret[count] = [];
-          for(j=0;j<bar.length;j++) {
-              baz = stripper(bar[j]);
-              if(patnum.test(baz)) { ret[count][j] = parseFloat(baz); }
-              else ret[count][j] = baz;
-          }
-          count++;
-      }
+        if(foo[k]==='') { continue; }
+        var bar = (foo[k]+",").match(pat),baz;
+        if(bar.length>0) {
+            ret[count] = [];
+            for(j=0;j<bar.length;j++) {
+                baz = stripper(bar[j]);
+                if(patnum.test(baz)) {
+                    ret[count][j] = parseFloat(baz);
+                }
+                else { ret[count][j] = baz; }
+                if (isNaN(ret[count][j])) { console.log('Warning: "'+baz+'"'); }
+            }
+            count++;
+        }
     }
     return ret;
 }
 
 numeric.toCSV = function toCSV(A) {
     var s = numeric.dim(A);
-    var i,j,m,n,row,ret;
-    m = s[0];
-    n = s[1];
-    ret = [];
+    var i,j,m=s[0],n=s[1],row=[],ret=[];
     for(i=0;i<m;i++) {
         row = [];
-        for(j=0;j<m;j++) { row[j] = A[i][j].toString(); }
+        for(j=0;j<n;j++) { row[j] = A[i][j].toString(); }
         ret[i] = row.join(', ');
     }
     return ret.join('\n')+'\n';
