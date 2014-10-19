@@ -139,7 +139,6 @@ numeric.parseCSV = function parseCSV(t) {
                     ret[count][j] = parseFloat(baz);
                 }
                 else { ret[count][j] = baz; }
-                if (isNaN(ret[count][j])) { console.log('Warning: "'+baz+'"'); }
             }
             count++;
         }
@@ -501,6 +500,18 @@ numeric.dot = function dot(x,y) {
     }
 }
 
+numeric.outer = function outer(x, y) {
+    x = numeric.flatten(x);
+    y = numeric.flatten(y);
+    return numeric.dot(numeric.transpose([x]), [y]);
+}
+
+numeric.inner = function inner(x, y) {
+    if(typeof x !== 'object') { return numeric.mul(x, y); }
+    if(typeof y !== 'object') { return numeric.mul(x, y); }
+    return numeric.sum(numeric.add(x, y), -1);
+}
+
 numeric.diag = function diag(d) {
     var i,i1,j,n = d.length, A = Array(n), Ai;
     for(i=n-1;i>=0;i--) {
@@ -681,6 +692,7 @@ numeric._mapreduce = function _mapreduce(body,setup) {
 numeric.mapreduce = function mapreduce(body,setup) {
     numeric['_anonymous'+numeric.anonID] = numeric._mapreduce(body,setup)
     var fun = Function('x','a','s','k',
+        'if(typeof x !== "object") { x = [x]; }\n'+
         'if(typeof a === "undefined") { x = numeric.flatten(x); a=0; }\n'+
         'if(typeof s === "undefined") { s = numeric.dim(x); }\n'+
         'if(typeof k === "undefined") { k = 0; }\n'+
@@ -928,6 +940,17 @@ numeric.sliceeq = function sliceeq(x,s,y,k) {
     }
 }
 
+numeric.wrap = function wrap(x, a, s, k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof a === 'undefined') { a=s.length; }
+    if(a < 0) { a = s.length+a; }
+    if(k === a) { return [numeric.clone(x)]; }
+    var i,n=s[k],z=Array(n);
+    for (i=n-1;i>=0;--i) { z[i] = wrap(x[i],a,s,k+1); }
+    return z;
+}
+
 numeric._mask = function _mask(x,m,s,k) {
     var i,n=s[k],z=[];
     for(i=0;i<n;i++) { if(m[i]) { z.push(x[i]); } }
@@ -945,14 +968,16 @@ numeric.mask = function mask(x,m,s,k) {
 
 numeric._maskeq = function _maskeq(x,m,y,s,k,l) {
     var i,n=s[k];
-    for(i=0;i<n;i++) { if(m[i]) { x[i] = y[l]; l++; } }
+    if (y.length === 1) { for(i=0;i<n;i++) { if(m[i]) { x[i] = y[0]; l++; } } }
+    else                { for(i=0;i<n;i++) { if(m[i]) { x[i] = y[l]; l++; } } }
     return l;
 }
 
 numeric.maskeq = function maskeq(x,m,y,s,k,l) {
     if(typeof k === 'undefined') { k=0; }
     if(typeof l === 'undefined') { l=0; }
-    if(typeof s === 'undefined') { s=numeric.dim(m); }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof y !== 'object') { y=[y]; }
     if (k === s.length-1) { return numeric._maskeq(x,m,y,s,k,l); }
     var i,n=s[k];
     for(i=0;i<n;i++) { l=maskeq(x[i],m[i],y,s,k+1,l); }

@@ -125,6 +125,7 @@ OUT> 0.2694
 <tr><td><tt>linspace</tt><td>Generate evenly spaced values
 <tr><td><tt>flatten</tt><td>Flatten Array to a single dimension
 <tr><td><tt>reshape</tt><td>Reshape an Array to given dimensions
+<tr><td><tt>wrap</tt><td>Wrap an Array on a given axis
 <tr><td><tt>concat</tt><td>Concatenate <tt>x</tt> and <tt>y</tt> together on a given axis
 <tr><td><tt>stack</tt><td>Concatenate Arrays together on a given axis
 <tr><td><tt>hstack</tt><td>Concatenate Arrays on their innermost axis
@@ -148,6 +149,8 @@ OUT> 0.2694
 <tr><td><tt>diag</tt><td>Create diagonal matrix
 <tr><td><tt>identity</tt><td>Identity matrix
 <tr><td><tt>transpose</tt><td>Matrix transpose
+<tr><td><tt>inner</tt><td>Inner product of two Arrays
+<tr><td><tt>outer</tt><td>Outer product of two Arrays
 <tr><td><tt>tensor</tt><td>Tensor product <tt>z[i][j] = x[i]*y[j]</tt>
 <tr><td><tt>solve</tt><td>Solve <tt>Ax=b</tt>
 <tr><td><tt>solveLP</tt><td>Solve a linear programming problem
@@ -832,6 +835,20 @@ IN> numeric.reshape([[1,2],[3,4],[5,6]],[2,3])
 OUT> [[1,2,3],[4,5,6]]
 IN> numeric.dim([[1,2,3],[4,5,6]])
 OUT> [2,3]
+</pre>
+
+Elements in an Array can be wrapped with a new Array using the <tt>numeric.wrap()</tt> function.
+An optional axis argument can be given to say upon which axis to do the wrapping.
+
+<pre>
+IN> numeric.wrap([1,2,3,4])
+OUT> [[1],[2],[3],[4]]
+IN> numeric.wrap([[1,2],[3,4],[5,6]])
+OUT> [[[1],[2]],[[3],[4]],[[5],[6]]]
+IN> numeric.wrap([1,2,3,4], 0)
+OUT> [[1,2,3,4]]
+IN> numeric.wrap([[1,2],[3,4],[5,6]], 1)
+OUT> [[[1,2]],[[3,4]],[[5,6]]]
 </pre>
 
 <h1>Masking &amp; Indexing</h1>
