@@ -384,17 +384,26 @@ numeric.same = function same(x,y) {
     return true;
 }
 
+numeric.empty = function empty(s,k) {
+    if(typeof k === "undefined") { k=0; }
+    var n=s[k], z=Array(n), i;
+    if(s.length   === 0) { return undefined; }
+    if(s.length-1 === k) { return z; }
+    for(i=n-1;i>=0;i--) { z[i] = numeric.empty(s,k+1); }
+    return z;
+}
+
 numeric.rep = function rep(s,v,k) {
     if(typeof k === "undefined") { k=0; }
-    var n = s[k], ret = Array(n), i;
+    var n=s[k], z=Array(n), i;
     if(s.length   === 0) { return v; }
     if(s.length-1 === k) {
-        for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
-        if(i===-1) { ret[0] = v; }
-        return ret;
+        for(i=n-2;i>=0;i-=2) { z[i+1] = v; z[i] = v; }
+        if(i===-1) { z[0] = v; }
+        return z;
     }
-    for(i=n-1;i>=0;i--) { ret[i] = numeric.rep(s,v,k+1); }
-    return ret;
+    for(i=n-1;i>=0;i--) { z[i] = numeric.rep(s,v,k+1); }
+    return z;
 }
 
 numeric.zeros = function zeros(s) { return numeric.rep(s,0); }
@@ -1208,6 +1217,11 @@ numeric.linspace = function linspace(a,b,n) {
     n--;
     for(i=n;i>=0;i--) { z[i] = (i*b+(n-i)*a)/n; }
     return z;
+}
+
+numeric.logspace = function logspace(a,b,n,e) {
+    if(typeof e === 'undefined') { e=10; }
+    return numeric.pow(e, numeric.linspace(a,b,n));
 }
 
 numeric.range = function range(start,stop,step) {
