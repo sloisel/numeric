@@ -398,6 +398,15 @@ numeric.same = function same(x, y)
     return true;
 };
 
+numeric.empty = function empty(s,k) {
+    if(typeof k === "undefined") { k=0; }
+    var n=s[k], z=Array(n), i;
+    if(s.length   === 0) { return undefined; }
+    if(s.length-1 === k) { return z; }
+    for(i=n-1;i>=0;i--) { z[i] = numeric.empty(s,k+1); }
+    return z;
+};
+
 // repeat
 numeric.rep = function rep(s, v, k) 
 {
@@ -418,6 +427,9 @@ numeric.rep = function rep(s, v, k)
     
     return ret;
 };
+
+numeric.zeros = function zeros(s) { return numeric.rep(s,0); };
+numeric.ones = function ones(s) { return numeric.rep(s,1); };
 
 // dot functions
 numeric.dotMMsmall = function dotMMsmall(x,y)
@@ -1019,7 +1031,7 @@ numeric._random = function _random(s,k) {
 
 numeric.random = function random(s) { return numeric._random(s,0); };
 
-numeric.norm2 = function norm2(x) { return Math.sqrt(numeric.norm2Squared(x)); };
+numeric.norm2 = function norm2(x,a) { return numeric.sqrt(numeric.norm2Squared(x,a)); };
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
@@ -1030,10 +1042,19 @@ numeric.linspace = function linspace(a,b,n) {
     return ret;
 };
 
-numeric.logspace = function logspace(a,b,n) {
-    return numeric.linspace(a,b,n).map(
-        function(x) { return Math.pow(10,x); }
-    );
+numeric.logspace = function logspace(a,b,n,e) {
+    if(typeof e === 'undefined') { e=10; }
+    return numeric.pow(e, numeric.linspace(a,b,n));
+};
+
+numeric.range = function range(start,stop,step) {
+    if (typeof step === 'undefined') { step = 1; }
+    if (typeof stop === 'undefined') { stop = start; start = 0; }
+    if (step > 0 && (stop < start)) { return []; }
+    if (step < 0 && (stop > start)) { return []; }
+    var i,z=[];
+    for(i=start;i<stop;i+=step) { z.push(i); }
+    return z;
 }
 
 numeric.getBlock = function getBlock(x,from,to) {

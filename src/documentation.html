@@ -85,6 +85,7 @@ OUT> 0.2694
 <tr><td><tt>dot</tt><td>Matrix-Matrix, Matrix-Vector and Vector-Matrix product
 <tr><td><tt>e</tt><td>2.71828182845904...
 <tr><td><tt>eig</tt><td>Eigenvalues and eigenvectors
+<tr><td><tt>empty</tt><td>Create an empty Array
 <tr><td><tt>epsilon</tt><td>2.220446049250313e-16
 <tr><td><tt>eq</tt><td>Pointwise comparison x === y
 <tr><td><tt>exp</tt><td>Pointwise Math.exp(x)
@@ -118,10 +119,11 @@ OUT> 0.2694
 <tr><td><tt>mul</tt><td>Pointwise x*y
 <tr><td><tt>neg</tt><td>Pointwise -x
 <tr><td><tt>neq</tt><td>Pointwise x!==y
-<tr><td><tt>norm2</tt><td>Square root of the sum of the square of the entries of x
+<tr><td><tt>norm2</tt><td>Square root of the sum of the squares of an Array
 <tr><td><tt>norm2Squared</tt><td>Sum of squares of entries of x
 <tr><td><tt>norminf</tt><td>Largest modulus entry of x
 <tr><td><tt>not</tt><td>Pointwise logical negation !x
+<tr><td><tt>ones</tt><td>Create an Array of ones
 <tr><td><tt>or</tt><td>Pointwise logical or x||y
 <tr><td><tt>oreq</tt><td>Pointwise x|=y
 <tr><td><tt>parseCSV</tt><td>Parse a CSV file into an Array
@@ -129,10 +131,11 @@ OUT> 0.2694
 <tr><td><tt>parseFloat</tt><td>Pointwise parseFloat(x)
 <tr><td><tt>pi</tt><td>3.14159265358979...
 <tr><td><tt>pointwise</tt><td>Create a pointwise function
-<tr><td><tt>pow</tt><td>Pointwise Math.pow(x)
+<tr><td><tt>pow</tt><td>Pointwise <tt>Math.pow(x,y)</tt>
 <tr><td><tt>precision</tt><td>Number of digits to prettyPrint
 <tr><td><tt>prettyPrint</tt><td>Pretty-prints x
 <tr><td><tt>random</tt><td>Create an Array of random numbers
+<tr><td><tt>range</tt><td>Create an Array from a range
 <tr><td><tt>rep</tt><td>Create an Array by duplicating values
 </table>
 <td valign="top" width="33%">
@@ -183,6 +186,7 @@ OUT> 0.2694
 <tr><td><tt>version</tt><td>Version string for the numeric library
 <tr><td><tt>xor</tt><td>Pointwise x^y
 <tr><td><tt>xoreq</tt><td>Pointwise x^=y
+<tr><td><tt>zeros</tt><td>Create an Array of zeros
 </table></table>
 
 <br>
@@ -347,6 +351,19 @@ OUT> [[0,0,0],
       [0,0,0]]
 </pre>
 
+You can create a multidimensional Array of zeros or ones using the functions <tt>numeric.zeros()</tt> and 
+<tt>numeric.ones()</tt>, and empty Arrays using <tt>numeric.empty()</tt>.
+
+<pre>
+IN> numeric.zeros([2,2])
+OUT> [[0,0],
+      [0,0]]
+IN> numeric.ones([5,1])
+OUT> [[1],[1],[1],[1],[1]]
+IN> numeric.empty([2,3])
+OUT> [[,,],[,,]]
+</pre>
+
 You can loop over Arrays as you normally would. However, in order to quickly generate optimized
 loops, the <tt>numeric</tt> library provides a few efficient loop-generation mechanisms. For example, the
 <tt>numeric.mapreduce()</tt> function can be used to make a function that computes the sum of all the
@@ -377,6 +394,7 @@ OUT> false
 </pre>
 
 You can create a diagonal matrix using <tt>numeric.diag()</tt>
+
 <pre>
 IN> numeric.diag([1,2,3])
 OUT> [[1,0,0],
@@ -425,11 +443,26 @@ IN> numeric.linspace(1,3,5);
 OUT> [1,1.5,2,2.5,3]
 </pre>
 
-Or a vector of logarithmically spaced values between Math.pow(10,a) and Math.pow(10,b):
+Or a vector of logarithmically spaced values between Math.pow(exp,a) and Math.pow(exp,b), where the default <tt>exp</tt> exponent is 10:
 
 <pre>
 IN> numeric.logspace(0,1,5);
 OUT> [1, 1.7782794100389228, 3.1622776601683795, 5.623413251903491, 10]
+IN> numeric.logspace(1,3,5,10);
+OUT> [10,31.62,1e2,316.2,1e3]
+</pre>
+
+Or via some range specifier:
+
+<pre>
+IN> numeric.range(7);
+OUT> [0,1,2,3,4,5,6]
+IN> numeric.range(0, 5);
+OUT> [0,1,2,3,4]
+IN> numeric.range(1, 3);
+OUT> [1,2]
+IN> numeric.range(-1, 6, 2);
+OUT> [-1, 1, 3, 5]
 </pre>
 
 <!--
