@@ -512,6 +512,60 @@ numeric.inner = function inner(x, y) {
     return numeric.sum(numeric.add(x, y), -1);
 }
 
+numeric.roll = function roll(x, r, a, s, k) {
+    if(typeof r === 'undefined') { r=1; }
+    if(typeof a === 'undefined') { a=-1; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof k === 'undefined') { k=0; }
+    if(a < 0) { a=s.length+a; }
+    if(k === a) { return x.slice(s[k]-r).concat(x.slice(0,s[k]-r)); }
+    var i,n=s[k],z=Array(n);
+    for(i=0;i<n;++i) { z[i] = numeric.roll(x[i],r,a,s,k+1); }
+    return z;
+}
+
+numeric.flip = function flip(x, a, s, k) {
+    if(typeof a === 'undefined') { a=-1; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof k === 'undefined') { k=0; }
+    if(a < 0) { a=s.length+a; }
+    if(k === a) { var z = x.slice(); z.reverse(); return z; }
+    var i,n=s[k],z=Array(n);
+    for(i=0;i<n;++i) { z[i] = numeric.flip(x[i],a,s,k+1); }
+    return z;
+}
+
+numeric.fliplr = function fliplr(x) {
+    return numeric.flip(x, -1);
+}
+
+numeric.flipud = function flipud(x) {
+    return numeric.flip(x, -2);
+}
+
+numeric.rot90 = function rot90(x, n) {
+    if(typeof n === 'undefined') { n=1; }
+    for (var i=0;i<n;i++) {
+        x=numeric.flipud(numeric.transpose(x));
+    }
+    return x;
+}
+
+numeric.kron = function kron(x, y) {
+    var sx=numeric.dim(x),sy=numeric.dim(y);
+    var n=sx[0]*sy[0],m=sx[1]*sy[1];
+    var z=numeric.rep([n,m],0);
+    for(var i=0;i<n;++i)
+    for(var j=0;j<m;++j) {
+        z[i][j] = 
+            x[Math.floor(i/sx[0])]
+             [Math.floor(j/sy[1])] * 
+            y[i%sx[0]]
+             [j%sx[1]];
+    }
+    return z;
+}
+
 numeric.diag = function diag(d) {
     var i,i1,j,n = d.length, A = Array(n), Ai;
     for(i=n-1;i>=0;i--) {

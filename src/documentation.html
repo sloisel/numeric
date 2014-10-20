@@ -125,6 +125,11 @@ OUT> 0.2694
 <tr><td><tt>linspace</tt><td>Generate evenly spaced values
 <tr><td><tt>flatten</tt><td>Flatten Array to a single dimension
 <tr><td><tt>reshape</tt><td>Reshape an Array to given dimensions
+<tr><td><tt>flip</tt><td>Flip an Array on a given axis
+<tr><td><tt>fliplr</tt><td>Flip an Array on the innermost axis
+<tr><td><tt>flipud</tt><td>Flip an Array on the second innermost axis
+<tr><td><tt>rot90</tt><td>Rotate an Array 90 degrees counter clockwise
+<tr><td><tt>roll</tt><td>Roll an Array on a given axis
 <tr><td><tt>wrap</tt><td>Wrap an Array on a given axis
 <tr><td><tt>concat</tt><td>Concatenate <tt>x</tt> and <tt>y</tt> together on a given axis
 <tr><td><tt>stack</tt><td>Concatenate Arrays together on a given axis
@@ -151,6 +156,7 @@ OUT> 0.2694
 <tr><td><tt>transpose</tt><td>Matrix transpose
 <tr><td><tt>inner</tt><td>Inner product of two Arrays
 <tr><td><tt>outer</tt><td>Outer product of two Arrays
+<tr><td><tt>kron</tt><td>Kronecker product of two matrices
 <tr><td><tt>tensor</tt><td>Tensor product <tt>z[i][j] = x[i]*y[j]</tt>
 <tr><td><tt>solve</tt><td>Solve <tt>Ax=b</tt>
 <tr><td><tt>solveLP</tt><td>Solve a linear programming problem
@@ -837,6 +843,23 @@ IN> numeric.dim([[1,2,3],[4,5,6]])
 OUT> [2,3]
 </pre>
 
+Arrays can be reversed using <tt>numeric.flip()</tt>, rotated using <tt>numeric.rot90()</tt>, and rolled using <tt>numeric.roll()</tt>.
+
+<pre>
+IN> numeric.flip([1,2,3,4])
+OUT> [4,3,2,1]
+IN> numeric.flip([[1,2],[3,4]], 0)
+OUT> [[3,4],[1,2]]
+IN> numeric.flip([[1,2],[3,4]], 1)
+OUT> [[2,1],[4,3]]
+IN> numeric.rot90([[1,2],[3,4]])
+OUT> [[2,4],[1,3]]
+IN> numeric.roll([1,2,3,4], 2)
+OUT> [3,4,1,2]
+IN> numeric.roll([[1,2],[3,4],[5,6]], 1, 0)
+OUT> [[5,6],[1,2],[3,4]]
+</pre>
+
 Elements in an Array can be wrapped with a new Array using the <tt>numeric.wrap()</tt> function.
 An optional axis argument can be given to say upon which axis to do the wrapping.
 
@@ -1004,6 +1027,15 @@ OUT> [[ 1],
       [12]]
 </pre>
 
+Kronecker product:
+<pre>
+IN> numeric.kron([[1,0],[0,1]],[[1,2],[3,4]])
+OUT> [[1,2,0,0],
+      [3,4,0,0],
+      [0,0,1,2],
+      [0,0,3,4]]
+</pre>
+      
 You can compute the 2-norm of an Array, which is the square root of the sum of the squares of the entries.
 <pre>
 IN> numeric.norm2([1,2])
