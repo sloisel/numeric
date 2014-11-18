@@ -1071,7 +1071,7 @@ numeric.T.prototype.reciprocal = function reciprocal() {
         var d = numeric.add(mul(this.x,this.x),mul(this.y,this.y));
         return new numeric.T(div(this.x,d),div(numeric.neg(this.y),d));
     }
-    return new T(div(1,this.x));
+    return new numeric.T(div(1,this.x), 0);
 }
 numeric.T.prototype.div = function div(y) {
     if(!(y instanceof numeric.T)) y = new numeric.T(y);
