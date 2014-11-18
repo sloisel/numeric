@@ -1,4 +1,4 @@
-numeric.Sparse = function Sparse(p,v) { this.p = p; this.v = v; }
+numeric.Sparse = function Sparse(p,v) { this.p = p; this.v = v; };
 numeric.Sparse.scatter = function scatter(i,j,z) {
     var n = numeric.sup(j)+1,m=i.length,jk;
     var p = Array(n),v = Array(n),k;
@@ -9,10 +9,10 @@ numeric.Sparse.scatter = function scatter(i,j,z) {
         v[jk].push(z[k]);
     }
     return new numeric.Sparse(p,v);
-}
+};
 numeric.Sparse.identity = function identity(n) {
     return numeric.Sparse.scatter(numeric.linspace(0,n-1),numeric.linspace(0,n-1),numeric.rep([n],1));
-}
+};
 numeric.Sparse.prototype.dim = function dim() {
     var m = 0, i,j,p=this.p,k=p.length,pi,a,b;
     for(i=k-1;i!==-1;--i) {
@@ -24,7 +24,7 @@ numeric.Sparse.prototype.dim = function dim() {
         }
     }
     return [m+1,p.length];
-}
+};
 numeric.Sparse.prototype.Lsolve = function Lsolve(b,n) {
     if(typeof n === "undefined") { n = b.length; }
     var i,j,k,ret = Array(n), p = this.p, v = this.v, pj,vj,m;
@@ -47,7 +47,7 @@ numeric.Sparse.prototype.Lsolve = function Lsolve(b,n) {
         }
     }
     return ret;
-}
+};
 numeric.Sparse.prototype.LU = function LU() {
     var p = this.p, v = this.v, pj, vj, n = p.length,m;
     var i,j,k, L = numeric.Sparse.identity(n), Up = Array(n), Uv = Array(n),uj,t,Lpj,Lvj;
@@ -93,7 +93,7 @@ numeric.Sparse.prototype.LU = function LU() {
         L.v[j] = Lvj;
     }
     return {L:L, U:new numeric.Sparse(Up,Uv)};
-}
+};
 numeric.Sparse.prototype.dotV = function dotV(x) {
     var p = this.p, v = this.v, m = (this.dim())[0], n = x.length,xj;
     var i,j,k,pj,vj,a, ret = numeric.rep([m],0);
@@ -107,7 +107,7 @@ numeric.Sparse.prototype.dotV = function dotV(x) {
         }
     }
     return ret;
-}
+};
 numeric.Sparse.prototype.dotM = function dotM(A) {
     var u,v,n = A.p.length, m = (A.dim())[1],Api,Avi,a;
     var i,j,k;
@@ -128,9 +128,9 @@ numeric.Sparse.prototype.dotM = function dotM(A) {
         Rv[i] = Avi;
     }
     return new numeric.Sparse(Rp,Rv);
-}
+};
 numeric.Sparse.prototype.dot = function dot(z) {
     if(z instanceof numeric.Sparse) return this.dotM(z);
     return this.dotV(z);
-}
+};
 
