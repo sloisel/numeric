@@ -29,6 +29,7 @@ numeric._myIndexOf = (function _myIndexOf(w) {
     for(k=0;k<n;++k) if(this[k]===w) return k;
     return -1;
 });
+
 numeric.myIndexOf = (Array.prototype.indexOf)?Array.prototype.indexOf:numeric._myIndexOf;
 
 numeric.Function = Function;
@@ -128,29 +129,29 @@ numeric.parseCSV = function parseCSV(t) {
     var stripper = function(n) { return n.substr(0,n.length-1); }
     var count = 0;
     for(k=0;k<foo.length;k++) {
-      var bar = (foo[k]+",").match(pat),baz;
-      if(bar.length>0) {
-          ret[count] = [];
-          for(j=0;j<bar.length;j++) {
-              baz = stripper(bar[j]);
-              if(patnum.test(baz)) { ret[count][j] = parseFloat(baz); }
-              else ret[count][j] = baz;
-          }
-          count++;
-      }
+        if(foo[k]==='') { continue; }
+        var bar = (foo[k]+",").match(pat),baz;
+        if(bar.length>0) {
+            ret[count] = [];
+            for(j=0;j<bar.length;j++) {
+                baz = stripper(bar[j]);
+                if(patnum.test(baz)) {
+                    ret[count][j] = parseFloat(baz);
+                }
+                else { ret[count][j] = baz; }
+            }
+            count++;
+        }
     }
     return ret;
 }
 
 numeric.toCSV = function toCSV(A) {
     var s = numeric.dim(A);
-    var i,j,m,n,row,ret;
-    m = s[0];
-    n = s[1];
-    ret = [];
+    var i,j,m=s[0],n=s[1],row=[],ret=[];
     for(i=0;i<m;i++) {
         row = [];
-        for(j=0;j<m;j++) { row[j] = A[i][j].toString(); }
+        for(j=0;j<n;j++) { row[j] = A[i][j].toString(); }
         ret[i] = row.join(', ');
     }
     return ret.join('\n')+'\n';
@@ -328,45 +329,47 @@ numeric.dim = function dim(x) {
     return [];
 }
 
-numeric.mapreduce = function mapreduce(body,init) {
-    return Function('x','accum','_s','_k',
-            'if(typeof accum === "undefined") accum = '+init+';\n'+
-            'if(typeof x === "number") { var xi = x; '+body+'; return accum; }\n'+
-            'if(typeof _s === "undefined") _s = numeric.dim(x);\n'+
-            'if(typeof _k === "undefined") _k = 0;\n'+
-            'var _n = _s[_k];\n'+
-            'var i,xi;\n'+
-            'if(_k < _s.length-1) {\n'+
-            '    for(i=_n-1;i>=0;i--) {\n'+
-            '        accum = arguments.callee(x[i],accum,_s,_k+1);\n'+
-            '    }'+
-            '    return accum;\n'+
-            '}\n'+
-            'for(i=_n-1;i>=1;i-=2) { \n'+
-            '    xi = x[i];\n'+
-            '    '+body+';\n'+
-            '    xi = x[i-1];\n'+
-            '    '+body+';\n'+
-            '}\n'+
-            'if(i === 0) {\n'+
-            '    xi = x[i];\n'+
-            '    '+body+'\n'+
-            '}\n'+
-            'return accum;'
-            );
-}
-numeric.mapreduce2 = function mapreduce2(body,setup) {
-    return Function('x',
-            'var n = x.length;\n'+
-            'var i,xi;\n'+setup+';\n'+
-            'for(i=n-1;i!==-1;--i) { \n'+
-            '    xi = x[i];\n'+
-            '    '+body+';\n'+
-            '}\n'+
-            'return accum;'
-            );
+numeric.flatten = function flatten(x,s,k) {
+    if(typeof x !== 'object') { return x; }
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(k === s.length-1) { return x; }
+    var i,n=x.length,z=[];
+    for(i=0;i<n;++i) { z = z.concat(numeric.flatten(x[i],s,k+1)); }
+    return z;
 }
 
+numeric._reshape = function _reshape(x,s,k) {
+    if(k === s.length-1) { return x.splice(0, s[k]); }
+    var i,n=s[k],z=Array(n);
+    for(i=0;i<n;++i) { z[i] = numeric._reshape(x,s,k+1); }
+    return z;
+}
+
+numeric.reshape = function reshape(x,s,k) {
+    return numeric._reshape(numeric.flatten(x),s,0)
+}
+
+numeric.concat = function concat(x,y,a,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof a === 'undefined') { a=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(a < 0) { a = s.length+a; }
+    if(a === k) { return x.concat(y); }
+    var i,n=s[k],z=Array(n);
+    for(i=n-1;i>=0;--i) { z[i] = numeric.concat(x[i],y[i],a,s,k+1); }
+    return z;
+}
+
+numeric.stack = function stack(xs,a) {
+    var i,x=xs[0],n=xs.length;
+    for (i=1;i<n;i++) { x=numeric.concat(x,xs[i],a); }
+    return x;
+}
+
+numeric.hstack = function hstack(xs) { return numeric.stack(xs,-1); }
+numeric.vstack = function vstack(xs) { return numeric.stack(xs,-2); }
+numeric.dstack = function dstack(xs) { return numeric.stack(xs,-3); }
 
 numeric.same = function same(x,y) {
     var i,n;
@@ -381,18 +384,30 @@ numeric.same = function same(x,y) {
     return true;
 }
 
-numeric.rep = function rep(s,v,k) {
+numeric.empty = function empty(s,k) {
     if(typeof k === "undefined") { k=0; }
-    var n = s[k], ret = Array(n), i;
-    if(k === s.length-1) {
-        for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
-        if(i===-1) { ret[0] = v; }
-        return ret;
-    }
-    for(i=n-1;i>=0;i--) { ret[i] = numeric.rep(s,v,k+1); }
-    return ret;
+    var n=s[k], z=Array(n), i;
+    if(s.length   === 0) { return undefined; }
+    if(s.length-1 === k) { return z; }
+    for(i=n-1;i>=0;i--) { z[i] = numeric.empty(s,k+1); }
+    return z;
 }
 
+numeric.rep = function rep(s,v,k) {
+    if(typeof k === "undefined") { k=0; }
+    var n=s[k], z=Array(n), i;
+    if(s.length   === 0) { return v; }
+    if(s.length-1 === k) {
+        for(i=n-2;i>=0;i-=2) { z[i+1] = v; z[i] = v; }
+        if(i===-1) { z[0] = v; }
+        return z;
+    }
+    for(i=n-1;i>=0;i--) { z[i] = numeric.rep(s,v,k+1); }
+    return z;
+}
+
+numeric.zeros = function zeros(s) { return numeric.rep(s,0); }
+numeric.ones = function ones(s) { return numeric.rep(s,1); }
 
 numeric.dotMMsmall = function dotMMsmall(x,y) {
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
@@ -414,6 +429,7 @@ numeric.dotMMsmall = function dotMMsmall(x,y) {
     }
     return ret;
 }
+
 numeric._getCol = function _getCol(A,j,x) {
     var n = A.length, i;
     for(i=n-1;i>0;--i) {
@@ -423,6 +439,7 @@ numeric._getCol = function _getCol(A,j,x) {
     }
     if(i===0) x[0] = A[0][j];
 }
+
 numeric.dotMMbig = function dotMMbig(x,y){
     var gc = numeric._getCol, p = y.length, v = Array(p);
     var m = x.length, n = y[0].length, A = new Array(m), xj;
@@ -492,6 +509,72 @@ numeric.dot = function dot(x,y) {
     }
 }
 
+numeric.outer = function outer(x, y) {
+    x = numeric.flatten(x);
+    y = numeric.flatten(y);
+    return numeric.dot(numeric.transpose([x]), [y]);
+}
+
+numeric.inner = function inner(x, y) {
+    if(typeof x !== 'object') { return numeric.mul(x, y); }
+    if(typeof y !== 'object') { return numeric.mul(x, y); }
+    return numeric.sum(numeric.add(x, y), -1);
+}
+
+numeric.roll = function roll(x, r, a, s, k) {
+    if(typeof r === 'undefined') { r=1; }
+    if(typeof a === 'undefined') { a=-1; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof k === 'undefined') { k=0; }
+    if(a < 0) { a=s.length+a; }
+    if(k === a) { return x.slice(s[k]-r).concat(x.slice(0,s[k]-r)); }
+    var i,n=s[k],z=Array(n);
+    for(i=0;i<n;++i) { z[i] = numeric.roll(x[i],r,a,s,k+1); }
+    return z;
+}
+
+numeric.flip = function flip(x, a, s, k) {
+    if(typeof a === 'undefined') { a=-1; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof k === 'undefined') { k=0; }
+    if(a < 0) { a=s.length+a; }
+    if(k === a) { var z = x.slice(); z.reverse(); return z; }
+    var i,n=s[k],z=Array(n);
+    for(i=0;i<n;++i) { z[i] = numeric.flip(x[i],a,s,k+1); }
+    return z;
+}
+
+numeric.fliplr = function fliplr(x) {
+    return numeric.flip(x, -1);
+}
+
+numeric.flipud = function flipud(x) {
+    return numeric.flip(x, -2);
+}
+
+numeric.rot90 = function rot90(x, n) {
+    if(typeof n === 'undefined') { n=1; }
+    for (var i=0;i<n;i++) {
+        x=numeric.flipud(numeric.transpose(x));
+    }
+    return x;
+}
+
+numeric.kron = function kron(x, y) {
+    var sx=numeric.dim(x),sy=numeric.dim(y);
+    var n=sx[0]*sy[0],m=sx[1]*sy[1];
+    var z=numeric.rep([n,m],0);
+    for(var i=0;i<n;++i)
+    for(var j=0;j<m;++j) {
+        z[i][j] = 
+            x[Math.floor(i/sx[0])]
+             [Math.floor(j/sy[1])] * 
+            y[i%sx[0]]
+             [j%sx[1]];
+    }
+    return z;
+}
+
 numeric.diag = function diag(d) {
     var i,i1,j,n = d.length, A = Array(n), Ai;
     for(i=n-1;i>=0;i--) {
@@ -512,6 +595,7 @@ numeric.diag = function diag(d) {
     }
     return A;
 }
+
 numeric.getDiag = function(A) {
     var n = Math.min(A.length,A[0].length),i,ret = Array(n);
     for(i=n-1;i>=1;--i) {
@@ -525,148 +609,192 @@ numeric.getDiag = function(A) {
     return ret;
 }
 
-numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)); }
-numeric.pointwise = function pointwise(params,body,setup) {
-    if(typeof setup === "undefined") { setup = ""; }
-    var fun = [];
-    var k;
-    var avec = /\[i\]$/,p,thevec = '';
-    var haveret = false;
-    for(k=0;k<params.length;k++) {
-        if(avec.test(params[k])) {
-            p = params[k].substring(0,params[k].length-3);
-            thevec = p;
-        } else { p = params[k]; }
-        if(p==='ret') haveret = true;
-        fun.push(p);
-    }
-    fun[params.length] = '_s';
-    fun[params.length+1] = '_k';
-    fun[params.length+2] = (
-            'if(typeof _s === "undefined") _s = numeric.dim('+thevec+');\n'+
-            'if(typeof _k === "undefined") _k = 0;\n'+
-            'var _n = _s[_k];\n'+
-            'var i'+(haveret?'':', ret = Array(_n)')+';\n'+
-            'if(_k < _s.length-1) {\n'+
-            '    for(i=_n-1;i>=0;i--) ret[i] = arguments.callee('+params.join(',')+',_s,_k+1);\n'+
-            '    return ret;\n'+
-            '}\n'+
-            setup+'\n'+
-            'for(i=_n-1;i!==-1;--i) {\n'+
-            '    '+body+'\n'+
-            '}\n'+
-            'return ret;'
-            );
-    return Function.apply(null,fun);
+numeric.setDiag = function(A, x) {
+    for(var i=0;i<x.length;i++) { A[i][i] = x[i]; }
 }
-numeric.pointwise2 = function pointwise2(params,body,setup) {
-    if(typeof setup === "undefined") { setup = ""; }
-    var fun = [];
-    var k;
-    var avec = /\[i\]$/,p,thevec = '';
-    var haveret = false;
-    for(k=0;k<params.length;k++) {
-        if(avec.test(params[k])) {
-            p = params[k].substring(0,params[k].length-3);
-            thevec = p;
-        } else { p = params[k]; }
-        if(p==='ret') haveret = true;
-        fun.push(p);
-    }
-    fun[params.length] = (
-            'var _n = '+thevec+'.length;\n'+
-            'var i'+(haveret?'':', ret = Array(_n)')+';\n'+
-            setup+'\n'+
-            'for(i=_n-1;i!==-1;--i) {\n'+
-            body+'\n'+
-            '}\n'+
-            'return ret;'
-            );
-    return Function.apply(null,fun);
-}
-numeric._biforeach = (function _biforeach(x,y,s,k,f) {
-    if(k === s.length-1) { f(x,y); return; }
-    var i,n=s[k];
-    for(i=n-1;i>=0;i--) { _biforeach(typeof x==="object"?x[i]:x,typeof y==="object"?y[i]:y,s,k+1,f); }
-});
-numeric._biforeach2 = (function _biforeach2(x,y,s,k,f) {
-    if(k === s.length-1) { return f(x,y); }
-    var i,n=s[k],ret = Array(n);
-    for(i=n-1;i>=0;--i) { ret[i] = _biforeach2(typeof x==="object"?x[i]:x,typeof y==="object"?y[i]:y,s,k+1,f); }
-    return ret;
-});
-numeric._foreach = (function _foreach(x,s,k,f) {
-    if(k === s.length-1) { f(x); return; }
-    var i,n=s[k];
-    for(i=n-1;i>=0;i--) { _foreach(x[i],s,k+1,f); }
-});
-numeric._foreach2 = (function _foreach2(x,s,k,f) {
-    if(k === s.length-1) { return f(x); }
-    var i,n=s[k], ret = Array(n);
-    for(i=n-1;i>=0;i--) { ret[i] = _foreach2(x[i],s,k+1,f); }
-    return ret;
-});
 
-/*numeric.anyV = numeric.mapreduce('if(xi) return true;','false');
-numeric.allV = numeric.mapreduce('if(!xi) return false;','true');
-numeric.any = function(x) { if(typeof x.length === "undefined") return x; return numeric.anyV(x); }
-numeric.all = function(x) { if(typeof x.length === "undefined") return x; return numeric.allV(x); }*/
+numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)); }
+
+numeric._broadcast = function expand(x, sx, sy) {
+    for(var i=0;i<sy.length-sx.length;i++) { x = [x]; };
+    return x;
+}
+
+numeric.anonID = 0;
+
+numeric.pointwise = function pointwise(body, setup, type) {
+    if (typeof body  === 'undefined') { body = ''; }
+    if (typeof setup === 'undefined') { setup = ''; }
+    if (typeof type  === 'undefined') { type = 'binary'; }
+    
+    if (type === 'unary') {
+        numeric['_anonymous'+numeric.anonID] = numeric._unary(body, setup);
+        var fun = Function('x',
+            'if(typeof x !== "object") {\n'+
+            '    var i=0,k=0,z=Array(1);'+setup+';\n'+
+            '    x=[x];'+body+';\n'+
+            '    return z[0];'+
+            '} else {\n'+
+            '    return numeric._foreach(x,numeric.dim(x),0,numeric._anonymous'+numeric.anonID+');\n'+
+            '}');
+    }
+    
+    else if (type === 'unary-inplace') {
+        numeric['_anonymous'+numeric.anonID] = numeric._unaryeq(body, setup);
+        var fun = Function('x', 
+            'if(typeof x !== "object") {\n'+
+            '    throw new Error("numeric: Cannot perform in-place operation on number");\n'+
+            '} else {\n'+
+            '    numeric._foreacheq(x,numeric.dim(x),0,numeric._anonymous'+numeric.anonID+');\n'+
+            '}');
+    }
+    
+    else if (type === 'binary') {
+        numeric['_anonymous'+numeric.anonID] = numeric._binary(body, setup);
+        var fun = Function(
+            'var a,n=arguments.length,x=arguments[0],y,dim=numeric.dim;\n'+
+            'for(a=1;a<n;++a) {\n'+
+            '    y = arguments[a];\n'+
+            '    if (typeof x === "object"\n'+
+            '    ||  typeof y === "object") {\n'+
+            '       x = numeric._broadcast(x, dim(x), dim(y));\n'+
+            '       y = numeric._broadcast(y, dim(y), dim(x));\n'+
+            '       x = numeric._biforeach(x,y,dim(x),dim(y),0,numeric._anonymous'+numeric.anonID+');\n'+
+            '   } else {\n'+
+            '       var i=0,j=0,k=0,z=Array(1);'+setup+';\n'+
+            '       x=[x];y=[y];'+body+';\n'+
+            '       x=z[0];\n'+
+            '   }\n'+
+            '}\n'+
+            'return x;');
+    }
+    
+    else if (type === 'binary-inplace') {
+        numeric['_anonymous'+numeric.anonID] = numeric._binaryeq(body, setup);
+        var fun = Function(
+            'var a,n=arguments.length,x=arguments[0],y,dim=numeric.dim;\n'+
+            'if(typeof x !== "object") {\n'+
+            '    throw new Error("numeric: Cannot perform in-place operation on number");\n'+
+            '}\n'+
+            'for(a=1;a<n;++a) {\n'+
+            '    y = arguments[a];\n'+
+            '    y = numeric._broadcast(y, dim(y), dim(x));\n'+
+            '    numeric._biforeacheq(x,y,dim(x),dim(y),0,numeric._anonymous'+numeric.anonID+');\n'+
+            '}\n'+
+            'return x;');
+    }
+    
+    else { throw new Error('numeric: Unknown pointwise function type "'+type+'"'); }
+    
+    numeric.anonID++;
+    return fun;
+    
+}
+
+numeric._binary = function _binary(body,setup) {
+    return Function('x','y','_n','_m',
+        'var i,j,k,z=_n===1?Array(_m):Array(_n);\n'+setup+';\n'+
+        'if(_n === 1) { for(j=_m-1;j>=0;--j) {i=0;k=j;'+body+'} } else \n'+
+        'if(_m === 1) { for(i=_n-1;i>=0;--i) {j=0;k=i;'+body+'} } else \n'+
+        '             { for(i=_n-1;i>=0;--i) {j=i;k=i;'+body+'} }\n'+
+        'return z;');
+}
+
+numeric._binaryeq = function _binaryeq(body,setup) {
+    return Function('x','y','_n','_m',
+        'var i,j,k;\n'+setup+';\n'+
+        'if(_m === 1) { for(i=_n-1;i>=0;--i) {j=0;k=i;'+body+'} } else \n'+
+        '             { for(i=_n-1;i>=0;--i) {j=i;k=i;'+body+'} }\n');
+}
+
+numeric._unary = function _unary(body,setup) {
+    return Function('x','_n',
+        'var i,k,z=Array(_n);\n'+setup+';\n'+
+        'for(i=_n-1;i>=0;--i) {k=i;'+body+'}'+
+        'return z;');
+}
+
+numeric._unaryeq = function _unaryeq(body,setup) {
+    return Function('x','_n',
+        'var i,k;\n'+setup+';\n'+
+        'for(i=_n-1;i>=0;--i) {k=i;'+body+'}');
+}
+
+numeric._biforeacheq = function _biforeacheq(x,y,sx,sy,k,f) {
+    if(k === sx.length-1) { f(x,y,sx[k],sy[k]); return; }
+    var i,n=sx[k],m=sy[k];
+    if (m === 1) { for(i=n-1;i>=0;i--) { _biforeacheq(x[i],y[0],sx,sy,k+1,f); }}
+    else         { for(i=n-1;i>=0;i--) { _biforeacheq(x[i],y[i],sx,sy,k+1,f); }}
+};
+
+numeric._biforeach = function _biforeach(x,y,sx,sy,k,f) {
+    if(k === sx.length-1) { return f(x,y,sx[k],sy[k]); }
+    var i,n=sx[k],m=sy[k],z=(n===1)?Array(m):Array(n);
+         if (n === 1) { for(i=m-1;i>=0;--i) { z[i] = _biforeach(x[0],y[i],sx,sy,k+1,f); }}
+    else if (m === 1) { for(i=n-1;i>=0;--i) { z[i] = _biforeach(x[i],y[0],sx,sy,k+1,f); }}
+    else              { for(i=n-1;i>=0;--i) { z[i] = _biforeach(x[i],y[i],sx,sy,k+1,f); }}
+    return z;
+};
+
+numeric._foreacheq = function _foreacheq(x,s,k,f) {
+    if(k === s.length-1) { f(x,s[k]); return; }
+    for(var i=s[k]-1;i>=0;i--) { _foreacheq(x[i],s,k+1,f); }
+};
+
+numeric._foreach = function _foreach(x,s,k,f) {
+    if(k === s.length-1) { return f(x,s[k]); }
+    var i,n=s[k],z=Array(n);
+    for(i=n-1;i>=0;i--) { z[i] = _foreach(x[i],s,k+1,f); }
+    return z;
+};
+
+numeric._mapreduce = function _mapreduce(body,setup) {
+    return Function('x','s','_n', setup+'; for(var i=_n-1;i>=0;--i) { '+body+' }; return z;');
+};
+
+numeric.mapreduce = function mapreduce(body,setup) {
+    numeric['_anonymous'+numeric.anonID] = numeric._mapreduce(body,setup)
+    var fun = Function('x','a','s','k',
+        'if(typeof x !== "object") { x = [x]; }\n'+
+        'if(typeof a === "undefined") { x = numeric.flatten(x); a=0; }\n'+
+        'if(typeof s === "undefined") { s = numeric.dim(x); }\n'+
+        'if(typeof k === "undefined") { k = 0; }\n'+
+        'if(a < 0) { a = numeric.dim(x).length+a; }'+
+        'return numeric._mapreduceeach(x,a,s,k,numeric._anonymous'+numeric.anonID+')');
+    numeric.anonID++;
+    return fun;
+};
+
+numeric._mapreduceeach = function _mapreduceeach(x,a,s,k,f) {
+    if (a === k) { return f(x,s.slice().splice(k+1),s[k]); }
+    var i,n=s[k],z=Array(n);
+    for (i=n-1;i>=0;--i) { z[i]=numeric._mapreduceeach(x[i],a,s,k+1,f); }
+    return z;
+};
+
+numeric.ops1 = {
+    neg: '-',  not: '!', bnot: '~', bool: '!!', clone: ''
+};
 
 numeric.ops2 = {
-        add: '+',
-        sub: '-',
-        mul: '*',
-        div: '/',
-        mod: '%',
-        and: '&&',
-        or:  '||',
-        eq:  '===',
-        neq: '!==',
-        lt:  '<',
-        gt:  '>',
-        leq: '<=',
-        geq: '>=',
-        band: '&',
-        bor: '|',
-        bxor: '^',
-        lshift: '<<',
-        rshift: '>>',
-        rrshift: '>>>'
+    add: '+',  sub: '-',  mul: '*',   div: '/',   mod: '%',
+    and: '&&', or:  '||', eq:  '===', neq: '!==', lt:  '<',
+    gt:  '>',  leq: '<=', geq: '>=',  band: '&',  bor: '|',
+    bxor: '^', lshift: '<<', rshift: '>>', rrshift: '>>>'
 };
+
 numeric.opseq = {
-        addeq: '+=',
-        subeq: '-=',
-        muleq: '*=',
-        diveq: '/=',
-        modeq: '%=',
-        lshifteq: '<<=',
-        rshifteq: '>>=',
-        rrshifteq: '>>>=',
-        bandeq: '&=',
-        boreq: '|=',
-        bxoreq: '^='
+    addeq: '+=',  subeq: '-=',     muleq: '*=',     diveq: '/=',
+    modeq: '%=',  lshifteq: '<<=', rshifteq: '>>=', rrshifteq: '>>>=', 
+    bandeq: '&=', boreq: '|=',     bxoreq: '^='
 };
-numeric.mathfuns = ['abs','acos','asin','atan','ceil','cos',
-                    'exp','floor','log','round','sin','sqrt','tan',
-                    'isNaN','isFinite'];
+
+numeric.mathfuns = [
+    'abs','acos', 'asin','atan', 'ceil','cos',
+    'exp','floor','log', 'round','sin', 'sqrt',
+    'tan','isNaN','isFinite'];
+
 numeric.mathfuns2 = ['atan2','pow','max','min'];
-numeric.ops1 = {
-        neg: '-',
-        not: '!',
-        bnot: '~',
-        clone: ''
-};
-numeric.mapreducers = {
-        any: ['if(xi) return true;','var accum = false;'],
-        all: ['if(!xi) return false;','var accum = true;'],
-        sum: ['accum += xi;','var accum = 0;'],
-        prod: ['accum *= xi;','var accum = 1;'],
-        norm2Squared: ['accum += xi*xi;','var accum = 0;'],
-        norminf: ['accum = max(accum,abs(xi));','var accum = 0, max = Math.max, abs = Math.abs;'],
-        norm1: ['accum += abs(xi)','var accum = 0, abs = Math.abs;'],
-        sup: ['accum = max(accum,xi);','var accum = -Infinity, max = Math.max;'],
-        inf: ['accum = min(accum,xi);','var accum = Infinity, min = Math.min;']
-};
 
 (function () {
     var i,o;
@@ -679,44 +807,22 @@ numeric.mapreducers = {
             o = numeric.ops2[i];
             var code, codeeq, setup = '';
             if(numeric.myIndexOf.call(numeric.mathfuns2,i)!==-1) {
-                setup = 'var '+o+' = Math.'+o+';\n';
-                code = function(r,x,y) { return r+' = '+o+'('+x+','+y+')'; };
-                codeeq = function(x,y) { return x+' = '+o+'('+x+','+y+')'; };
+                setup = 'var '+o+' = Math.'+o+';';
+                code = function(r,x,y) { return r+' = '+o+'('+x+','+y+');'; };
+                codeeq = function(x,y) { return x+' = '+o+'('+x+','+y+');'; };
             } else {
-                code = function(r,x,y) { return r+' = '+x+' '+o+' '+y; };
+                code = function(r,x,y) { return r+' = '+x+' '+o+' '+y+';'; };
                 if(numeric.opseq.hasOwnProperty(i+'eq')) {
-                    codeeq = function(x,y) { return x+' '+o+'= '+y; };
+                    codeeq = function(x,y) { return x+' '+o+'= '+y+';'; };
                 } else {
-                    codeeq = function(x,y) { return x+' = '+x+' '+o+' '+y; };                    
+                    codeeq = function(x,y) { return x+' = '+x+' '+o+' '+y+';'; };                    
                 }
             }
-            numeric[i+'VV'] = numeric.pointwise2(['x[i]','y[i]'],code('ret[i]','x[i]','y[i]'),setup);
-            numeric[i+'SV'] = numeric.pointwise2(['x','y[i]'],code('ret[i]','x','y[i]'),setup);
-            numeric[i+'VS'] = numeric.pointwise2(['x[i]','y'],code('ret[i]','x[i]','y'),setup);
-            numeric[i] = Function(
-                    'var n = arguments.length, i, x = arguments[0], y;\n'+
-                    'var VV = numeric.'+i+'VV, VS = numeric.'+i+'VS, SV = numeric.'+i+'SV;\n'+
-                    'var dim = numeric.dim;\n'+
-                    'for(i=1;i!==n;++i) { \n'+
-                    '  y = arguments[i];\n'+
-                    '  if(typeof x === "object") {\n'+
-                    '      if(typeof y === "object") x = numeric._biforeach2(x,y,dim(x),0,VV);\n'+
-                    '      else x = numeric._biforeach2(x,y,dim(x),0,VS);\n'+
-                    '  } else if(typeof y === "object") x = numeric._biforeach2(x,y,dim(y),0,SV);\n'+
-                    '  else '+codeeq('x','y')+'\n'+
-                    '}\nreturn x;\n');
+
+            numeric[i] = numeric.pointwise(code('z[k]','x[i]','y[j]'),setup,'binary');            
+            numeric[i+'eq'] = numeric.pointwise(codeeq('x[k]','y[j]'),setup,'binary-inplace');
             numeric[o] = numeric[i];
-            numeric[i+'eqV'] = numeric.pointwise2(['ret[i]','x[i]'], codeeq('ret[i]','x[i]'),setup);
-            numeric[i+'eqS'] = numeric.pointwise2(['ret[i]','x'], codeeq('ret[i]','x'),setup);
-            numeric[i+'eq'] = Function(
-                    'var n = arguments.length, i, x = arguments[0], y;\n'+
-                    'var V = numeric.'+i+'eqV, S = numeric.'+i+'eqS\n'+
-                    'var s = numeric.dim(x);\n'+
-                    'for(i=1;i!==n;++i) { \n'+
-                    '  y = arguments[i];\n'+
-                    '  if(typeof y === "object") numeric._biforeach(x,y,s,0,V);\n'+
-                    '  else numeric._biforeach(x,y,s,0,S);\n'+
-                    '}\nreturn x;\n');
+            numeric[o+'='] = numeric[i+'eq'];
         }
     }
     for(i=0;i<numeric.mathfuns2.length;++i) {
@@ -729,68 +835,253 @@ numeric.mapreducers = {
     }
     for(i in numeric.ops1) {
         if(numeric.ops1.hasOwnProperty(i)) {
-            setup = '';
+            var setup = '';
             o = numeric.ops1[i];
             if(numeric.myIndexOf.call(numeric.mathfuns,i)!==-1) {
-                if(Math.hasOwnProperty(o)) setup = 'var '+o+' = Math.'+o+';\n';
+                if(Math.hasOwnProperty(o)) setup = 'var '+o+' = Math.'+o+';';
             }
-            numeric[i+'eqV'] = numeric.pointwise2(['ret[i]'],'ret[i] = '+o+'(ret[i]);',setup);
-            numeric[i+'eq'] = Function('x',
-                    'if(typeof x !== "object") return '+o+'x\n'+
-                    'var i;\n'+
-                    'var V = numeric.'+i+'eqV;\n'+
-                    'var s = numeric.dim(x);\n'+
-                    'numeric._foreach(x,s,0,V);\n'+
-                    'return x;\n');
-            numeric[i+'V'] = numeric.pointwise2(['x[i]'],'ret[i] = '+o+'(x[i]);',setup);
-            numeric[i] = Function('x',
-                    'if(typeof x !== "object") return '+o+'(x)\n'+
-                    'var i;\n'+
-                    'var V = numeric.'+i+'V;\n'+
-                    'var s = numeric.dim(x);\n'+
-                    'return numeric._foreach2(x,s,0,V);\n');
+            numeric[i]      = numeric.pointwise('z[k] = '+o+'(x[i]);',setup,'unary');
+            numeric[i+'eq'] = numeric.pointwise('x[k] = '+o+'(x[i]);',setup,'unary-inplace');
         }
     }
     for(i=0;i<numeric.mathfuns.length;++i) {
         o = numeric.mathfuns[i];
         delete numeric.ops1[o];
     }
-    for(i in numeric.mapreducers) {
-        if(numeric.mapreducers.hasOwnProperty(i)) {
-            o = numeric.mapreducers[i];
-            numeric[i+'V'] = numeric.mapreduce2(o[0],o[1]);
-            numeric[i] = Function('x','s','k',
-                    o[1]+
-                    'if(typeof x !== "object") {'+
-                    '    xi = x;\n'+
-                    o[0]+';\n'+
-                    '    return accum;\n'+
-                    '}'+
-                    'if(typeof s === "undefined") s = numeric.dim(x);\n'+
-                    'if(typeof k === "undefined") k = 0;\n'+
-                    'if(k === s.length-1) return numeric.'+i+'V(x);\n'+
-                    'var xi;\n'+
-                    'var n = x.length, i;\n'+
-                    'for(i=n-1;i!==-1;--i) {\n'+
-                    '   xi = arguments.callee(x[i]);\n'+
-                    o[0]+';\n'+
-                    '}\n'+
-                    'return accum;\n');
+}());
+
+numeric.when = function when(c, x, y) {
+    return numeric.bor(numeric.and(c, x), 
+        numeric.and(numeric.not(c), y));
+}
+
+numeric.clip = function clip(x, min, max) {
+    return numeric.min(numeric.max(x, min), max);
+}
+
+numeric.saturate = function saturate(x) {
+    return numeric.clip(x, 0, 1);
+}
+
+numeric.reducers = {
+        any: ['z = or(z, bool(x[i]));',
+            'var z=numeric.rep(s,false), or=numeric.or, bool=numeric.bool;'],
+        all: ['z=and(z,bool(x[i]));',
+            'var z=numeric.rep(s,true), and=numeric.and, bool=numeric.bool;'],
+        sum: ['z=add(z,x[i]);',
+            'var z=numeric.zeros(s), add=numeric.add;'],
+        prod: ['z=mul(z,x[i]);',
+            'var z=numeric.ones(s), mul=numeric.mul;'],
+        mean: ['z=add(z,div(x[i],x.length));',
+            'var z=numeric.zeros(s), add=numeric.add, div=numeric.div;'],
+        norm1: ['z=add(z,abs(x[i]))',
+            'var z=numeric.zeros(s), add=numeric.add, abs=numeric.abs;'],
+        norminf: ['z=max(z,abs(x[i]));',
+            'var z=numeric.zeros(s), max=numeric.max, abs=numeric.abs;'],
+        norm2Squared: ['z=add(z,mul(x[i],x[i]));',
+            'var z=numeric.zeros(s), add=numeric.add, mul=numeric.mul;'],
+        sup: ['z=max(z,x[i]);',
+            'var z=numeric.rep(s,-Infinity), max=numeric.max;'],
+        inf: ['z=min(z,x[i]);',
+            'var z=numeric.rep(s,Infinity), min=numeric.min;'],
+        arginf: ['z=when(lt(x[i],v),i,z);v=min(x[i],v);',
+            'var z=numeric.zeros(s), v=numeric.rep(s,Infinity),'+
+            'lt=numeric.lt, when=numeric.when, min=numeric.min;'],
+        argsup: ['z=when(gt(x[i],v),i,z);v=max(x[i],v);',
+            'var z=numeric.zeros(s), v=numeric.rep(s,-Infinity),'+
+            'gt=numeric.gt, when=numeric.when, max=numeric.max;']
+};
+
+(function () {
+    var i,o;
+    for(i in numeric.reducers) {
+        if(numeric.reducers.hasOwnProperty(i)) {
+            o = numeric.reducers[i];
+            numeric[i] = numeric.mapreduce(o[0],o[1]);
         }
     }
 }());
 
-numeric.truncVV = numeric.pointwise(['x[i]','y[i]'],'ret[i] = round(x[i]/y[i])*y[i];','var round = Math.round;');
-numeric.truncVS = numeric.pointwise(['x[i]','y'],'ret[i] = round(x[i]/y)*y;','var round = Math.round;');
-numeric.truncSV = numeric.pointwise(['x','y[i]'],'ret[i] = round(x/y[i])*y[i];','var round = Math.round;');
-numeric.trunc = function trunc(x,y) {
-    if(typeof x === "object") {
-        if(typeof y === "object") return numeric.truncVV(x,y);
-        return numeric.truncVS(x,y);
-    }
-    if (typeof y === "object") return numeric.truncSV(x,y);
-    return Math.round(x/y)*y;
+numeric.variance = function variance(x, a) {
+    return numeric.sub(
+        numeric.mean(numeric.pow(x,2),a),
+        numeric.pow(numeric.mean(x,a),2));
 }
+
+numeric.std = function std(x, a) {
+    return numeric.sqrt(numeric.variance(x, a));
+}
+
+numeric._parseSlice = function _parseSlice(x,s) {
+    var m= /^(-?\d+)?:(-?\d+)?(:(-?\d+))?$/.exec(s)
+    var sp=(typeof m[4] !== 'undefined')?parseInt(m[4]):1;
+    var r = {
+        start: ((typeof m[1] !== 'undefined')?parseInt(m[1]):(sp<0?x.length-1:0)),
+        stop:  ((typeof m[2] !== 'undefined')?parseInt(m[2]):(sp<0?0:x.length)),
+        step:  sp,
+    }
+    r.start=r.start<0?x.length+r.start:r.start;
+    r.stop=r.stop<0?x.length+r.stop:r.stop;
+    return r;
+}
+
+numeric._slice = function _slice(x,s) {
+    if(s === '|') { return [x]; }
+    if(s === ':') { return  x; }
+    if(typeof s === 'number') { return x[s<0?x.length+s:s]; }
+    if(typeof s === 'string') {
+        var i,r=numeric._parseSlice(x, s),z=[];
+        for(i=r.start; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step) {
+            z.push(x[i]);
+        }
+        return z;
+    }
+}
+
+numeric.slice = function slice(x,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s !== 'object') { return numeric.slice(x,[s],0); }
+    if(k === s.length-1) { return numeric._slice(x,s[k]); }
+    if(s[k] === '|') { return [numeric.slice(x,s,k+1)]; }
+    
+    if(typeof s[k] === 'number') {
+        return numeric.slice(x[s[k]<0?x.length+s[k]:s[k]],s,k+1);
+    }
+    
+    if(typeof s[k] === 'string') {
+        
+        if(s[k] === '...') {
+            var i,n=numeric.dim(x).length-s.length+1; s=s.splice(1)
+            for(var i=0;i<n;i++) { s=[':'].concat(s); }
+            return numeric.slice(x,s,0);
+        }
+    
+        var i,r=numeric._parseSlice(x, s[k]),z=[];
+        for(i=r.start; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step) {
+            z.push(numeric.slice(x[i],s,k+1));
+        }
+        return z;
+    }   
+}
+
+numeric._sliceeq = function _sliceeq(x,s,y) {
+    if(typeof s === 'number') { x[s<0?x.length+s:s] = y; }
+    if(typeof s === 'string') {
+        var i,j,n=x.length,r=numeric._parseSlice(x, s);
+        for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step,j++) {
+            x[i] = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
+        }
+    }
+}
+
+numeric.sliceeq = function sliceeq(x,s,y,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s !== 'object') { numeric.sliceeq(x,[s],y,0); }
+    if(k === s.length-1) { numeric._sliceeq(x,s[k],y); }
+    
+    if(typeof s[k] === 'number') {
+        numeric.sliceeq(x[s[k]<0?x.length+s[k]:s[k]],s,y,k+1);
+    }
+    
+    if(typeof s[k] === 'string') {
+    
+        if(s[k] === '...') {
+            var i,n=numeric.dim(x).length-s.length+1; s=s.splice(1)
+            for(var i=0;i<n;i++) { s=[':'].concat(s); }
+            numeric.sliceeq(x,s,y,0); return;
+        }
+    
+        var i,j,yi,r=numeric._parseSlice(x, s[k]);
+        for(i=r.start,j=0; ((r.step<0)?(i>r.stop):(i<r.stop))
+            && (i>=0) && (i<x.length); i+=r.step,j++) {
+            yi = (typeof y !== 'object')?y:(y.length==1?y[0]:y[j]);
+            numeric.sliceeq(x[i],s,yi,k+1);
+        }
+    }
+}
+
+numeric.wrap = function wrap(x, a, s, k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof a === 'undefined') { a=s.length; }
+    if(a < 0) { a = s.length+a; }
+    if(k === a) { return [numeric.clone(x)]; }
+    var i,n=s[k],z=Array(n);
+    for (i=n-1;i>=0;--i) { z[i] = wrap(x[i],a,s,k+1); }
+    return z;
+}
+
+numeric._mask = function _mask(x,m,s,k) {
+    var i,n=s[k],z=[];
+    for(i=0;i<n;i++) { if(m[i]) { z.push(x[i]); } }
+    return z;
+}
+
+numeric.mask = function mask(x,m,s,k) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(m); }
+    if (k === s.length-1) { return numeric._mask(x,m,s,k); }
+    var i,n=s[k],z=[];
+    for(i=0;i<n;i++) { z=z.concat(mask(x[i],m[i],s,k+1)); }
+    return z;
+}
+
+numeric._maskeq = function _maskeq(x,m,y,s,k,l) {
+    var i,n=s[k];
+    if (y.length === 1) { for(i=0;i<n;i++) { if(m[i]) { x[i] = y[0]; l++; } } }
+    else                { for(i=0;i<n;i++) { if(m[i]) { x[i] = y[l]; l++; } } }
+    return l;
+}
+
+numeric.maskeq = function maskeq(x,m,y,s,k,l) {
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof l === 'undefined') { l=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(x); }
+    if(typeof y !== 'object') { y=[y]; }
+    if (k === s.length-1) { return numeric._maskeq(x,m,y,s,k,l); }
+    var i,n=s[k];
+    for(i=0;i<n;i++) { l=maskeq(x[i],m[i],y,s,k+1,l); }
+    return l;
+}
+
+numeric._index = function _index(x,y,s,k) {
+    var i,n=s[k],z=Array(n);
+    for(i=n-1;i>=0;--i) { z[i] = numeric.clone(x[y[i]]); }
+    return z;
+}
+
+numeric.index = function index(x,y,s,k) {
+    if(typeof y !== 'object') { return x[y]; }
+    if(typeof k === 'undefined') { k=0; }
+    if(typeof s === 'undefined') { s=numeric.dim(y); }
+    if (k === s.length-1) { return numeric._index(x,y,s,k); }
+    var i,n=s[k],z=Array(n);
+    for(i=n-1;i>=0;--i) { z[i]=numeric.index(x,y[i],s,k+1); }
+    return z;
+}
+
+numeric._indexeq = function _indexeq(x,y,z,sy,sz,k) {
+    var i,n=sy[k],m=sz[k];
+    if (n === 0) { for(i=m-1;i>=0;--i) { x[y[0]] = numeric.clone(z[i]); } }
+    if (m === 0) { for(i=n-1;i>=0;--i) { x[y[i]] = numeric.clone(z[0]); } }
+    else         { for(i=n-1;i>=0;--i) { x[y[i]] = numeric.clone(z[i]); } }
+}
+
+numeric.indexeq = function indexeq(x,y,z,sy,sz,k) {
+    if(typeof k === 'undefined')  { k=0; }
+    if(typeof sy === 'undefined') { sy=numeric.dim(y); }
+    if(typeof sz === 'undefined') { sz=numeric.dim(z); }
+    if (k === sy.length-1) { numeric._indexeq(x,y,z,sy,sz,k); }
+    var i,n=sy[k],m=sz[k];
+    if (n === 0) { for(i=m-1;i>=0;--i) { numeric.indexeq(x,y[0],z[i],sy,sz,k+1); } }
+    if (m === 0) { for(i=n-1;i>=0;--i) { numeric.indexeq(x,y[i],z[0],sy,sz,k+1); } }
+    else         { for(i=n-1;i>=0;--i) { numeric.indexeq(x,y[i],z[i],sy,sz,k+1); } }
+}
+
+numeric.trunc = numeric.pointwise('z[k] = round(x[i]/y[j])*y[j];','var round = Math.round;','binary');
 
 numeric.inv = function inv(x) {
     var s = numeric.dim(x), abs = Math.abs, m = s[0], n = s[1];
@@ -849,95 +1140,110 @@ numeric.det = function det(x) {
 }
 
 numeric.transpose = function transpose(x) {
-    var i,j,m = x.length,n = x[0].length, ret=Array(n),A0,A1,Bj;
-    for(j=0;j<n;j++) ret[j] = Array(m);
+    var i,j,m = x.length,n = x[0].length, z=Array(n),A0,A1,Bj;
+    for(j=0;j<n;j++) z[j] = Array(m);
     for(i=m-1;i>=1;i-=2) {
         A1 = x[i];
         A0 = x[i-1];
         for(j=n-1;j>=1;--j) {
-            Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
+            Bj = z[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
             --j;
-            Bj = ret[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
+            Bj = z[j]; Bj[i] = A1[j]; Bj[i-1] = A0[j];
         }
         if(j===0) {
-            Bj = ret[0]; Bj[i] = A1[0]; Bj[i-1] = A0[0];
+            Bj = z[0]; Bj[i] = A1[0]; Bj[i-1] = A0[0];
         }
     }
     if(i===0) {
         A0 = x[0];
         for(j=n-1;j>=1;--j) {
-            ret[j][0] = A0[j];
+            z[j][0] = A0[j];
             --j;
-            ret[j][0] = A0[j];
+            z[j][0] = A0[j];
         }
-        if(j===0) { ret[0][0] = A0[0]; }
+        if(j===0) { z[0][0] = A0[0]; }
     }
-    return ret;
+    return z;
 }
 numeric.negtranspose = function negtranspose(x) {
-    var i,j,m = x.length,n = x[0].length, ret=Array(n),A0,A1,Bj;
-    for(j=0;j<n;j++) ret[j] = Array(m);
+    var i,j,m = x.length,n = x[0].length, z=Array(n),A0,A1,Bj;
+    for(j=0;j<n;j++) z[j] = Array(m);
     for(i=m-1;i>=1;i-=2) {
         A1 = x[i];
         A0 = x[i-1];
         for(j=n-1;j>=1;--j) {
-            Bj = ret[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
+            Bj = z[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
             --j;
-            Bj = ret[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
+            Bj = z[j]; Bj[i] = -A1[j]; Bj[i-1] = -A0[j];
         }
         if(j===0) {
-            Bj = ret[0]; Bj[i] = -A1[0]; Bj[i-1] = -A0[0];
+            Bj = z[0]; Bj[i] = -A1[0]; Bj[i-1] = -A0[0];
         }
     }
     if(i===0) {
         A0 = x[0];
         for(j=n-1;j>=1;--j) {
-            ret[j][0] = -A0[j];
+            z[j][0] = -A0[j];
             --j;
-            ret[j][0] = -A0[j];
+            z[j][0] = -A0[j];
         }
-        if(j===0) { ret[0][0] = -A0[0]; }
+        if(j===0) { z[0][0] = -A0[0]; }
     }
-    return ret;
+    return z;
 }
 
 numeric._random = function _random(s,k) {
-    var i,n=s[k],ret=Array(n), rnd;
+    var i,n=s[k],z=Array(n), rnd;
     if(k === s.length-1) {
         rnd = Math.random;
         for(i=n-1;i>=1;i-=2) {
-            ret[i] = rnd();
-            ret[i-1] = rnd();
+            z[i] = rnd();
+            z[i-1] = rnd();
         }
-        if(i===0) { ret[0] = rnd(); }
-        return ret;
+        if(i===0) { z[0] = rnd(); }
+        return z;
     }
-    for(i=n-1;i>=0;i--) ret[i] = _random(s,k+1);
-    return ret;
+    for(i=n-1;i>=0;i--) z[i] = _random(s,k+1);
+    return z;
 }
 numeric.random = function random(s) { return numeric._random(s,0); }
 
-numeric.norm2 = function norm2(x) { return Math.sqrt(numeric.norm2Squared(x)); }
+numeric.norm2 = function norm2(x,a) { return numeric.sqrt(numeric.norm2Squared(x,a)); }
 
 numeric.linspace = function linspace(a,b,n) {
     if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
     if(n<2) { return n===1?[a]:[]; }
-    var i,ret = Array(n);
+    var i,z = Array(n);
     n--;
-    for(i=n;i>=0;i--) { ret[i] = (i*b+(n-i)*a)/n; }
-    return ret;
+    for(i=n;i>=0;i--) { z[i] = (i*b+(n-i)*a)/n; }
+    return z;
+}
+
+numeric.logspace = function logspace(a,b,n,e) {
+    if(typeof e === 'undefined') { e=10; }
+    return numeric.pow(e, numeric.linspace(a,b,n));
+}
+
+numeric.range = function range(start,stop,step) {
+    if (typeof step === 'undefined') { step = 1; }
+    if (typeof stop === 'undefined') { stop = start; start = 0; }
+    if (step > 0 && (stop < start)) { return []; }
+    if (step < 0 && (stop > start)) { return []; }
+    var i,z=[];
+    for(i=start;i<stop;i+=step) { z.push(i); }
+    return z;
 }
 
 numeric.getBlock = function getBlock(x,from,to) {
     var s = numeric.dim(x);
     function foo(x,k) {
-        var i,a = from[k], n = to[k]-a, ret = Array(n);
+        var i,a = from[k], n = to[k]-a, z=Array(n);
         if(k === s.length-1) {
-            for(i=n;i>=0;i--) { ret[i] = x[i+a]; }
-            return ret;
+            for(i=n;i>=0;i--) { z[i] = x[i+a]; }
+            return z;
         }
-        for(i=n;i>=0;i--) { ret[i] = foo(x[i+a],k+1); }
-        return ret;
+        for(i=n;i>=0;i--) { z[i] = foo(x[i+a],k+1); }
+        return z;
     }
     return foo(x,0);
 }
@@ -1071,7 +1377,7 @@ numeric.T.prototype.reciprocal = function reciprocal() {
         var d = numeric.add(mul(this.x,this.x),mul(this.y,this.y));
         return new numeric.T(div(this.x,d),div(numeric.neg(this.y),d));
     }
-    return new T(div(1,this.x));
+    return new numeric.T(div(1,this.x), 0);
 }
 numeric.T.prototype.div = function div(y) {
     if(!(y instanceof numeric.T)) y = new numeric.T(y);
@@ -1387,6 +1693,8 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
 }
 
 numeric.epsilon = 2.220446049250313e-16;
+numeric.pi = 3.141592653589793238462643383279502884197169399375105820;
+numeric.e = 2.71828182845904523536028747135266249775724709369995;
 
 numeric.QRFrancis = function(H,maxiter) {
     if(typeof maxiter === "undefined") { maxiter = 10000; }
@@ -2163,24 +2471,24 @@ numeric.sdotMV = function dotMV(A,x) {
 
 numeric.sdotVM = function dotMV(x,A) {
     var i,j,Ai,alpha;
-    var ret = [], accum;
+    var z=[], accum;
     for(i in x) {
         if(!x.hasOwnProperty(i)) continue;
         Ai = A[i];
         alpha = x[i];
         for(j in Ai) {
             if(!Ai.hasOwnProperty(j)) continue;
-            if(!ret[j]) { ret[j] = 0; }
-            ret[j] += alpha*Ai[j];
+            if(!z[j]) { z[j] = 0; }
+            z[j] += alpha*Ai[j];
         }
     }
-    return ret;
+    return z;
 }
 
 numeric.sdotVV = function dotVV(x,y) {
-    var i,ret=0;
-    for(i in x) { if(x[i] && y[i]) ret+= x[i]*y[i]; }
-    return ret;
+    var i,z=0;
+    for(i in x) { if(x[i] && y[i]) z+= x[i]*y[i]; }
+    return z;
 }
 
 numeric.sdot = function dot(A,B) {
@@ -2680,7 +2988,7 @@ numeric.T.prototype.fft = function fft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (-3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (-numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
@@ -2705,7 +3013,7 @@ numeric.T.prototype.ifft = function ifft() {
     var n = x.length, log = Math.log, log2 = log(2),
         p = Math.ceil(log(2*n-1)/log2), m = Math.pow(2,p);
     var cx = numeric.rep([m],0), cy = numeric.rep([m],0), cos = Math.cos, sin = Math.sin;
-    var k, c = (3.141592653589793238462643383279502884197169399375105820/n),t;
+    var k, c = (numeric.pi/n),t;
     var a = numeric.rep([m],0), b = numeric.rep([m],0),nhalf = Math.floor(n/2);
     for(k=0;k<n;k++) a[k] = x[k];
     if(typeof y !== "undefined") for(k=0;k<n;k++) b[k] = y[k];
