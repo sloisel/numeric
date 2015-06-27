@@ -38,7 +38,7 @@ numeric.largeArray = 50;
 numeric.compile = function () {
   var args = Array.prototype.slice.call(arguments);
   var body = args.pop();
-  body = 'return function (' + args.join(',') + ') {' + body + ';}';
+  body = 'return function (' + args.join(',') + ') {' + body + '}';
   return (new Function(['numeric'], body))(numeric);
 }
 
