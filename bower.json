@@ -9,6 +9,10 @@
     ".jshintrc",
     "**/*.txt"
   ],
+  "keywords": [
+    "numerical",
+    "analysis"
+  ],
   "dependencies": {
     "seedrandom": "latest",
     "quadprog": "lib/quadprog.js",
