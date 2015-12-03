@@ -3,10 +3,16 @@
   "version": "1.2.6",
   "main": "lib/numeric.js",
   "description": "Numerical analysis in Javascript",
-  "license": "Eclipse",
+  "license": "MIT",
   "repo": "sloisel/numeric"
   "ignore": [
     ".jshintrc",
     "**/*.txt"
-  ]
+  ],
+  "dependencies": {
+    "seedrandom": "latest",
+    "quadprog": "lib/quadprog.js",
+    "sparse2": "lib/sparse2.js",
+    "svd": "lib/svd.js",
+  }
 }
