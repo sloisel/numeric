@@ -1,0 +1,12 @@
+{
+  "name": "numericjs",
+  "version": "1.2.6",
+  "main": "lib/numeric.js",
+  "description": "Numerical analysis in Javascript",
+  "license": "Eclipse",
+  "repo": "sloisel/numeric"
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ]
+}
