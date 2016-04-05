@@ -1,12 +1,16 @@
 This is a fork of Numeric Javascript by Sébastien Loisel.
 
+Changes
+------
+
 Notable changes comapred with numeric-1.2.6.js
 
 - numeric.jacobi(A, maxiter), that diagonalizes symmetric real matrices (real hermitian). No problems with repeated eigenvalues/symmetry.
 - numeric.eigh(A, maxiter), mirrors numeric.jacobi.
 - numeric.jacobinorm(A), helper for numeric.jacobi, computes the weight in the upper triangular part of a square matrix.
 
-===
+Introduction
+------
 
 Numeric Javascript is a javascript library for doing numerical
 analysis in the browser. Because Numeric Javascript uses only the
