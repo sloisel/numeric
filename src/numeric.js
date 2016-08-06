@@ -56,9 +56,9 @@ numeric.prettyPrint = function prettyPrint(x) {
         if(typeof x === "string") { ret.push('"'+x+'"'); return false; }
         if(typeof x === "boolean") { ret.push(x.toString()); return false; }
         if(typeof x === "number") {
-            var a = fmtnum(x);
+            var a = parseFloat(x.toString()).toString();
             var b = x.toPrecision(numeric.precision);
-            var c = parseFloat(x.toString()).toString();
+            var c = fmtnum(x);
             var d = [a,b,c,parseFloat(b).toString(),parseFloat(c).toString()];
             for(k=1;k<d.length;k++) { if(d[k].length < a.length) a = d[k]; }
             ret.push(Array(numeric.precision+8-a.length).join(' ')+a);
@@ -358,10 +358,10 @@ numeric.mapreduce = function mapreduce(body,init) {
 numeric.mapreduce2 = function mapreduce2(body,setup) {
     return Function('x',
             'var n = x.length;\n'+
-            'var i,xi;\n'+setup+';\n'+
+            'var i,xi;\n'+setup+'\n'+
             'for(i=n-1;i!==-1;--i) { \n'+
             '    xi = x[i];\n'+
-            '    '+body+';\n'+
+            '    '+body+'\n'+
             '}\n'+
             'return accum;'
             );
@@ -663,7 +663,7 @@ numeric.mapreducers = {
         prod: ['accum *= xi;','var accum = 1;'],
         norm2Squared: ['accum += xi*xi;','var accum = 0;'],
         norminf: ['accum = max(accum,abs(xi));','var accum = 0, max = Math.max, abs = Math.abs;'],
-        norm1: ['accum += abs(xi)','var accum = 0, abs = Math.abs;'],
+        norm1: ['accum += abs(xi);','var accum = 0, abs = Math.abs;'],
         sup: ['accum = max(accum,xi);','var accum = -Infinity, max = Math.max;'],
         inf: ['accum = min(accum,xi);','var accum = Infinity, min = Math.min;']
 };
@@ -763,7 +763,7 @@ numeric.mapreducers = {
                     o[1]+
                     'if(typeof x !== "object") {'+
                     '    xi = x;\n'+
-                    o[0]+';\n'+
+                    o[0]+'\n'+
                     '    return accum;\n'+
                     '}'+
                     'if(typeof s === "undefined") s = numeric.dim(x);\n'+
@@ -773,7 +773,7 @@ numeric.mapreducers = {
                     'var n = x.length, i;\n'+
                     'for(i=n-1;i!==-1;--i) {\n'+
                     '   xi = arguments.callee(x[i]);\n'+
-                    o[0]+';\n'+
+                    o[0]+'\n'+
                     '}\n'+
                     'return accum;\n');
         }
@@ -1102,15 +1102,15 @@ numeric.Tunop = function Tunop(r,c,s) {
             'var x = this;\n'+
             s+'\n'+
             'if(x.y) {'+
-            '  '+c+';\n'+
+            '  '+c+'\n'+
             '}\n'+
-            r+';\n'
+            r+'\n'
     );
 }
 
 numeric.T.prototype.exp = numeric.Tunop(
-        'return new numeric.T(ex)',
-        'return new numeric.T(mul(cos(x.y),ex),mul(sin(x.y),ex))',
+        'return new numeric.T(ex);',
+        'return new numeric.T(mul(cos(x.y),ex),mul(sin(x.y),ex));',
         'var ex = numeric.exp(x.x), cos = numeric.cos, sin = numeric.sin, mul = numeric.mul;');
 numeric.T.prototype.conj = numeric.Tunop(
         'return new numeric.T(x.x);',
@@ -1120,10 +1120,10 @@ numeric.T.prototype.neg = numeric.Tunop(
         'return new numeric.T(neg(x.x),neg(x.y));',
         'var neg = numeric.neg;');
 numeric.T.prototype.sin = numeric.Tunop(
-        'return new numeric.T(numeric.sin(x.x))',
+        'return new numeric.T(numeric.sin(x.x));',
         'return x.exp().sub(x.neg().exp()).div(new numeric.T(0,2));');
 numeric.T.prototype.cos = numeric.Tunop(
-        'return new numeric.T(numeric.cos(x.x))',
+        'return new numeric.T(numeric.cos(x.x));',
         'return x.exp().add(x.neg().exp()).div(2);');
 numeric.T.prototype.abs = numeric.Tunop(
         'return new numeric.T(numeric.abs(x.x));',
