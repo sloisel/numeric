@@ -56,9 +56,9 @@ numeric.prettyPrint = function prettyPrint(x) {
         if(typeof x === "string") { ret.push('"'+x+'"'); return false; }
         if(typeof x === "boolean") { ret.push(x.toString()); return false; }
         if(typeof x === "number") {
-            var a = fmtnum(x);
+            var a = parseFloat(x.toString()).toString();
             var b = x.toPrecision(numeric.precision);
-            var c = parseFloat(x.toString()).toString();
+            var c = fmtnum(x);
             var d = [a,b,c,parseFloat(b).toString(),parseFloat(c).toString()];
             for(k=1;k<d.length;k++) { if(d[k].length < a.length) a = d[k]; }
             ret.push(Array(numeric.precision+8-a.length).join(' ')+a);
