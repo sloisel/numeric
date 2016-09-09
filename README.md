@@ -1,5 +1,16 @@
-Numeric Javascript by Sébastien Loisel
-======================================
+This is a fork of Numeric Javascript by Sébastien Loisel.
+
+Changes
+------
+
+Notable changes comapred with numeric-1.2.6.js
+
+- numeric.jacobi(A, maxiter), that diagonalizes symmetric real matrices (real hermitian). No problems with repeated eigenvalues/symmetry.
+- numeric.eigh(A, maxiter), mirrors numeric.jacobi.
+- numeric.jacobinorm(A), helper for numeric.jacobi, computes the weight in the upper triangular part of a square matrix.
+
+Introduction
+------
 
 Numeric Javascript is a javascript library for doing numerical
 analysis in the browser. Because Numeric Javascript uses only the
@@ -12,7 +23,7 @@ asking a server to compute something. Indeed, you do not need a
 powerful server (or any server at all) since your web app will perform
 all its calculations in the client.
 
-For further information, see http://www.numericjs.com/
+The original website, see http://www.numericjs.com/
 Discussion forum: http://groups.google.com/group/numericjs
 
 License
@@ -47,5 +58,4 @@ the numericjs.com web site, which you probably won't need.
 Building and testing
 --------------------
 
-If you tweak the code, you can build and test the library by running the script /tools/build.sh. If you plan
-to send me patches, please at least run this build script and check that all the tests pass.
+If you tweak the code, you can build and test the library by running the script /tools/build.sh.

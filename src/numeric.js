@@ -3,7 +3,7 @@
 var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
 if(typeof global !== "undefined") { global.numeric = numeric; }
 
-numeric.version = "1.2.6";
+numeric.version = "1.2.7";
 
 // 1. Utility functions
 numeric.bench = function bench (f,interval) {
@@ -335,7 +335,8 @@ numeric.dim = function dim(x) {
     return [];
 };
 
-numeric.mapreduce = function mapreduce(body,init) {
+// mapreduce
+numeric.mapreduce = function mapreduce(body, init) {
     return numeric.compile('x','accum','_s','_k',
             'if(typeof accum === "undefined") accum = '+init+';\n'+
             'if(typeof x === "number") { var xi = x; '+body+'; return accum; }\n'+
@@ -363,7 +364,8 @@ numeric.mapreduce = function mapreduce(body,init) {
             );
 };
 
-numeric.mapreduce2 = function mapreduce2(body,setup) {
+// 
+numeric.mapreduce2 = function mapreduce2(body, setup) {
     return numeric.compile('x',
             'var n = x.length;\n'+
             'var i,xi;\n'+setup+'\n'+
@@ -375,32 +377,50 @@ numeric.mapreduce2 = function mapreduce2(body,setup) {
             );
 };
 
-numeric.same = function same(x,y) {
-    var i,n;
+// compare arrays/tensors
+numeric.same = function same(x, y)
+{
+    var i, n;
+
     if(!(x instanceof Array) || !(y instanceof Array)) { return false; }
+    
     n = x.length;
+    
     if(n !== y.length) { return false; }
-    for(i=0;i<n;i++) {
+    
+    for(i = 0; i < n; i++)
+    {
         if(x[i] === y[i]) { continue; }
-        if(typeof x[i] === "object") { if(!same(x[i],y[i])) return false; }
+        if(typeof x[i] === "object") { if(!same(x[i], y[i])) return false; }
         else { return false; }
     }
     return true;
 };
 
-numeric.rep = function rep(s,v,k) {
-    if(typeof k === "undefined") { k=0; }
+// repeat
+numeric.rep = function rep(s, v, k) 
+{
+    // repeat value v over a tensor of size s = [s0, s1, s2, ...]
+    // k recursive index
+    if(typeof k === "undefined") { k = 0; }
+    
     var n = s[k], ret = Array(n), i;
-    if(k === s.length-1) {
-        for(i=n-2;i>=0;i-=2) { ret[i+1] = v; ret[i] = v; }
-        if(i===-1) { ret[0] = v; }
+    
+    if(k === s.length - 1)
+    {
+        for(i = n - 2; i >= 0; i -= 2) { ret[i+1] = v; ret[i] = v; }
+        if(i === -1) { ret[0] = v; }
         return ret;
     }
-    for(i=n-1;i>=0;i--) { ret[i] = numeric.rep(s,v,k+1); }
+    
+    for(i = n - 1; i >= 0; i--) { ret[i] = numeric.rep(s, v, k+1); }
+    
     return ret;
 };
 
-numeric.dotMMsmall = function dotMMsmall(x,y) {
+// dot functions
+numeric.dotMMsmall = function dotMMsmall(x,y)
+{
     var i,j,k,p,q,r,ret,foo,bar,woo,i0,k0,p0,r0;
     p = x.length; q = y.length; r = y[0].length;
     ret = Array(p);
@@ -500,6 +520,7 @@ numeric.dot = function dot(x,y) {
     }
 };
 
+// diag function
 numeric.diag = function diag(d) {
     var i,i1,j,n = d.length, A = Array(n), Ai;
     for(i=n-1;i>=0;i--) {
@@ -536,7 +557,8 @@ numeric.getDiag = function(A) {
 
 numeric.identity = function identity(n) { return numeric.diag(numeric.rep([n],1)); };
 
-numeric.pointwise = function pointwise(params,body,setup) {
+numeric.pointwise = function pointwise(params,body,setup) 
+{
     if(typeof setup === "undefined") { setup = ""; }
     var fun = [];
     var k;
@@ -570,7 +592,8 @@ numeric.pointwise = function pointwise(params,body,setup) {
     return numeric.compile.apply(null,fun);
 };
 
-numeric.pointwise2 = function pointwise2(params,body,setup) {
+numeric.pointwise2 = function pointwise2(params,body,setup)
+{
     if(typeof setup === "undefined") { setup = ""; }
     var fun = [];
     var k;
@@ -648,6 +671,7 @@ numeric.ops2 = {
         rshift: '>>',
         rrshift: '>>>'
 };
+
 numeric.opseq = {
         addeq: '+=',
         subeq: '-=',
@@ -661,16 +685,20 @@ numeric.opseq = {
         boreq: '|=',
         bxoreq: '^='
 };
+
 numeric.mathfuns = ['abs','acos','asin','atan','ceil','cos',
                     'exp','floor','log','round','sin','sqrt','tan',
                     'isNaN','isFinite'];
+
 numeric.mathfuns2 = ['atan2','pow','max','min'];
+
 numeric.ops1 = {
         neg: '-',
         not: '!',
         bnot: '~',
         clone: ''
 };
+
 numeric.mapreducers = {
         any: ['if(xi) return true;','var accum = false;'],
         all: ['if(!xi) return false;','var accum = true;'],
@@ -977,7 +1005,7 @@ numeric.setBlock = function setBlock(x,from,to,B) {
     return x;
 };
 
-numeric.getRange = function getRange(A,I,J) {
+numeric.getRange = function getRange(A, I,J ) {
     var m = I.length, n = J.length;
     var i,j;
     var B = Array(m), Bi, AI;
@@ -1363,7 +1391,7 @@ numeric.T.prototype.setBlock = function setBlock(from,to,A) {
     if(y) b(y,from,to,numeric.rep(numeric.dim(Ax),0));
 };
 
-numeric.T.rep = function rep(s,v) {
+numeric.T.rep = function rep(s, v) {
     var T = numeric.T;
     if(!(v instanceof T)) v = new T(v);
     var x = v.x, y = v.y, r = numeric.rep;
@@ -1394,6 +1422,7 @@ numeric.T.prototype.getDiag = function getDiag() {
 
 // 4. Eigenvalues of real matrices
 
+// householder transform
 numeric.house = function house(x) {
     var v = numeric.clone(x);
     var s = x[0] >= 0 ? 1 : -1;
@@ -1404,6 +1433,7 @@ numeric.house = function house(x) {
     return numeric.div(v,foo);
 };
 
+// upper hessenberg 
 numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     var s = numeric.dim(me);
     if(s.length !== 2 || s[0] !== s[1]) { throw new Error('numeric: toUpperHessenberg() only works on square matrices'); }
@@ -1428,9 +1458,11 @@ numeric.toUpperHessenberg = function toUpperHessenberg(me) {
     return {H:A, Q:Q};
 };
 
+// precision
 numeric.epsilon = 2.220446049250313e-16;
 
-numeric.QRFrancis = function(H,maxiter) {
+// qr 
+numeric.QRFrancis = function(H, maxiter) {
     if(typeof maxiter === "undefined") { maxiter = 10000; }
     H = numeric.clone(H);
     var H0 = numeric.clone(H);
@@ -1517,6 +1549,160 @@ numeric.QRFrancis = function(H,maxiter) {
     throw new Error('numeric: eigenvalue iteration does not converge -- increase maxiter?');
 };
 
+// extension to real hermitian (symmetric) matrices 
+numeric.eigh = function(A, maxiter) 
+{
+    return numeric.jacobi(A, maxiter)
+}
+
+numeric.jacobi = function(Ain, maxiter) 
+{
+    // jacobi method with rutishauser improvements from 
+    // Rutishauser, H. (1966). The Jacobi method for real symmetric matrices. 
+    // Numerische Mathematik, 9(1), 1–10. doi:10.1007/BF02165223
+
+    // returns object containing
+    // E: {x : v} eigenvalues.
+    // lambda : {x: d} eigenstates.
+    // niter : number of iterations.
+    // iterations : list of convergence factors for each step of the iteration.
+    // nrot : number of rotations performed.
+
+    var size = [Ain.length, Ain[0].length];
+    if (size[0] != size[1])
+    {
+        throw 'jacobi : matrix must be square';
+    }
+    // remember use only symmetric real matrices.
+    var n = size[0];
+    
+    var v = numeric.identity(n);
+    var A = numeric.clone(Ain);
+
+    var iters = numeric.rep([maxiter], 0);
+    var d = numeric.getDiag(A);
+    var bw = numeric.clone(d);
+
+    // zeros    
+    var zw = numeric.rep([n], 0);
+    
+    // iteration parameters
+    var iter = -1;
+    var niter = 0;
+    var nrot = 0;
+    var tresh = 0;
+    
+    //  prealloc
+    var h, g, gapq, term, termp, termq, theta, t, c, s, tau;
+    while (iter < maxiter)
+    {
+        iter++;
+        iters[iter] = numeric.jacobinorm(A)
+        niter = iter;
+        tresh = iters[iter]/(4 * n);
+        
+        if (tresh==0) { return {E: {x: v}, lambda: {x: d}, iterations: iters, niter: niter, nrot: nrot}; }
+        
+        for (var p = 0; p < n; p++)
+        {
+            for (var q = p + 1; q < n; q++)
+            {
+                gapq = 10*Math.abs(A[p][q]);
+                termp = gapq + Math.abs(d[p]);
+                termq = gapq + Math.abs(d[q]);
+                if (iter > 4 && termp == Math.abs(d[p]) && termq == Math.abs(d[q]))
+                {
+                    // remove small elmts
+                    A[p][q] = 0;
+                }
+                else
+                {
+                    if (Math.abs(A[p][q]) >= tresh)
+                    {
+                        // apply rotation
+                        h = d[q] - d[p];
+                        term = Math.abs(h) + gapq;
+                        if (term == Math.abs(h))
+                        {
+                            t = A[p][q]/h;
+                        }
+                        else
+                        {
+                            theta = 0.5 * h / A[p][q];
+                            t = 1/(Math.abs(theta) + Math.sqrt(1 + theta*theta));
+                            if (theta < 0)
+                            {
+                                t = -t;
+                            }
+                        }
+                        c = 1/Math.sqrt(1 + t*t);
+                        s = t * c;
+                        tau = s/(1 + c);
+                        h = t * A[p][q];
+                        zw[p] = zw[p] - h;
+                        zw[q] = zw[q] + h;
+                        d[p] = d[p] - h;
+                        d[q] = d[q] + h;
+                        A[p][q] = 0;
+                        // rotate and use upper tria only
+                        for (var j = 0; j < p; j++)
+                        {
+                            g = A[j][p];
+                            h = A[j][q];
+                            A[j][p] = g - s * (h + g * tau);
+                            A[j][q] = h + s * (g - h * tau);
+                        }
+                        for (var j = p + 1; j < q; j++)
+                        {
+                            g = A[p][j];
+                            h = A[j][q];
+                            A[p][j] = g - s * (h + g * tau);
+                            A[j][q] = h + s * (g - h * tau);
+                        } 
+                        for (var j = q + 1; j < n; j++)
+                        {
+                            g = A[p][j];
+                            h = A[q][j];
+                            A[p][j] = g - s * (h + g * tau);
+                            A[q][j] = h + s * (g - h * tau);
+                        }
+                        // eigenstates
+                        for (var j = 0; j < n; j++)
+                        {
+                            g = v[j][p];
+                            h = v[j][q];
+                            v[j][p] = g - s * (h + g * tau);
+                            v[j][q] = h + s * (g - h * tau);
+                        }
+                        nrot++;
+                    }
+                }
+            }
+        }
+        bw = numeric.add(bw, zw);
+        d = numeric.clone(bw);
+        zw = numeric.rep([n], 0);
+    }
+
+    return {E: {x: v}, lambda: {x: d}, iterations: iters, niter: niter, nrot: nrot};
+}
+
+numeric.jacobinorm = function(A)
+{
+    // used in numeric.jacobi
+    var n = A.length;
+    var s = 0;
+    for (var i = 0; i < n; i ++)
+    {
+        for (var j = i + 1; j < n; j ++)
+        {
+            s = s + Math.pow(A[i][j], 2)
+        }
+    }
+    return Math.sqrt(s);
+}
+
+// eig function
 numeric.eig = function eig(A,maxiter) {
     var QH = numeric.toUpperHessenberg(A);
     var QB = numeric.QRFrancis(QH.H,maxiter);
