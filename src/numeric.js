@@ -145,7 +145,7 @@ numeric.parseCSV = function parseCSV(t) {
                     ret[count][j] = parseFloat(baz);
                 }
                 else { ret[count][j] = baz; }
-                if (isNaN(ret[count][j])) { console.log('Warning: "'+baz+'"'); }
+                //if (isNaN(ret[count][j])) { console.log('Warning: "'+baz+'"'); }
             }
             count++;
         }
