@@ -150,7 +150,7 @@ numeric.toCSV = function toCSV(A) {
     ret = [];
     for(i=0;i<m;i++) {
         row = [];
-        for(j=0;j<m;j++) { row[j] = A[i][j].toString(); }
+        for(j=0;j<n;j++) { row[j] = A[i][j].toString(); }
         ret[i] = row.join(', ');
     }
     return ret.join('\n')+'\n';
