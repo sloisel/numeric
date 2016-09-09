@@ -98,6 +98,7 @@ OUT> 0.2694
 <tr><td><tt>largeArray</tt><td>Don't prettyPrint Arrays larger than this
 <tr><td><tt>leq</tt><td>Pointwise x&lt;=y
 <tr><td><tt>linspace</tt><td>Generate evenly spaced values
+<tr><td><tt>logspace</tt><td>Generate logarithmically spaced values
 <tr><td><tt>log</tt><td>Pointwise Math.log(x)
 <tr><td><tt>lshift</tt><td>Pointwise x&lt;&lt;y
 <tr><td><tt>lshifteq</tt><td>Pointwise x&lt;&lt;=y
@@ -395,6 +396,13 @@ IN> numeric.linspace(1,5);
 OUT> [1,2,3,4,5]
 IN> numeric.linspace(1,3,5);
 OUT> [1,1.5,2,2.5,3]
+</pre>
+
+Or a vector of logarithmically spaced values between Math.pow(10,a) and Math.pow(10,b):
+
+<pre>
+IN> numeric.logspace(0,1,5);
+OUT> [1, 1.7782794100389228, 3.1622776601683795, 5.623413251903491, 10]
 </pre>
 
 <!--
