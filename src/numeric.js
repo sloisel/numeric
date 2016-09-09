@@ -1642,6 +1642,18 @@ numeric.ccsFull = function ccsFull(A) {
         for(j=j0;j<j1;++j) { B[Aj[j]][i] = Av[j]; }
     }
     return B;
+}; 
+
+numeric.ccsDiag = function ccsDiag(diag) {
+    var ij = [];
+    for (var i = 0; i < diag.length; ++i) ij.push(i);
+    return numeric.ccsScatter([ij, ij, diag]);
+};
+
+numeric.ccsTranspose = function ccsTranspose(A)
+{
+    var rows_cols_vals = numeric.ccsGather(A);
+    return numeric.ccsScatter([rows_cols_vals[1], rows_cols_vals[0], rows_cols_vals[2]]);
 };
 
 numeric.ccsTSolve = function ccsTSolve(A,b,x,bj,xj) {

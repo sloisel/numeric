@@ -49,6 +49,7 @@ OUT> 0.2694
 <tr><td><tt>bnot</tt><td>Binary negation ~x
 <tr><td><tt>bor</tt><td>Binary or x|y
 <tr><td><tt>bxor</tt><td>Binary xor x^y
+<tr><td><tt>ccsDiag</tt><td>Create sparse diagonal matrix
 <tr><td><tt>ccsDim</tt><td>Dimensions of sparse matrix
 <tr><td><tt>ccsDot</tt><td>Sparse matrix-matrix product
 <tr><td><tt>ccsFull</tt><td>Convert sparse to full
@@ -58,6 +59,7 @@ OUT> 0.2694
 <tr><td><tt>ccsLUPSolve</tt><td>Solve Ax=b using LUP decomp
 <tr><td><tt>ccsScatter</tt><td>Scatter entries of sparse matrix
 <tr><td><tt>ccsSparse</tt><td>Convert from full to sparse
+<tr><td><tt>ccsTranspose</tt><td>Sparse matrix transpose
 <tr><td><tt>ccsTSolve</tt><td>Solve upper/lower triangular system
 <tr><td><tt>ccs&lt;op&gt;</td><td>Supported ops include: add/div/mul/geq/etc...
 <tr><td><tt>cLU</tt><td>Coordinate matrix LU decomposition
@@ -854,6 +856,20 @@ IN> M = [[0,1,3,6],[0,0,1,0,1,2],[3,-1,2,3,-2,4]];
 OUT> [3.167,2,0.5]
 IN> numeric.ccsDot(M,[[0,3],[0,1,2],x])
 OUT> [[0,3],[0,1,2],[9,3,2]]
+</pre>
+Create a sparse diangoal matrix
+<pre>
+IN> SA = numeric.ccsDiag([1,2,3]);
+OUT> [[ 0, 1, 2, 3],
+      [ 0, 1, 2],
+      [ 1, 2, 3]]
+</pre>
+Tranpose a sparse matrix
+<pre>
+IN> numeric.ccsTranspose(numeric.ccsScatter([[0,1,2],[2,1,0],[1,2,4]]));
+OUT> [[ 0, 1, 2, 3],
+      [ 2, 1, 0],
+      [ 1, 2, 4]]  
 </pre>
 We provide an LU=PA decomposition:
 <pre>
