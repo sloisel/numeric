@@ -14,9 +14,9 @@ if [ -f nodepid.log ]; then
 fi
 ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/'`
 echo "Version is $ver"
-cat ../src/intro.js ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js ../src/outro.js > ../lib/numeric-$ver.js
+cat ../src/intro.js ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js ../src/iterative.js ../src/newton.js ../src/uniroot.js ../src/sparse2.js ../src/outro.js > ../lib/numeric-$ver.js
 cp ../lib/numeric-$ver.js  ../lib/numeric.latest.js
-uglifyjs ../lib/numeric-$ver.js > ../lib/numeric-$ver.min.js
+../node_modules/.bin/uglifyjs ../lib/numeric-$ver.js > ../lib/numeric-$ver.min.js
 cat jquery-1.7.1.min.js jquery.flot.min.js 'Crypto-JS v2.4.0/crypto/crypto-min.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
 echo "" | cat closurelib.js sylvester.js - ../lib/numeric-$ver.min.js jquery-1.7.1.min.js jquery.flot.min.js  > benchlib.js
 cat > ../resources/header.html <<XXXXX
@@ -45,7 +45,8 @@ cp ../src/documentation.html ..
 rm -f ../workshop.php
 sed -e '/WORKSHOPHTML/r workshop.html' -e 's/WORKSHOPHTML//' -e "s/VERSIONSTRING/$ver/" workshop_in.php > ../workshop.php
 cd ..
-runjs=`which d8 || which jsdb || which node`
+#runjs=`which d8 || which jsdb || which node`
+runjs=node
 echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
@@ -57,21 +58,32 @@ cp numeric-$ver.js numeric-$ver
 cp numeric-$ver.min.js numeric-$ver
 cat > numeric-$ver/package.json <<EOF
 {
-"name": "numeric",
-"version": "$ver",
-"author": "Sébastien Loisel",
-"description": "Numerical analysis in javascript",
-"keywords": [
-"numeric",
-"analysis",
-"math"
-],
-"homepage": "http://numericjs.com",
-"main": "numeric-$ver.js",
-"repository": {
-"type": "git",
-"url": "https://github.com/sloisel/numeric.git"
-}
+  "name": "numeric",
+  "version": "$ver",
+  "author": "Sébastien Loisel",
+  "description": "Numerical analysis in Javascript http://www.numericjs.com/",
+  "keywords": [
+    "numeric",
+    "analysis",
+    "math"
+  ],
+  "homepage": "http://numericjs.com",
+  "license": "MIT",
+  "main": "numeric-$ver.js",
+  "scripts": {
+    "test": "node ./tools/unit2.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sloisel/numeric.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sloisel/numeric/issues"
+  },
+  "devDependencies": {
+    "js-beautify": "^1.6.4",
+    "uglify-js": "^2.7.3"
+  }
 }
 EOF
 cp ../README.md numeric-$ver
