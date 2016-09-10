@@ -17,8 +17,8 @@ echo "Version is $ver"
 cat ../src/intro.js ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js ../src/iterative.js ../src/newton.js ../src/uniroot.js ../src/sparse2.js ../src/outro.js > ../lib/numeric-$ver.js
 cp ../lib/numeric-$ver.js  ../lib/numeric.latest.js
 ../node_modules/.bin/uglifyjs ../lib/numeric-$ver.js > ../lib/numeric-$ver.min.js
-cat jquery-1.7.1.min.js jquery.flot.min.js 'Crypto-JS v2.4.0/crypto/crypto-min.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
-echo "" | cat closurelib.js sylvester.js - ../lib/numeric-$ver.min.js jquery-1.7.1.min.js jquery.flot.min.js  > benchlib.js
+cat jquery-1.7.1.js jquery.flot.js 'Crypto-JS v2.4.0/crypto/crypto.js' 'Crypto-JS v2.4.0/crypto-sha256/crypto-sha256.js' json2.js > megalib.js
+echo "" | cat closurelib.js sylvester.js - ../lib/numeric-$ver.js jquery-1.7.1.js jquery.flot.js  > benchlib.js
 cat > ../resources/header.html <<XXXXX
 <a href="https://github.com/sloisel/numeric"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/numeric/resources/forkme.png" alt="Fork me on GitHub"></a>
 <div class="nav" style="position: relative;">
