@@ -1,7 +1,3 @@
-"use strict";
-
-var numeric = (typeof exports === "undefined")?(function numeric() {}):(exports);
-if(typeof global !== "undefined") { global.numeric = numeric; }
 
 numeric.version = "1.2.7";
 
@@ -379,8 +375,7 @@ numeric.mapreduce2 = function mapreduce2(body, setup) {
 };
 
 // compare arrays/tensors
-numeric.same = function same(x, y)
-{
+numeric.same = function same(x,y) {
     var i, n;
 
     if(!(x instanceof Array) || !(y instanceof Array)) { return false; }

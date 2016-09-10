@@ -1,24 +1,7 @@
 // CCS matrix mul dense vector
-numeric.ccsMV = numeric.ccsMV || function ccsMV(A, x) {
-	var Ai = A[0], Aj = A[1], Av = A[2];
-	var sA = numeric.ccsDim(A);
-	var m = sA[0], n = sA[1];
-	var L = x.length;
-	var ret = numeric.rep([L],0);
-	if( n !== L ) throw 'Matrix dimension does not match input vector.';
-	var i, j, k, j0, j1;
-	var ri, val;
-	for(k=0;k!==n;k++) {
-		j0 = Ai[k];
-		j1 = Ai[k+1];
-		for(j=j0;j<j1;j++) {
-			ri = Aj[j];
-			val = Av[j];
-			ret[ri] += x[k] * val;
-		}
-	}
-	return ret;
-}
+//
+// numeric.ccsMV is defined in src/numeric.js
+
 
 numeric.bicgstab = function bicgstab(A, b, maxIters, residue) {
 	var maxIters = maxIters || 1024;
@@ -377,4 +360,4 @@ numeric.sor = function sor(A, b, relax, maxIters, residue) {
 	}
 	}	
 
-}
+};

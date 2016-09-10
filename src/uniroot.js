@@ -11,7 +11,7 @@
  * @returns an estimate for the root within accuracy.
  */
 // Translated from zeroin.c in http://www.netlib.org/c/brent.shar.
-function uniroot ( func, lowerLimit, upperLimit, errorTol, maxIter ) {
+numeric.uniroot = function uniroot(func, lowerLimit, upperLimit, errorTol, maxIter) {
   var a = lowerLimit
     , b = upperLimit
     , c = a
@@ -91,7 +91,7 @@ function uniroot ( func, lowerLimit, upperLimit, errorTol, maxIter ) {
     }
   }
 
-}
+};
 
 
 /*

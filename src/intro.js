@@ -13,3 +13,5 @@
 
 'use strict';
 var numeric = function numeric(){};
+
+//if(typeof global !== "undefined") { global.numeric = numeric; }

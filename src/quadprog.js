@@ -2,7 +2,6 @@
  * It has been slightly modified by Sébastien Loisel to make sure that it handles
  * 0-based Arrays instead of 1-based Arrays.
  * License is in resources/LICENSE.quadprog */
-(function(exports) {
 
 function base0to1(A) {
     if(typeof A !== "object") { return A; }
@@ -583,5 +582,5 @@ function solveQP(Dmat, dvec, Amat, bvec, meq, factorized) {
         message: message
     };
 }
-exports.solveQP = solveQP;
-}(numeric));
+
+numeric.solveQP = solveQP;
