@@ -1,10 +1,16 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="google-site-verification" content="wRToy1IFW5JCMZF58VL7Y4Bo0-twB2EGpk1pmMrKsk8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="Numerical analysis in javascript: library and console." />
+<meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
+<meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript</title>
+</head>
 <body>
 <?php
 require("resources/header.html");
@@ -94,3 +100,4 @@ howpublished = {\url{http://www.numericjs.com/}} }
 
 <br><br><br>
 </div>
+</body>
