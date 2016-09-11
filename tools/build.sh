@@ -12,7 +12,7 @@ if [ -f nodepid.log ]; then
     kill -9 $nodepid || true
     rm -f nodepid.log
 fi
-ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/'`
+ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.\-]*\)".*/\1/'`
 echo "Version is $ver"
 cat ../src/intro.js ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js ../src/iterative.js ../src/newton.js ../src/uniroot.js ../src/sparse2.js ../src/outro.js > ../lib/numeric-$ver.js
 cp ../lib/numeric-$ver.js  ../lib/numeric.latest.js
