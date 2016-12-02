@@ -76,3 +76,4 @@ for(_j=0;_j<_bar.length;_j++) {
     runner(_bar[_j].replace(/<pre>/g,'').split('\nIN> '));
 }
 console.log('unit2: '+_k1+' tests, '+_unit_pass+' pass and '+_unit_fail+' fail.');
+if(typeof process !== "undefined") { process.exit(!!_unit_fail); }
