@@ -1,0 +1,6 @@
+dependencies:
+  override:
+    - npm install -g selenium-webdriver uglifyjs
+test:
+  override:
+    - ./tools/build.sh
