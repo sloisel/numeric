@@ -20,6 +20,8 @@ test:
     - curl --retry 10 --retry-delay 2 -s http://localhost:8000/ > /dev/null
     # Run selenium tests.
     - python ./tools/selenium_tests.py Chrome http://localhost:8000/
+    - python ./tools/selenium_tests.py Firefox http://localhost:8000/
+    - python ./tools/selenium_tests.py IE http://localhost:8000/
   post:
     # Wait for Sauce Connect to close the tunnel.
     - killall --wait sc
