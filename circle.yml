@@ -6,14 +6,15 @@ dependencies:
     - tar -xzf sc-latest-linux.tar.gz
 test:
   override:
-    # Build and test locally.
-    - ./tools/build.sh
+    # First start the tunnel because it takes time to setup.
     - cd sc-*-linux && ./bin/sc --user $SAUCE_USERNAME --api-key $SAUCE_ACCESS_KEY --readyfile ~/sauce_is_ready:
         background: true
+    # Build and test locally.
+    - ./tools/build.sh
     # Wait for tunnel to be ready.
     - while [ ! -e ~/sauce_is_ready ]; do sleep 1; done
     # Server files.
-    - python -m SimpleHTTPServer:
+    - python ./tools/serve.py:
         background: true
     # Wait for server to be ready.
     - curl --retry 10 --retry-delay 2 -s http://localhost:8000/ > /dev/null
@@ -22,3 +23,4 @@ test:
   post:
     # Wait for Sauce Connect to close the tunnel.
     - killall --wait sc
+    - killall python
