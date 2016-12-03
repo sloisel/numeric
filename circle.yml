@@ -25,4 +25,4 @@ test:
   post:
     # Wait for Sauce Connect to close the tunnel.
     - killall --wait sc
-    - killall python
+    - killall --wait python
