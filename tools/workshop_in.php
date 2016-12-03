@@ -24,6 +24,13 @@ if(isset($_POST['savedata'])) {
 WORKSHOPHTML
 
 <script>
+workshop._restore = ((typeof localStorage.savedata === "string")?
+	                (JSON.parse(localStorage.savedata)):
+	                {inputs: [], outputs: [],
+	                 scripts: ["lib/numeric-VERSIONSTRING.js"] });
+</script>
+
+<script>
 <?php
 $incs = NULL;
 
@@ -42,16 +49,11 @@ if(isset($_GET['link'])) {
 	echo <<<EOT
 workshop._restore = $restore;
 EOT;
-} else {
-	echo <<<EOT
-workshop._restore = ((typeof localStorage.savedata === "string")?
-	                (JSON.parse(localStorage.savedata)):
-	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-VERSIONSTRING.js"] });
-EOT;
 }
 ?>
+</script>
 
+<script>
 workshop.version = "VERSIONSTRING";
 workshop.updateVersion = "lib/numeric-VERSIONSTRING.js";
 workshop.preload(workshop._restore);

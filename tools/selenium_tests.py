@@ -7,6 +7,7 @@ import sys
 import urllib
 import re
 
+# Returns True if any test failed.
 def test(name,driver):
     p = 0
     f = 0
@@ -31,9 +32,11 @@ def test(name,driver):
                 print k,"FAIL:",tests[k][0],'==>',foo,"reason:",str(ex)
                 f=f+1
         print name,'testing complete. PASS:',p,'FAIL:',f,'Total:',t
+        return bool(f)
     except:
         print "FAIL: "+name+" selenium tests. Details:"
         traceback.print_exc()
+        return True
 
 url = ""
 if len(sys.argv) > 1:
@@ -50,7 +53,8 @@ u0 = url + 'documentation.html'
 print 'Fetching',u0
 njs = urllib.urlopen(u0).read()
 y = re.findall(r'<pre>[\s\S]*?(?=<\/pre>)',njs)
-tests = [];
+tests = []
+failure = True
 
 print "In-browser unit tests."
 for x in y:
@@ -66,11 +70,14 @@ try:
     driver.get(url+'workshop.php')
     try:
         WebDriverWait(driver, 30).until(lambda driver : driver.find_element_by_id("text_1"))
-        test(client,driver)
+        failure=test(client,driver)
     except Exception as ex:
         print "FAIL: text_1 not found. ",ex
 except Exception as ex:
     print "Could not use browser",client
     print ex
+
 if(driver):
     driver.quit()
+
+sys.exit(failure)
