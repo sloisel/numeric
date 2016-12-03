@@ -4,6 +4,9 @@ dependencies:
     - pip install selenium
     - wget https://saucelabs.com/downloads/sc-latest-linux.tar.gz
     - tar -xzf sc-latest-linux.tar.gz
+    - wget https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz
+    - tar -xvzf geckodriver-v0.11.1-linux64.tar.gz
+    - export PATH=$(pwd):$PATH
 test:
   override:
     # First start the tunnel because it takes time to setup.
@@ -21,7 +24,6 @@ test:
     # Run selenium tests.
     - python ./tools/selenium_tests.py Chrome http://localhost:8000/
     - python ./tools/selenium_tests.py Firefox http://localhost:8000/
-    - python ./tools/selenium_tests.py IE http://localhost:8000/
   post:
     # Wait for Sauce Connect to close the tunnel.
     - killall --wait sc
