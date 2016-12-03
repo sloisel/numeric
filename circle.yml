@@ -13,7 +13,7 @@ test:
     # Wait for tunnel to be ready.
     - while [ ! -e ~/sauce_is_ready ]; do sleep 1; done
     # Server files.
-    - python -m SimpleHTTPServer
+    - python -m SimpleHTTPServer:
         background: true
     # Wait for server to be ready.
     - curl --retry 10 --retry-delay 2 -s http://localhost:8000/ > /dev/null
