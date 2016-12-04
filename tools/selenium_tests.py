@@ -7,6 +7,7 @@ import sys
 import urllib
 import re
 import json
+import os
 
 # Returns True if any test failed.
 def test(name,driver):
@@ -65,7 +66,7 @@ for x in y:
         tests.append((re.sub(r'\s',' ',foo[0:bar]),re.sub(r'\s','',foo[bar+5:])))
 driver=0
 try:
-    if client is 'Remote':
+    if client == 'Remote':
         driver = webdriver.Remote(
           # Example: http://YOUR_SAUCE_USERNAME:YOUR_SAUCE_ACCESSKEY@ondemand.saucelabs.com:80/wd/hub
           command_executor=os.environ['SELENIUM_REMOTE_URL'],
