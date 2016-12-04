@@ -47,7 +47,8 @@ cd ..
 runjs=`which d8 || which jsdb || which node`
 echo Using $runjs
 $runjs ./tools/unit2.js &
-echo $! > tools/nodepid.log
+nodepid=$!
+echo $nodepid > tools/nodepid.log
 
 cd lib
 rm -rf numeric-$ver
@@ -78,7 +79,11 @@ rm -f numeric-$ver.tar.gz
 tar cfz numeric-$ver.tar.gz numeric-$ver
 rm -rf numeric-$ver
 cd ../tools
-wait
+set +e
+wait "$nodepid"
+testexit=$?
+set -e
 rm -f buildpid.log
 rm -f nodepid.log
 echo "Build complete"
+exit $testexit

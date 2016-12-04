@@ -461,6 +461,13 @@ return {
 
 
 <script>
+workshop._restore = ((typeof localStorage.savedata === "string")?
+	                (JSON.parse(localStorage.savedata)):
+	                {inputs: [], outputs: [],
+	                 scripts: ["lib/numeric-1.2.6.js"] });
+</script>
+
+<script>
 <?php
 $incs = NULL;
 
@@ -479,16 +486,11 @@ if(isset($_GET['link'])) {
 	echo <<<EOT
 workshop._restore = $restore;
 EOT;
-} else {
-	echo <<<EOT
-workshop._restore = ((typeof localStorage.savedata === "string")?
-	                (JSON.parse(localStorage.savedata)):
-	                {inputs: [], outputs: [], 
-	                 scripts: ["lib/numeric-1.2.6.js"] });
-EOT;
 }
 ?>
+</script>
 
+<script>
 workshop.version = "1.2.6";
 workshop.updateVersion = "lib/numeric-1.2.6.js";
 workshop.preload(workshop._restore);

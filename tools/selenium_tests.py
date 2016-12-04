@@ -6,7 +6,10 @@ import traceback
 import sys
 import urllib
 import re
+import json
+import os
 
+# Returns True if any test failed.
 def test(name,driver):
     p = 0
     f = 0
@@ -31,9 +34,11 @@ def test(name,driver):
                 print k,"FAIL:",tests[k][0],'==>',foo,"reason:",str(ex)
                 f=f+1
         print name,'testing complete. PASS:',p,'FAIL:',f,'Total:',t
+        return bool(f)
     except:
         print "FAIL: "+name+" selenium tests. Details:"
         traceback.print_exc()
+        return True
 
 url = ""
 if len(sys.argv) > 1:
@@ -50,7 +55,8 @@ u0 = url + 'documentation.html'
 print 'Fetching',u0
 njs = urllib.urlopen(u0).read()
 y = re.findall(r'<pre>[\s\S]*?(?=<\/pre>)',njs)
-tests = [];
+tests = []
+failure = True
 
 print "In-browser unit tests."
 for x in y:
@@ -60,17 +66,28 @@ for x in y:
         tests.append((re.sub(r'\s',' ',foo[0:bar]),re.sub(r'\s','',foo[bar+5:])))
 driver=0
 try:
-    driver = eval('webdriver.'+client+'()')
+    if client == 'Remote':
+        driver = webdriver.Remote(
+          # Example: http://YOUR_SAUCE_USERNAME:YOUR_SAUCE_ACCESSKEY@ondemand.saucelabs.com:80/wd/hub
+          command_executor=os.environ['SELENIUM_REMOTE_URL'],
+          # Example: {"browserName": "chrome", "platform": "Linux", "version": "48.0"}
+          desired_capabilities=json.loads(os.environ['SELENIUM_REMOTE_CAPABILITIES']),
+        )
+    else:
+        driver = eval('webdriver.'+client+'()')
     print "Using",client
     driver.implicitly_wait(2)
     driver.get(url+'workshop.php')
     try:
         WebDriverWait(driver, 30).until(lambda driver : driver.find_element_by_id("text_1"))
-        test(client,driver)
+        failure=test(client,driver)
     except Exception as ex:
         print "FAIL: text_1 not found. ",ex
 except Exception as ex:
     print "Could not use browser",client
     print ex
+
 if(driver):
     driver.quit()
+
+sys.exit(failure)

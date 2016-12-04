@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "6"
+  - "6.1"
+  - "4.4"
+  - "5.11"
+  - "0.10"
+  - "0.12"
+before_script:
+  - npm install -g uglifyjs
+script:
+  - ./tools/build.sh
