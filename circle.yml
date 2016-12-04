@@ -9,7 +9,7 @@ dependencies:
 test:
   override:
     # First start the tunnel because it takes time to setup.
-    - cd sc-*-linux && ./bin/sc --user $SAUCE_USERNAME --api-key $SAUCE_ACCESS_KEY --readyfile ~/sauce_is_ready:
+    - cd sc-*-linux && ./bin/sc --user $SAUCE_USERNAME --api-key $SAUCE_ACCESS_KEY --readyfile ~/sauce_is_ready --tunnel-identifier numeric-$CIRCLE_BUILD_NUM:
         background: true
     # Build and test locally.
     - ./tools/build.sh
@@ -24,7 +24,7 @@ test:
     # Wait for tunnel to be ready.
     - while [ ! -e ~/sauce_is_ready ]; do sleep 1; done
     # TODO: We should upgrade to HTTPS once selenium Python package is released with this pull request: https://github.com/SeleniumHQ/selenium/pull/3179
-    - SELENIUM_REMOTE_CAPABILITIES='{"browserName":"internet explorer","platform":"Windows 10","version":"11.103"}' SELENIUM_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub python ./tools/selenium_tests.py Remote http://localhost:8000/
+    - SELENIUM_REMOTE_CAPABILITIES="{\"browserName\":\"internet explorer\",\"platform\":\"Windows 10\",\"version\":\"11.103\",\"name\":\"numeric\",\"build\":\"$CIRCLE_BUILD_NUM\"}" SELENIUM_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub python ./tools/selenium_tests.py Remote http://localhost:8000/
   post:
     # Wait for Sauce Connect to close the tunnel.
     - killall --wait sc
