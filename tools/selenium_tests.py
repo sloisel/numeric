@@ -6,6 +6,7 @@ import traceback
 import sys
 import urllib
 import re
+import json
 
 # Returns True if any test failed.
 def test(name,driver):
@@ -64,7 +65,15 @@ for x in y:
         tests.append((re.sub(r'\s',' ',foo[0:bar]),re.sub(r'\s','',foo[bar+5:])))
 driver=0
 try:
-    driver = eval('webdriver.'+client+'()')
+    if client is 'Remote':
+        driver = webdriver.Remote(
+          # Example: http://YOUR_SAUCE_USERNAME:YOUR_SAUCE_ACCESSKEY@ondemand.saucelabs.com:80/wd/hub
+          command_executor=os.environ['SELENIUM_REMOTE_URL'],
+          # Example: {"browserName": "chrome", "platform": "Linux", "version": "48.0"}
+          desired_capabilities=json.loads(os.environ['SELENIUM_REMOTE_CAPABILITIES']),
+        )
+    else:
+        driver = eval('webdriver.'+client+'()')
     print "Using",client
     driver.implicitly_wait(2)
     driver.get(url+'workshop.php')
