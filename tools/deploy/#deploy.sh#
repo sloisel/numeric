@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
-cd `dirname $0`
+cd $(dirname $0)
 cd ../..
-foo=`git status --porcelain` && 
+foo=$(git status --porcelain) && 
 if [ "x" != "x$foo" ]; then
     echo "Cannot deploy while there are uncommited changes."
     exit
 fi
-ver=`grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/'`
+ver=$(grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/')
 npm publish ./lib/numeric-1.1.9.tar.gz
 git tag v$ver
 git push --tags
