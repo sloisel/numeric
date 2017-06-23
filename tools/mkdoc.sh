@@ -5,7 +5,7 @@ djsdoc=$d1/tools/jsdoc-toolkit
 djs=$d1/lib
 ddoc=$d1/doc
 
-cd $djsdoc
+cd $djsdoc || exit 1
 echo "JSDoc:"
 rm -rf $ddoc
 mkdir $ddoc
