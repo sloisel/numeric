@@ -5,7 +5,7 @@ cd ../../..
 numeric=$(readlink numeric || echo "")
 staging=$(readlink staging || echo "")
 for x in v*; do
-    if [ "z$x" != "z$numeric" -a "z$x" != "z$staging" ]; then
+    if [ "z$x" != "z$numeric" ] && [ "z$x" != "z$staging" ]; then
 	rm -rf $x
     fi
 done
