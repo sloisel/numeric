@@ -1,18 +1,18 @@
 #!/bin/bash -e
-home=`dirname $0`
+home=$(dirname $0)
 cd $home
 if [ -f buildpid.log ]; then
-	buildpid=`cat buildpid.log`
+	buildpid=$(cat buildpid.log)
 	kill -9 $buildpid || true
 	rm -f buildpid.log
 fi
 echo $$ > buildpid.log
 if [ -f nodepid.log ]; then
-	nodepid=`cat nodepid.log`
+	nodepid=$(cat nodepid.log)
 	kill -9 $nodepid || true
 	rm -f nodepid.log
 fi
-ver=`grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/'`
+ver=$(grep 'numeric.version.*=.*"' ../src/numeric.js | sed 's/numeric.version[ =]*"\([0-9.]*\)".*/\1/')
 echo "Version is $ver"
 cat ../src/numeric.js ../src/seedrandom.js ../src/quadprog.js ../src/svd.js > ../lib/numeric-$ver.js
 uglifyjs ../lib/numeric-$ver.js > ../lib/numeric-$ver.min.js
@@ -44,7 +44,7 @@ cp ../src/documentation.html ..
 rm -f ../workshop.php
 sed -e '/WORKSHOPHTML/r workshop.html' -e 's/WORKSHOPHTML//' -e "s/VERSIONSTRING/$ver/" workshop_in.php > ../workshop.php
 cd ..
-runjs=`which d8 || which jsdb || which node`
+runjs=$(which d8 || which jsdb || which node)
 echo Using $runjs
 $runjs ./tools/unit2.js &
 echo $! > tools/nodepid.log
