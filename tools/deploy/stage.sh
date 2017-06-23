@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
-version=`date "+%Y-%m-%d_%H-%M-%S"`
-cd `dirname $0`
+version=$(date "+%Y-%m-%d_%H-%M-%S")
+cd $(dirname $0)
 rm -f version.txt
 echo $version > version.txt
 source config.sh
 cd ../../
-ver=`grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/'`
-foo=`git tag -l v$ver`
+ver=$(grep "numeric.version =" src/numeric.js | sed 's/.*[''"]\([0-9.]*\)[''"].*/\1/')
+foo=$(git tag -l v$ver)
 if [ "x$foo" != "x" ]; then
     echo "The version $ver already exists."
     echo "You must update the version number in numeric.js."
