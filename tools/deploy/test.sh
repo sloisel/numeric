@@ -1,5 +1,5 @@
 #!/bin/bash
-cd `dirname $0`
+cd `dirname $0` || exit 1
 source config.sh
 version=`cat version.txt`
 rm -f wintests.log mactests.txt
@@ -24,6 +24,6 @@ echo "test.sh: Mac/Firefox unit tests on $server/staging"
 python -u selenium_tests.py Firefox http://$server/staging/ >> $logfile 2>&1
 kill -9 $tailpid
 echo "test.sh: making report"
-cd deploy
+cd deploy || exit 1
 python make_report.py $version > report.html
 scp report.html $user@$server:$webroot/staging
