@@ -1,11 +1,11 @@
 #!/bin/bash
-d0=`dirname $0`
-d1=`cd $d0/.. && pwd`
+d0=$(dirname $0)
+d1=$(cd $d0/.. && pwd)
 djsdoc=$d1/tools/jsdoc-toolkit
 djs=$d1/lib
 ddoc=$d1/doc
 
-cd $djsdoc
+cd $djsdoc || exit 1
 echo "JSDoc:"
 rm -rf $ddoc
 mkdir $ddoc
