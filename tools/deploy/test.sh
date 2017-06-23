@@ -1,7 +1,7 @@
 #!/bin/bash
-cd `dirname $0` || exit 1
+cd $(dirname $0) || exit 1
 source config.sh
-version=`cat version.txt`
+version=$(cat version.txt)
 rm -f wintests.log mactests.txt
 echo "test.sh: launching IE unit tests"
 cd ..
