@@ -1,14 +1,14 @@
 body {
-	font-family: 'Lato', sans-serif;
-	margin-top: 20px;
-	margin-left: 50px;
-	margin-right: 50px;
-	margin-bottom: 50px;
-	font-size: 16px;
-	height: 100%;
-	line-height: 150%;
+    font-family: 'Lato', sans-serif;
+    margin-top: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+    font-size: 16px;
+    height: 100%;
+    line-height: 150%;
 }
-pre { 
+pre {
     font-size:15px;
     line-height: 100%;
     margin-left: 10px;
@@ -19,7 +19,7 @@ pre {
     white-space: pre-wrap;
 }
 h1 {
-	font-size: 22px;
+    font-size: 22px;
     margin-top: 20px;
     margin-bottom: 20px;
     border-bottom: solid 1px #000000;
@@ -29,29 +29,29 @@ hr {
     margin-top: 0px;
 }
 div.nav {
-	min-width: 900px;
-	height: 150px;
-	padding-left: 10px;
+    min-width: 900px;
+    height: 150px;
+    padding-left: 10px;
 }
 div.nav {
-	min-width: 900px;
-	padding-right: 50px;
-	vertical-align: top;
-	font-size: 34px;
+    min-width: 900px;
+    padding-right: 50px;
+    vertical-align: top;
+    font-size: 34px;
 }
 tr.nav {
-	height:150px;
+    height:150px;
 }
 td.nav {
-	padding-left: 10px;
-	padding-right: 10px;
-	vertical-align: top;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: top;
 }
 td.navmain {
-	padding-left: 10px;
-	padding-right: 50px;
-	vertical-align: top;
-	font-size:34px;
+    padding-left: 10px;
+    padding-right: 50px;
+    vertical-align: top;
+    font-size:34px;
 }
 ul.nav
 {
@@ -115,12 +115,12 @@ text-decoration:underline;
 }
 
 div.plot {
-	font-family: sans-serif;
-	font-size: 14px;
-	margin:10px;
-	width:600px;
-	height:400px;
-	line-height: 100%;
+    font-family: sans-serif;
+    font-size: 14px;
+    margin:10px;
+    width:600px;
+    height:400px;
+    line-height: 100%;
 }
 
 a.button:link { text-decoration: none; color: #0000ff; }

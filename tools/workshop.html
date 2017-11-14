@@ -32,11 +32,11 @@
             user-select: none;
         }
         div.input,div.output {
-            margin-left: 30px; 
+            margin-left: 30px;
             margin-right: 15px;
             margin-top: 0px;
             margin-bottom: 0px;
-            position: relative;            
+            position: relative;
             margin: 0px;
             padding: 0px;
             border: 0px;
@@ -91,8 +91,8 @@
 <table cellspacing=20px cellpadding=0>
 <tr><td>
 <ul class="nav">
-	<li class="nav"><a id = "NEW" class="nav" href="#" onclick="workshop.reset();">START OVER</a></li>
-	<li class="nav"><a href="javascript: workshop.submit();" class="nav" id="permalink">MAKE PERMALINK</a>
+    <li class="nav"><a id = "NEW" class="nav" href="#" onclick="workshop.reset();">START OVER</a></li>
+    <li class="nav"><a href="javascript: workshop.submit();" class="nav" id="permalink">MAKE PERMALINK</a>
 </ul>
 </td>
 <td style="margin:10px; font-size:12px;" id="divupdate">
@@ -105,7 +105,7 @@
     <div id="master_0" class="master">
         <div class="output" id="output_0" style="margin-left: 30px; margin-right: 15px; position: relative;">
         <div class="inout" style="position: absolute; left: -30px; top: 5px;">
-        
+
         </div>
         <a href="#" onclick="workshop.mkdiv(0);" class="button" style="position: absolute; right: -15px; bottom: -10px;">&#x21A9;</a>
         <div class="out" id="out_0"></div>
@@ -131,61 +131,61 @@ if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ _retarded = true; }
 
 if(_retarded) {
     _queue = [];
-	_onmessage = function(ev) { _queue.push(ev); }
-	_loaded = 0;
-	window.Worker = function(f) {
-		var worker = this;
-		worker.queue = [];
-		worker.onmessage = function(ev) {};
-		worker.postMessage = function(ev) { _onmessage({data: ev}); };
-		var scr = document.createElement('script');
-		scr.src = f;
-		scr.type = 'text/javascript';
+    _onmessage = function(ev) { _queue.push(ev); }
+    _loaded = 0;
+    window.Worker = function(f) {
+        var worker = this;
+        worker.queue = [];
+        worker.onmessage = function(ev) {};
+        worker.postMessage = function(ev) { _onmessage({data: ev}); };
+        var scr = document.createElement('script');
+        scr.src = f;
+        scr.type = 'text/javascript';
         scr.onreadystatechange = function () {
             var k;
             if (scr.readyState == 'loaded' || scr.readyState == 'complete') {
                 for(k=0;k<_queue.length;k++) { _onmessage(_queue[k]); }
             }
         }
-		document.getElementsByTagName('head')[0].appendChild(scr);
-		workerPostMessage = function(ev) { worker.onmessage({data: ev}); }
-	}
-	importScripts = function(z) {
-	    var scr = document.createElement('script');
+        document.getElementsByTagName('head')[0].appendChild(scr);
+        workerPostMessage = function(ev) { worker.onmessage({data: ev}); }
+    }
+    importScripts = function(z) {
+        var scr = document.createElement('script');
         scr.src = z;
         scr.type = 'text/javascript';
         document.getElementsByTagName('head')[0].appendChild(scr);
-	};
+    };
 }
 var workshop = (function () {
 
 function resize(input) {
-	if(input.scrollHeight > input.clientHeight) {
-		input.style.height = (input.scrollHeight+10)+"px";
-	}
+    if(input.scrollHeight > input.clientHeight) {
+        input.style.height = (input.scrollHeight+10)+"px";
+    }
 }
 
 function elementPos(e){
-	var x = 0, y = 0, dx = e.offsetWidth, dy = e.offsetHeight;
+    var x = 0, y = 0, dx = e.offsetWidth, dy = e.offsetHeight;
     while(e !== null){
-    	x += e.offsetLeft;
-    	y += e.offsetTop;
-    	e = e.offsetParent;
-  	}
-  	return {x:x, y:y, dx:dx, dy:dy};
+        x += e.offsetLeft;
+        y += e.offsetTop;
+        e = e.offsetParent;
+    }
+    return {x:x, y:y, dx:dx, dy:dy};
 }
 
 function checkpos(e) {
-	var foo = elementPos(e);
-	var y = window.pageYOffset, dy = window.innerHeight;
-	if(foo.y < y+10 || foo.y+foo.dy > y+dy-10) {
-		window.scrollTo(window.pageXOffset,Math.max(0,Math.round(foo.y-0.5*dy)));
-	}	
+    var foo = elementPos(e);
+    var y = window.pageYOffset, dy = window.innerHeight;
+    if(foo.y < y+10 || foo.y+foo.dy > y+dy-10) {
+        window.scrollTo(window.pageXOffset,Math.max(0,Math.round(foo.y-0.5*dy)));
+    }
 }
 
 function myfocus(e) {
-	checkpos(e);
-	e.focus();
+    checkpos(e);
+    e.focus();
 }
 
 var savedata;
@@ -199,76 +199,76 @@ var w = new Worker('myworker.js');
 var plotcount = 0;
 
 function plotit(plotid,x) {
-	var k;
+    var k;
     try {
-		if(typeof x.s === "object") $('#'+plotid).css(x.s);
-		$.plot($("#"+plotid), x.p, x.o);
+        if(typeof x.s === "object") $('#'+plotid).css(x.s);
+        $.plot($("#"+plotid), x.p, x.o);
     } catch(e) {
-		var _foo = e.toString();
-       	if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined") {
-       		_foo += "\n\n"+e.stack.toString();
-       	}
-       	_foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-       	$('#'+plotid).after(_foo);
-    	$('#'+plotid).remove();
+        var _foo = e.toString();
+        if(typeof e.stack !== "undefined" && typeof e.stack.toString !== "undefined") {
+            _foo += "\n\n"+e.stack.toString();
+        }
+        _foo = _foo.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+        $('#'+plotid).after(_foo);
+        $('#'+plotid).remove();
     }
 }
 
 var savereq = false;
 function saveit() {
-	if(!savereq) {
-		savereq = true;
-		setTimeout(function () {
-			savereq = false;
-			localStorage.savedata = JSON.stringify(savedata);
-		},1000);
-	}
+    if(!savereq) {
+        savereq = true;
+        setTimeout(function () {
+            savereq = false;
+            localStorage.savedata = JSON.stringify(savedata);
+        },1000);
+    }
 }
 
 function outputChanged(k,o) {
-	var i = _indexOf(divorder,k);
-	savedata.outputs[i].push(o);
-	saveit();
+    var i = _indexOf(divorder,k);
+    savedata.outputs[i].push(o);
+    saveit();
 }
 
 w.onmessage = function(ev) {
-	var x = JSON.parse(ev.data);
-	var y = $('#out_'+x.k.toString())[0];
-	if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[_indexOf(divorder,x.k)] = []; }
-	if(typeof x.p !== "undefined") {
-		var plotid = "plot_"+plotcount.toString();
-		plotcount++;
-		y.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
-		(function () { 
-			setTimeout(function () { 
-				plotit(plotid,x); 
-				setTimeout(function () { 
-					outputChanged(x.k,x); 
-				},0); 
-			},0); 
-		}());
-		clear[x.k] = false;
-		return;
-	} 
-	else { 
-		y.innerHTML += x.o;
-		(function () {
-			setTimeout(function() { 
-				outputChanged(x.k,x.o); },0) 
-			}());
-		clear[x.k] = false;
-	}
-	if(y.innerHTML === '') { y.innerHTML = ' '; clear[x.k] = true; }
+    var x = JSON.parse(ev.data);
+    var y = $('#out_'+x.k.toString())[0];
+    if(clear[x.k]) { y.innerHTML = ''; savedata.outputs[_indexOf(divorder,x.k)] = []; }
+    if(typeof x.p !== "undefined") {
+        var plotid = "plot_"+plotcount.toString();
+        plotcount++;
+        y.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
+        (function () {
+            setTimeout(function () {
+                plotit(plotid,x);
+                setTimeout(function () {
+                    outputChanged(x.k,x);
+                },0);
+            },0);
+        }());
+        clear[x.k] = false;
+        return;
+    }
+    else {
+        y.innerHTML += x.o;
+        (function () {
+            setTimeout(function() {
+                outputChanged(x.k,x.o); },0)
+            }());
+        clear[x.k] = false;
+    }
+    if(y.innerHTML === '') { y.innerHTML = ' '; clear[x.k] = true; }
 }
 function mkdiv(i) {
-	divcount++;
-	var foo = _indexOf(divorder,i);
-	divorder.splice(foo+1,0,divcount);
-	savedata.inputs.splice(foo+1,0,'');
-	savedata.outputs.splice(foo+1,0,[]);
-	$('#master_'+i.toString()).after(
-	    '<div id="master_'+divcount.toString()+'" class="master">'+
-	    '<div class="input">'+
+    divcount++;
+    var foo = _indexOf(divorder,i);
+    divorder.splice(foo+1,0,divcount);
+    savedata.inputs.splice(foo+1,0,'');
+    savedata.outputs.splice(foo+1,0,[]);
+    $('#master_'+i.toString()).after(
+        '<div id="master_'+divcount.toString()+'" class="master">'+
+        '<div class="input">'+
         '<div class="inout" style="position: absolute; left: -30px; top: 2px;">'+
         'IN>'+
         '</div>'+
@@ -285,39 +285,39 @@ function mkdiv(i) {
     );
 }
 function rmdiv(i) {
-	var foo = _indexOf(divorder,i);
-	divorder.splice(foo,1);
-	$('#master_'+i.toString()).remove();
-	savedata.inputs.splice(foo,1);
-	savedata.outputs.splice(foo,1);
+    var foo = _indexOf(divorder,i);
+    divorder.splice(foo,1);
+    $('#master_'+i.toString()).remove();
+    savedata.inputs.splice(foo,1);
+    savedata.outputs.splice(foo,1);
 }
 
 function go(k) {
-	var input = $('#text_'+k.toString())[0];
+    var input = $('#text_'+k.toString())[0];
     var n = _indexOf(divorder,k);
     var foo = divorder[n+1];
     if(typeof foo === "number") {
-       	myfocus($('#text_'+foo.toString())[0]);
+        myfocus($('#text_'+foo.toString())[0]);
     } else {
-    	mkdiv(k);
-    	foo = divorder[n+1];
+        mkdiv(k);
+        foo = divorder[n+1];
     }
     input.className = "in1";
     cache[k] = input.value;
-	myfocus($('#text_'+foo.toString())[0]);
-	clear[k] = true;
-	$('#out_'+k.toString())[0].innerHTML = "<img src=\"resources/wait16.gif\">";
+    myfocus($('#text_'+foo.toString())[0]);
+    clear[k] = true;
+    $('#out_'+k.toString())[0].innerHTML = "<img src=\"resources/wait16.gif\">";
     var runit = function() { w.postMessage(JSON.stringify({k:k,n:n,e:input.value})); }
-	setTimeout(runit,0);
+    setTimeout(runit,0);
 }
 
 function inputChanged(k){
-	var i = _indexOf(divorder,k);
-	var input = $('#text_'+k.toString())[0];
-	if(input.value === cache[k]) input.className = "in1";
-	else { input.className = "in0"; cache[k] = null; }
-	savedata.inputs[i] = input.value;
-	saveit();
+    var i = _indexOf(divorder,k);
+    var input = $('#text_'+k.toString())[0];
+    if(input.value === cache[k]) input.className = "in1";
+    else { input.className = "in0"; cache[k] = null; }
+    savedata.inputs[i] = input.value;
+    saveit();
 }
 
 var _foo;
@@ -327,46 +327,46 @@ function restore2(foo) {
     rc++;
     if(rc<2) return;
     foo = _foo;
-	savedata = { inputs: [], outputs: [], scripts: foo.scripts };
-	var baz = 'Version: <tt>'+foo.scripts[0]+'</tt>';
-	if(_indexOf(foo.scripts,workshop.updateVersion)<0) {
-	    baz = baz + ' (Update to <tt><a href="javascript: workshop.update();">'+workshop.updateVersion+'</a></tt>)';
-	}
-	$('#divupdate')[0].innerHTML = baz;
-	if(foo.inputs.length === 0) { mkdiv(0); return; }
-	var input,output,i,j,f0;
-	for(i=1;i<foo.inputs.length;i++) {
-		mkdiv(i-1);
-		input = $('#text_'+i.toString())[0];
-		input.value = foo.inputs[i];
-		f0 = (function(in0) { return function() { resize(in0); }; }(input));
-		setTimeout(f0,0);
-		output = $('#out_'+i.toString())[0];
-		output.innerHTML = '';
-		if(typeof foo.outputs[i] === "undefined") { continue; }
-		for(j=0;j<foo.outputs[i].length;j++) {
-			if(typeof foo.outputs[i][j] === "string") {
-				output.innerHTML += foo.outputs[i][j];
-			} else {
-				(function(i,j) {
-					var plotid = "plot_"+plotcount.toString();
-					plotcount++;
-					output.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
-					setTimeout(function () { 
-						plotit(plotid,{k:i, o:foo.outputs[i][j].o, p:foo.outputs[i][j].p});
-					},0);
-				}(i,j));
-			}
-		}
-		if(output.innerHTML === '') { output.innerHTML = ' '; clear[i] = true; }
-	}
-	savedata = foo;
-	workshop.savedata = savedata;
+    savedata = { inputs: [], outputs: [], scripts: foo.scripts };
+    var baz = 'Version: <tt>'+foo.scripts[0]+'</tt>';
+    if(_indexOf(foo.scripts,workshop.updateVersion)<0) {
+        baz = baz + ' (Update to <tt><a href="javascript: workshop.update();">'+workshop.updateVersion+'</a></tt>)';
+    }
+    $('#divupdate')[0].innerHTML = baz;
+    if(foo.inputs.length === 0) { mkdiv(0); return; }
+    var input,output,i,j,f0;
+    for(i=1;i<foo.inputs.length;i++) {
+        mkdiv(i-1);
+        input = $('#text_'+i.toString())[0];
+        input.value = foo.inputs[i];
+        f0 = (function(in0) { return function() { resize(in0); }; }(input));
+        setTimeout(f0,0);
+        output = $('#out_'+i.toString())[0];
+        output.innerHTML = '';
+        if(typeof foo.outputs[i] === "undefined") { continue; }
+        for(j=0;j<foo.outputs[i].length;j++) {
+            if(typeof foo.outputs[i][j] === "string") {
+                output.innerHTML += foo.outputs[i][j];
+            } else {
+                (function(i,j) {
+                    var plotid = "plot_"+plotcount.toString();
+                    plotcount++;
+                    output.innerHTML += '<div class="plot" id="'+plotid+'"></div>';
+                    setTimeout(function () {
+                        plotit(plotid,{k:i, o:foo.outputs[i][j].o, p:foo.outputs[i][j].p});
+                    },0);
+                }(i,j));
+            }
+        }
+        if(output.innerHTML === '') { output.innerHTML = ' '; clear[i] = true; }
+    }
+    savedata = foo;
+    workshop.savedata = savedata;
 }
 
 function restore(savedata) {
     w.postMessage(JSON.stringify({imports:savedata.scripts}));
-	restore2(savedata);
+    restore2(savedata);
 }
 
 function preload(savedata) {
@@ -381,55 +381,55 @@ function preload(savedata) {
 }
 
 function mykeydown(e,i) {
-	var input = $('#text_'+i.toString())[0];
-	checkpos(input);
-	resize(input);
-	setTimeout(function () { resize(input); },0);
-	var e = window.event?window.event:e;
+    var input = $('#text_'+i.toString())[0];
+    checkpos(input);
+    resize(input);
+    setTimeout(function () { resize(input); },0);
+    var e = window.event?window.event:e;
     if(e.keyCode === 13 && e.shiftKey === false) {
-		setTimeout(function () { inputChanged(i); go(i); },0);
-		if(window.event) e.returnValue = false;
-		else e.preventDefault();
-	} else {
-		setTimeout(function () { inputChanged(i); },0)
-	};
+        setTimeout(function () { inputChanged(i); go(i); },0);
+        if(window.event) e.returnValue = false;
+        else e.preventDefault();
+    } else {
+        setTimeout(function () { inputChanged(i); },0)
+    };
 }
 function reset() {
-	localStorage.clear();
-	window.location.replace('workshop.php');
+    localStorage.clear();
+    window.location.replace('workshop.php');
 }
 function update() {
-	savedata.scripts = [workshop.updateVersion];
-	localStorage.savedata = JSON.stringify(savedata);
-	window.location.replace('workshop.php');
+    savedata.scripts = [workshop.updateVersion];
+    localStorage.savedata = JSON.stringify(savedata);
+    window.location.replace('workshop.php');
 }
 
 function submit() {
-	var f = document.myform;
-	var foo = JSON.stringify(savedata);
-	var digest = Crypto.SHA256(foo, { asBytes: true });
-	var s = document.myform.savedata;
-	s.value = foo;
-	digest = Crypto.util.bytesToHex(digest);
-	f.action = "workshop.php?link="+digest;
-	f.submit();
+    var f = document.myform;
+    var foo = JSON.stringify(savedata);
+    var digest = Crypto.SHA256(foo, { asBytes: true });
+    var s = document.myform.savedata;
+    s.value = foo;
+    digest = Crypto.util.bytesToHex(digest);
+    f.action = "workshop.php?link="+digest;
+    f.submit();
 }
 
 return {
-	    print:print,
-	    mkdiv:mkdiv,
-	    rmdiv:rmdiv,
-	    mykeydown:mykeydown,
-	    w:w,
-	    savedata:savedata,
-	    restore:restore,
-	    restore2:restore2,
-	    reset:reset,
-	    resize:resize,
-	    submit:submit,
-	    update:update,
-	    preload:preload
-	    }
+        print:print,
+        mkdiv:mkdiv,
+        rmdiv:rmdiv,
+        mykeydown:mykeydown,
+        w:w,
+        savedata:savedata,
+        restore:restore,
+        restore2:restore2,
+        reset:reset,
+        resize:resize,
+        submit:submit,
+        update:update,
+        preload:preload
+        }
 }());
 </script>
 

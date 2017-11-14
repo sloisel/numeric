@@ -19,6 +19,9 @@
 *.rar
 *.tar
 *.zip
+	     
+# installed NPM packages	     
+node_modules/
 
 # Emacs backups
 *~

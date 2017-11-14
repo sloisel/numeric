@@ -79,31 +79,37 @@ if (!('map' in Array.prototype)) {
 goog.require('goog.math.Matrix');
 var bench = numeric.bench;
 var geometricmeans = [0,0,0];
-var mkA = function(n) { return numeric.random([n,n]); };
-var mkV = function(n) { return numeric.random([n]); };
+var mkA = function(n) { var A = numeric.ccsScatter(numeric.cdelsq(numeric.cgrid(n))); A.format = 'ccs'; return A;};
+var mkV = function(n) { return numeric.random([(n-2)*(n-2)]); };
 var benchmarks = [
   [
-  'Solve Ax=b, A square', [3,5,10,20,30,50,75,100,200],
-  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.dot(numeric.inv(A), b); }); },
-  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b); }); },
-  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.solve(A, b, true); }); },
+  'Solve Ax=b, A is Sparse Laplacian', [4, 6, 9, 14, 21, 32, 48, 72],
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.ccsLUPSolve(numeric.ccsLUP(A), b); }); },
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.cg(A, b); }); },
+  function(n) { var A = mkA(n); var b = mkV(n); return bench(function() { numeric.bicgstab(A, b); }); },
+  ],
+  [
+  'Solve Ax=b, A is Banded Laplacian', [4, 6, 9, 14, 21, 32, 48, 72],
+  function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.cLUsolve(numeric.cLU(A), b); }); },
+  function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.cg(A, b); }); },
+  function(n) { var A = numeric.cdelsq(numeric.cgrid(n)); A.format = 'crs'; var b = mkV(n); return bench(function() { numeric.bicgstab(A, b); }); },  
   ],
 ];
 
-var pwr = [3,];
+var pwr = [4, 4];
 
 var k=0,b=0;
-var libs = ['inv(A) * b','solve(A,b)','solve(A,b,true)'];
+var libs = ['ccsLUPSolve(A,b)','cg(A,b)', 'bicgstab(A,b)'];
 var datasets = [];
 var l;
 var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
-for(l=0;l<libs.length;l++) {
-  datasets[l] = {
-    data: [],
-    label: libs[l],
-    color: colors[l],
-    points: { show: true },
-    lines: { show: true }
+for(l=0;l<libs.length;l++) { 
+  datasets[l] = { 
+    data: [], 
+    label: libs[l], 
+    color: colors[l], 
+    points: { show: true }, 
+    lines: { show: true } 
     };
 }
 l=1;
@@ -155,18 +161,18 @@ function invbench(b,k,lib,rep) {
     if(!MSIE) {
       var t = document.getElementById('bench');
       var r = t.insertRow(-1);
-      if(k === 1) {
+      if(k === 1) { 
         r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
                       +'<td width=125px><b>Numeric</b></td>'
                         +'<td width=125px><b>Google Closure</b></td>'
                         +'<td width=125px><b>Sylvester</b></td>');
-        r = t.insertRow(-1);
+        r = t.insertRow(-1); 
       }
       r.innerHTML = foo;
     }
-    $.plot($("#placeholder"), datasets,
-        {
-          legend: {container: '#legend'},
+    $.plot($("#placeholder"), datasets, 
+        { 
+          legend: {container: '#legend'}, 
           xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
           yaxis:  {ticks:20}
         });
@@ -177,12 +183,12 @@ function invbench(b,k,lib,rep) {
     for(i=0;i<cps.length;i++) datasets[i].data.push(null);
     k=0; b++;
   }
-  if(b < benchmarks.length) {
+  if(b < benchmarks.length) { 
     setTimeout('invbench('+b.toString()
                       +','+k.toString()
                       +','+lib.toString()
                       +','+rep.toString()
-                      +')',MSIE?10:0);
+                      +')',MSIE?10:0); 
     } else {
         geometricmeans = numeric.exp(numeric.div(geometricmeans,counts));
         $('#meanscore')[0].innerHTML += numeric.prettyPrint(geometricmeans)+'MFLOPS';

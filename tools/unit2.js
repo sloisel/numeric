@@ -1,9 +1,9 @@
 _console = { 
-    log: function() { 
-        var k; 
-        for(k=0;k<arguments.length;k++) { 
-            if(k>0) { write(' '); } 
-            write(arguments[k]); } 
+    log: function() {
+        var k;
+        for(k=0;k<arguments.length;k++) {
+            if(k>0) { write(' '); }
+            write(arguments[k]); }
         write('\n');
         if(typeof system !== 'undefined') { system.stdout.flush(); }
     }
@@ -27,7 +27,7 @@ function XMLHttpRequest() {
 if(typeof _fs !== "undefined") global.XMLHttpRequest = XMLHttpRequest;
 var _foo = myread('./documentation.html');
 var _baz = myread('./src/numeric.js');
-var _ver = _baz.match(/numeric.version[ =]*"([0-9.]*)".*/)[1];
+var _ver = _baz.match(/numeric.version[ =]*"([0-9.\-]*)".*/)[1];
 var _bar = _foo.match(/<pre>[\s\S]*?(?=<\/pre>)/g);
 //.join('\n').replace(/<pre>/g,'').split('\nIN> ');
 _baz = [];

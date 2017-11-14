@@ -1,13 +1,19 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta name="google-site-verification" content="wRToy1IFW5JCMZF58VL7Y4Bo0-twB2EGpk1pmMrKsk8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="Numerical analysis in javascript: library and console." />
+<meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
+<meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
 <title>Numeric Javascript</title>
+</head>
 <body>
 <?php
-require("resources/header.html"); 
+require("resources/header.html");
 define('WP_USE_THEMES', false);
 require('../wordpress/wp-blog-header.php');
 ?>
@@ -62,7 +68,7 @@ The Workshop also includes plotting facilities using the
 Although Javascript does not reach the same performance as native programs, the Numeric Javascript
 library is carefully tuned to obtain the best possible performance for a Javascript program. You
 can compare the performance of Numeric, <a href="http://sylvester.jcoglan.com/">Sylvester</a> and
-<a href="http://code.google.com/closure/">Google Closure</a>'s 
+<a href="http://code.google.com/closure/">Google Closure</a>'s
 <a href="http://code.google.com/p/closure-library/source/browse/trunk/closure/goog/math/matrix.js">Matrix</a>
 object using our <a href="benchmark.html">Benchmark</a>.
 
@@ -94,3 +100,4 @@ howpublished = {\url{http://www.numericjs.com/}} }
 
 <br><br><br>
 </div>
+</body>

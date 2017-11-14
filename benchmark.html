@@ -1,6 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="Numerical analysis in javascript: library and console." />
+<meta name="keywords" content="Javascript,HTML,simplex,matrix,vector,linear algebra" />
+<meta name="author" content="Sébastien Loisel" />
 <link rel="SHORTCUT ICON" href="favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" type="text/css" href="resources/style.css">
@@ -25,8 +29,8 @@ test, the matrix size increases.<br><br>
 <!--<script src="lib/numeric.js"></script>
 <script src="tools/sylvester.js"></script>
 <script src="tools/trunk/closure/goog/base.js"></script>
-<script src="tools/jquery-1.7.1.min.js"></script>
-<script src="tools/jquery.flot.min.js"></script>-->
+<script src="tools/jquery-1.7.1.js"></script>
+<script src="tools/jquery.flot.js"></script>-->
 <script src="tools/benchlib.js"></script>
 
 <script>
@@ -49,59 +53,59 @@ var geometricmeans = [0,0,0];
 var mkA = function(n) { return numeric.random([n,n]); };
 var mkV = function(n) { return numeric.random([n]); };
 var benchmarks = [
-	[
-	'abs(vector)', [3,10,30,100,300,1000,3000],
-	function(n) { var V = mkV(n); return bench(function() { numeric.abs(V); }); },
-	function(n) { var V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.toArray().map(Math.abs); }); },
-	function(n) { var V = $V(mkV(n)); return bench(function() { V.map(Math.abs); }); }
-	],
-	[
-	'Create identity', [3,10,30,100,300,1000],
-	function(n) { return bench(function() { numeric.identity(n); }); },
-	function(n) { return bench(function() { goog.math.Matrix.createIdentityMatrix(n); }); },
-	function(n) { return bench(function() { Matrix.I(n); }); }
-	],
-	[
-	'Matrix transpose', [3,10,30,100,300,1000],
-	function(n) { var A = mkA(n); return bench(function() { numeric.transpose(A); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getTranspose(); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.transpose(); }); }
-	],
-	[
-	'Matrix-Vector product', [3,10,30,100,300,1000],
-	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(A,V); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(V); }); },
-	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.multiply(V); }); }
-	],
-	[
-	'Vector-Matrix product', [3,10,30,100,300,1000],
-	function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(V,A); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.multiply(A); }); },
-	function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.transpose().multiply(V); }); }
-	],
-	['Ax+b', [3,10,30,100,300,1000],
-	function(n) { var A = mkA(n), x = mkV(n), b = mkV(n); return bench(function() { numeric.addeq(numeric.dot(A,x),b); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)), x = new goog.math.Matrix([mkV(n)]).getTranspose(), b = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(x).add(b); }); },
-	function(n) { var A = $M(mkA(n)), x = $V(mkV(n)), b = $V(mkV(n)); return bench(function() { A.multiply(x).add(b); }); }
-	],
-	[
-	'Matrix-Matrix product', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n), B = mkA(n); return bench(function() { numeric.dot(A,B); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)), B = new goog.math.Matrix(mkA(n)); return bench(function() { A.multiply(B); }); },
-	function(n) { var A = $M(mkA(n)), B = $M(mkA(n)); return bench(function() { A.multiply(B); }); }
-	],
-	[
-	'Matrix-Matrix sum', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { numeric.add(A,A); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.add(A); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.add(A); }); }
-	],
-	[
-	'Matrix inverse', [3,5,10,20,30,50,75,100],
-	function(n) { var A = mkA(n); return bench(function() { numeric.inv(A); }); },
-	function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getInverse(); }); },
-	function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
-	],
+    [
+    'abs(vector)', [3,10,30,100,300,1000,3000],
+    function(n) { var V = mkV(n); return bench(function() { numeric.abs(V); }); },
+    function(n) { var V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.toArray().map(Math.abs); }); },
+    function(n) { var V = $V(mkV(n)); return bench(function() { V.map(Math.abs); }); }
+    ],
+    [
+    'Create identity', [3,10,30,100,300,1000],
+    function(n) { return bench(function() { numeric.identity(n); }); },
+    function(n) { return bench(function() { goog.math.Matrix.createIdentityMatrix(n); }); },
+    function(n) { return bench(function() { Matrix.I(n); }); }
+    ],
+    [
+    'Matrix transpose', [3,10,30,100,300,1000],
+    function(n) { var A = mkA(n); return bench(function() { numeric.transpose(A); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getTranspose(); }); },
+    function(n) { var A = $M(mkA(n)); return bench(function() { A.transpose(); }); }
+    ],
+    [
+    'Matrix-Vector product', [3,10,30,100,300,1000],
+    function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(A,V); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(V); }); },
+    function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.multiply(V); }); }
+    ],
+    [
+    'Vector-Matrix product', [3,10,30,100,300,1000],
+    function(n) { var A = mkA(n), V = mkV(n); return bench(function() { numeric.dot(V,A); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)), V = new goog.math.Matrix([mkV(n)]); return bench(function() { V.multiply(A); }); },
+    function(n) { var A = $M(mkA(n)), V = $V(mkV(n)); return bench(function() { A.transpose().multiply(V); }); }
+    ],
+    ['Ax+b', [3,10,30,100,300,1000],
+    function(n) { var A = mkA(n), x = mkV(n), b = mkV(n); return bench(function() { numeric.addeq(numeric.dot(A,x),b); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)), x = new goog.math.Matrix([mkV(n)]).getTranspose(), b = new goog.math.Matrix([mkV(n)]).getTranspose(); return bench(function() { A.multiply(x).add(b); }); },
+    function(n) { var A = $M(mkA(n)), x = $V(mkV(n)), b = $V(mkV(n)); return bench(function() { A.multiply(x).add(b); }); }
+    ],
+    [
+    'Matrix-Matrix product', [3,5,10,20,30,50,75,100],
+    function(n) { var A = mkA(n), B = mkA(n); return bench(function() { numeric.dot(A,B); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)), B = new goog.math.Matrix(mkA(n)); return bench(function() { A.multiply(B); }); },
+    function(n) { var A = $M(mkA(n)), B = $M(mkA(n)); return bench(function() { A.multiply(B); }); }
+    ],
+    [
+    'Matrix-Matrix sum', [3,5,10,20,30,50,75,100],
+    function(n) { var A = mkA(n); return bench(function() { numeric.add(A,A); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.add(A); }); },
+    function(n) { var A = $M(mkA(n)); return bench(function() { A.add(A); }); }
+    ],
+    [
+    'Matrix inverse', [3,5,10,20,30,50,75,100],
+    function(n) { var A = mkA(n); return bench(function() { numeric.inv(A); }); },
+    function(n) { var A = new goog.math.Matrix(mkA(n)); return bench(function() { A.getInverse(); }); },
+    function(n) { var A = $M(mkA(n)); return bench(function() { A.inv(); }); }
+    ],
     [
     'Sparse Laplacian LU', [5,10,20,30],
     function(n) { var A = numeric.ccsScatter(numeric.cdelsq(numeric.cgrid(n))); return bench(function() { numeric.ccsLUP(A); }); },
@@ -123,23 +127,23 @@ var libs = ['Numeric '+numeric.version,'Closure 5 Dec 2011','Sylvester 5 Dec 201
 var datasets = [];
 var l;
 var colors = ["#000","#00f","#0f0","#f80","#f0f","#0ff"];
-for(l=0;l<libs.length;l++) { 
-	datasets[l] = { 
-		data: [], 
-		label: libs[l], 
-		color: colors[l], 
-		points: { show: true }, 
-		lines: { show: true } 
-		};
+for(l=0;l<libs.length;l++) {
+    datasets[l] = {
+        data: [],
+        label: libs[l],
+        color: colors[l],
+        points: { show: true },
+        lines: { show: true }
+        };
 }
 l=1;
 var l0,xticks = [];
 for(b=0;b<benchmarks.length;b++) {
-	l0 = l;
-	for(k=0;k<benchmarks[b][1].length;k++) {
-		l++;
-	}
-	xticks.push([(l0+l)*0.5,benchmarks[b][0]]);
+    l0 = l;
+    for(k=0;k<benchmarks[b][1].length;k++) {
+        l++;
+    }
+    xticks.push([(l0+l)*0.5,benchmarks[b][0]]);
 }
 k=0;
 b=0;
@@ -149,66 +153,66 @@ numeric.precision = 6;
 var c0 = [[],[],[]];
 var counts = [0,0,0];
 function invbench(b,k,lib,rep) {
-	var ks,sz = benchmarks[b][1][k];
-	var i,j,foo;
-	ks = sz.toString();
-	if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
-	else { foo = benchmarks[b][lib+2]; if(k===0) foo(sz); c0[lib][rep] = foo(sz); }
-	rep++;
-	if(rep === 1) { rep = 0; lib++; }
-	if(lib+2 === benchmarks[b].length) {
-		k++;
-		lib=0;
-		var cps = [];
-		var mi = 1e6/Math.pow(benchmarks[b][1][k-1],pwr[b]);
-		for(i=0;i<c0.length;i++) {
-		    cps[i] = 0;
-		    for(j=0;j<c0[i].length;j++) cps[i] += c0[i][j];
-			cps[i] /= (c0[i].length*mi);
-		}
-		for(i=0;i<cps.length;i++) {
-			if(MSIE || cps[i]) datasets[i].data.push([count,cps[i]]);
-			if(cps[i]) {
-			    counts[i]++;
-			    geometricmeans[i] += Math.log(cps[i]);
-			}
-		}
-		var foo = '<td>n='+ks+'</td>';
-		var color = '', uncolor='';
-		for(i=0;i<cps.length;i++) {
-			foo +=  '<td>'+cps[i].toPrecision(8)+'</td>';
-		}
-		if(!MSIE) {
-			var t = document.getElementById('bench');
-			var r = t.insertRow(-1);
-			if(k === 1) { 
-				r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
-			    	          +'<td width=125px><b>Numeric</b></td>'
-		            	      +'<td width=125px><b>Google Closure</b></td>'
-		                	  +'<td width=125px><b>Sylvester</b></td>');
-				r = t.insertRow(-1); 
-			}
-			r.innerHTML = foo;
-		}
-		$.plot($("#placeholder"), datasets, 
-		    { 
-		   	  legend: {container: '#legend'}, 
-	    	  xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
-	    	  yaxis:  {ticks:20}
-    		});
-	    c0 = [[],[],[]];
-		count++;
-	}
-	if(k === benchmarks[b][1].length) {
-		for(i=0;i<cps.length;i++) datasets[i].data.push(null);
-		k=0; b++;
-	}
-	if(b < benchmarks.length) { 
-		setTimeout('invbench('+b.toString()
-		                  +','+k.toString()
-		                  +','+lib.toString()
-		                  +','+rep.toString()
-		                  +')',MSIE?10:0); 
+    var ks,sz = benchmarks[b][1][k];
+    var i,j,foo;
+    ks = sz.toString();
+    if(rep>0 && c0[lib][rep-1] < 10) { c0[lib][rep] = c0[lib][rep-1]; }
+    else { foo = benchmarks[b][lib+2]; if(k===0) foo(sz); c0[lib][rep] = foo(sz); }
+    rep++;
+    if(rep === 1) { rep = 0; lib++; }
+    if(lib+2 === benchmarks[b].length) {
+        k++;
+        lib=0;
+        var cps = [];
+        var mi = 1e6/Math.pow(benchmarks[b][1][k-1],pwr[b]);
+        for(i=0;i<c0.length;i++) {
+            cps[i] = 0;
+            for(j=0;j<c0[i].length;j++) cps[i] += c0[i][j];
+            cps[i] /= (c0[i].length*mi);
+        }
+        for(i=0;i<cps.length;i++) {
+            if(MSIE || cps[i]) datasets[i].data.push([count,cps[i]]);
+            if(cps[i]) {
+                counts[i]++;
+                geometricmeans[i] += Math.log(cps[i]);
+            }
+        }
+        var foo = '<td>n='+ks+'</td>';
+        var color = '', uncolor='';
+        for(i=0;i<cps.length;i++) {
+            foo +=  '<td>'+cps[i].toPrecision(8)+'</td>';
+        }
+        if(!MSIE) {
+            var t = document.getElementById('bench');
+            var r = t.insertRow(-1);
+            if(k === 1) {
+                r.innerHTML = ('<td width=200px><b>'+benchmarks[b][0]+'</b></td>'
+                              +'<td width=125px><b>Numeric</b></td>'
+                              +'<td width=125px><b>Google Closure</b></td>'
+                              +'<td width=125px><b>Sylvester</b></td>');
+                r = t.insertRow(-1);
+            }
+            r.innerHTML = foo;
+        }
+        $.plot($("#placeholder"), datasets,
+            {
+              legend: {container: '#legend'},
+              xaxis:  {ticks:xticks, tickLength:0, min:1, max: l-1},
+              yaxis:  {ticks:20}
+            });
+        c0 = [[],[],[]];
+        count++;
+    }
+    if(k === benchmarks[b][1].length) {
+        for(i=0;i<cps.length;i++) datasets[i].data.push(null);
+        k=0; b++;
+    }
+    if(b < benchmarks.length) {
+        setTimeout('invbench('+b.toString()
+                          +','+k.toString()
+                          +','+lib.toString()
+                          +','+rep.toString()
+                          +')',MSIE?10:0);
     } else {
         geometricmeans = numeric.exp(numeric.div(geometricmeans,counts));
         $('#meanscore')[0].innerHTML += numeric.prettyPrint(geometricmeans)+'MFLOPS';

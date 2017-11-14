@@ -1,7 +1,7 @@
 The /tools directory
 ====================
 
-This directory contains build/test scripts for numeric.js as well as 
+This directory contains build/test scripts for numeric.js as well as
 js libraries needed by the Workshop.
 
 Building

@@ -1,0 +1,28 @@
+{
+  "name": "numeric",
+  "version": "1.2.8-2",
+  "author": "Sébastien Loisel",
+  "description": "Numerical analysis in Javascript http://www.numericjs.com/",
+  "keywords": [
+    "numeric",
+    "analysis",
+    "math"
+  ],
+  "homepage": "http://numericjs.com",
+  "license": "MIT",
+  "main": "./lib/numeric.latest.js",
+  "scripts": {
+    "test": "node ./tools/unit2.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sloisel/numeric.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sloisel/numeric/issues"
+  },
+  "devDependencies": {
+    "js-beautify": "1.6.4",
+    "uglify-js": "2.7.3"
+  }
+}
